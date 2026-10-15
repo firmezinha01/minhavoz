@@ -1,0 +1,24 @@
+{
+  "name": "minhavoz",
+  "version": "1.0.0",
+  "description": "Rede social comunitária para dar visibilidade a pacientes na fila do SUS, medir tempo de espera e mobilizar autoridades em tempo real.",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve . -l 3000"
+  },
+  "keywords": [
+    "sus",
+    "saude",
+    "brasil",
+    "rede-social",
+    "fila-sus",
+    "supabase",
+    "vercel"
+  ],
+  "author": "firmezinha01",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.48.0"
+  }
+}
