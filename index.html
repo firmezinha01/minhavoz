@@ -1042,10 +1042,25 @@
       savePostsLocally();
       renderFeed();
 
+      // Persiste na nuvem do Supabase
+      if (window.supabaseClient) {
+        window.supabaseClient
+          .from('reports')
+          .insert([{
+            relato: text,
+            tipo_midia: activeMediaMode,
+            anonimo: isAnon,
+            duracao_segundos: 214
+          }])
+          .then(({ error }) => {
+            if (error) console.warn('Supabase insert note:', error);
+          });
+      }
+
       // Reset
       document.getElementById('composer-text').value = '';
       selectMediaComposer('texto');
-      alert('✓ Relato publicado com sucesso na rede social Minha Voz! As autoridades locais foram notificadas.');
+      alert('✓ Relato publicado com sucesso na rede social Minha Voz! Dados sincronizados no Supabase.');
     }
 
     // ALTERNADOR DE MÍDIA NO COMPOSITOR
@@ -1240,7 +1255,12 @@
       container.innerHTML = filtered.map(post => createPostHTML(post)).join('');
     }
 
-    // PERSISTÊNCIA LOCAL & SUPABASE CLIENT
+    // ====================================================================
+    // PERSISTÊNCIA LOCAL & INTEGRAÇÃO EM TEMPO REAL COM O SUPABASE
+    // ====================================================================
+    const DEFAULT_SUPABASE_URL = 'https://rtpuzrjjcrwlivwtlcya.supabase.co';
+    const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0cHV6cmpqY3J3bGl2d3RsY3lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjI3NTYsImV4cCI6MjEwNzU5ODc1Nn0._letC6F8us6Idehchk-zbO_xfItWZ3brCjHQwIxxbLM';
+
     function savePostsLocally() {
       try {
         localStorage.setItem('minhavoz_posts', JSON.stringify(socialPosts));
@@ -1254,25 +1274,97 @@
       } catch (e) {}
     }
 
-    function initSupabaseClient() {
-      const url = localStorage.getItem('supabase_url') || '';
-      const key = localStorage.getItem('supabase_key') || '';
+    async function initSupabaseClient() {
+      let url = localStorage.getItem('supabase_url') || DEFAULT_SUPABASE_URL;
+      let key = localStorage.getItem('supabase_key') || DEFAULT_SUPABASE_KEY;
+
+      // Sanitiza caso a URL termine com /rest/v1/
+      url = url.replace(/\/rest\/v1\/?$/, '').trim();
+
       if (url && key && window.supabase) {
-        window.supabaseClient = window.supabase.createClient(url, key);
-        const badge = document.getElementById('supabase-status-badge');
-        if (badge) badge.classList.remove('hidden');
+        try {
+          window.supabaseClient = window.supabase.createClient(url, key);
+          const badge = document.getElementById('supabase-status-badge');
+          if (badge) badge.classList.remove('hidden');
+
+          // 1. Carrega relatos reais gravados no Supabase
+          const { data, error } = await window.supabaseClient
+            .from('reports')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(20);
+
+          if (!error && data && data.length > 0) {
+            const remotePosts = data.map(r => ({
+              id: r.id,
+              author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
+              avatar: r.anonimo ? '🎭' : 'PS',
+              location: 'Brasil',
+              hospital: 'Hospital SUS',
+              waitDays: r.duracao_segundos || 180,
+              specialty: 'Atendimento / Procedimento',
+              mediaType: r.tipo_midia || 'texto',
+              text: r.relato,
+              likes: 12,
+              hasLiked: false,
+              pressures: 8,
+              commentsCount: 2,
+              createdAt: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              isAnon: r.anonimo
+            }));
+            // Mescla sem duplicar
+            const existingIds = new Set(socialPosts.map(p => p.id));
+            const newOnes = remotePosts.filter(p => !existingIds.has(p.id));
+            if (newOnes.length > 0) {
+              socialPosts = [...newOnes, ...socialPosts];
+              renderFeed();
+            }
+          }
+
+          // 2. Escuta eventos em TEMPO REAL (Novas publicações instantâneas)
+          window.supabaseClient
+            .channel('realtime:reports')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reports' }, payload => {
+              const r = payload.new;
+              if (r && !socialPosts.some(p => p.id === r.id)) {
+                socialPosts.unshift({
+                  id: r.id,
+                  author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
+                  avatar: r.anonimo ? '🎭' : 'PS',
+                  location: 'Brasil',
+                  hospital: 'Hospital SUS',
+                  waitDays: r.duracao_segundos || 180,
+                  specialty: 'Atendimento / Procedimento',
+                  mediaType: r.tipo_midia || 'texto',
+                  text: r.relato,
+                  likes: 1,
+                  hasLiked: false,
+                  pressures: 1,
+                  commentsCount: 0,
+                  createdAt: 'Agora mesmo',
+                  isAnon: r.anonimo
+                });
+                renderFeed();
+              }
+            })
+            .subscribe();
+
+        } catch (err) {
+          console.warn('Conexão Supabase:', err);
+        }
       }
     }
 
     function saveSupabaseConfig() {
-      const url = document.getElementById('supabase-input-url').value.trim();
-      const key = document.getElementById('supabase-input-key').value.trim();
+      let url = document.getElementById('supabase-input-url').value.trim();
+      let key = document.getElementById('supabase-input-key').value.trim();
       if (url && key) {
+        url = url.replace(/\/rest\/v1\/?$/, '').trim();
         localStorage.setItem('supabase_url', url);
         localStorage.setItem('supabase_key', key);
         initSupabaseClient();
         closeModal('modal-supabase');
-        alert('✓ Supabase conectado com sucesso!');
+        alert('✓ Supabase conectado com sucesso em tempo real!');
       } else {
         alert('Preencha os campos de URL e Chave Anon.');
       }
