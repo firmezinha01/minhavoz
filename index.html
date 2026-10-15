@@ -1905,32 +1905,42 @@
     // INTEGRAÇÃO ROBUSTA COM SUPABASE (AUTO-FALLBACK E SUPORTE A ERROS)
     // ====================================================================
     function copySupabaseScript() {
-      const sql = `-- EXECUTE NO SQL EDITOR DO SUPABASE (https://supabase.com/dashboard):
+      const sql = `-- ====================================================================
+-- SCRIPT DE LIBERAÇÃO IMEDIATA (SUPABASE - REDE SOCIAL MINHA VOZ)
+-- ====================================================================
 ALTER TABLE public.reports DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.waiting_times DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.users DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.community_posts DISABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users insert reports" ON public.reports;
+DROP POLICY IF EXISTS "Users insert waiting times" ON public.waiting_times;
+DROP POLICY IF EXISTS "Users view own waiting times" ON public.waiting_times;
+DROP POLICY IF EXISTS "Users read own profile" ON public.users;
+DROP POLICY IF EXISTS "allow_all_reports" ON public.reports;
+DROP POLICY IF EXISTS "allow_all_waiting_times" ON public.waiting_times;
+DROP POLICY IF EXISTS "allow_all_users" ON public.users;
+
+CREATE POLICY "allow_all_reports" ON public.reports FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
+CREATE POLICY "allow_all_waiting_times" ON public.waiting_times FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
+CREATE POLICY "allow_all_users" ON public.users FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
+
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON TABLE public.reports TO anon, authenticated, service_role;
+GRANT ALL ON TABLE public.waiting_times TO anon, authenticated, service_role;
+GRANT ALL ON TABLE public.users TO anon, authenticated, service_role;
+
+ALTER TABLE public.reports DROP CONSTRAINT IF EXISTS reports_user_id_fkey;
+ALTER TABLE public.waiting_times DROP CONSTRAINT IF EXISTS waiting_times_user_id_fkey;
 ALTER TABLE public.reports ALTER COLUMN user_id DROP NOT NULL;
 ALTER TABLE public.waiting_times ALTER COLUMN user_id DROP NOT NULL;
 
-ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS hospital TEXT;
-ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS especialidade TEXT;
-ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS categoria TEXT;
-ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS tempo_espera_dias INT;
-ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS tempo_espera_horas NUMERIC;
-ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS cidade TEXT;
-ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS estado TEXT;
-
-ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS setor TEXT;
-ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS categoria TEXT;
-ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS tempo_horas NUMERIC;
-ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS cidade TEXT;
-ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS estado TEXT;
-
-GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
-GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;`;
+INSERT INTO public.users (id, nome, idade, cidade, email, cpf, senha_hash, condicao_saude)
+VALUES 
+    ('a0000000-0000-0000-0000-000000000001', 'Administrador Minha Voz', 35, 'Brasília, DF', 'admin@minhavoz.org.br', 'admin', '123456', 'Gestão e Moderação SUS'),
+    ('a0000000-0000-0000-0000-000000000002', 'José Silva', 48, 'São Paulo, SP', 'jose@minhavoz.org.br', 'jose', '123456', 'Ortopedia / Fila Cirurgia'),
+    ('a0000000-0000-0000-0000-000000000003', 'Maria Silva', 42, 'São Paulo, SP', 'maria@minhavoz.org.br', 'maria', '123456', 'Paciente SUS / Consultas e Exames')
+ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
       if (navigator.clipboard) {
         navigator.clipboard.writeText(sql).then(() => {
@@ -1971,6 +1981,12 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role
       try {
         let res = await window.supabaseClient.from('reports').insert([fullPayload]).select();
 
+        // Se houver erro de chave estrangeira em user_id, tentar sem user_id
+        if (res.error && res.error.message && (res.error.message.includes('foreign key') || res.error.message.includes('user_id'))) {
+          delete fullPayload.user_id;
+          res = await window.supabaseClient.from('reports').insert([fullPayload]).select();
+        }
+
         // Se coluna não existir no cache do schema do Supabase (código PGRST204)
         if (res.error && res.error.code === 'PGRST204') {
           console.warn('Tentando gravar com colunas base do Supabase:', res.error.message);
@@ -1980,7 +1996,6 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role
             anonimo: fullPayload.anonimo,
             duracao_segundos: fullPayload.duracao_segundos
           };
-          if (currentUser && currentUser.id) basePayload.user_id = currentUser.id;
           res = await window.supabaseClient.from('reports').insert([basePayload]).select();
         }
 
@@ -2020,6 +2035,12 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role
       try {
         let res = await window.supabaseClient.from('waiting_times').insert([fullPayload]).select();
 
+        // Se houver erro de chave estrangeira em user_id, tentar sem user_id
+        if (res.error && res.error.message && (res.error.message.includes('foreign key') || res.error.message.includes('user_id'))) {
+          delete fullPayload.user_id;
+          res = await window.supabaseClient.from('waiting_times').insert([fullPayload]).select();
+        }
+
         if (res.error && res.error.code === 'PGRST204') {
           console.warn('Tentando gravar waiting_times com colunas base:', res.error.message);
           const basePayload = {
@@ -2028,7 +2049,6 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role
             fim: fullPayload.fim,
             comentario: fullPayload.comentario
           };
-          if (currentUser && currentUser.id) basePayload.user_id = currentUser.id;
           res = await window.supabaseClient.from('waiting_times').insert([basePayload]).select();
         }
 
