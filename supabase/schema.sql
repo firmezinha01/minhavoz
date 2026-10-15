@@ -110,3 +110,22 @@ CREATE POLICY "Users insert waiting times" ON public.waiting_times FOR INSERT WI
 -- Relatos e posts comunitários podem ser lidos por todos para visibilidade pública
 CREATE POLICY "Public read community posts" ON public.community_posts FOR SELECT USING (true);
 CREATE POLICY "Public read reports" ON public.reports FOR SELECT USING (true);
+CREATE POLICY "Public insert reports" ON public.reports FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public delete reports" ON public.reports FOR DELETE USING (true);
+CREATE POLICY "Public insert waiting_times" ON public.waiting_times FOR INSERT WITH CHECK (true);
+
+-- ====================================================================
+-- USUÁRIO ADMINISTRADOR PADRÃO (LOGIN: admin / SENHA: 123456)
+-- ====================================================================
+INSERT INTO public.users (id, nome, idade, cidade, email, cpf, senha_hash, condicao_saude)
+VALUES (
+    'a0000000-0000-0000-0000-000000000001',
+    'Administrador Minha Voz',
+    35,
+    'Brasília, DF',
+    'admin@minhavoz.org.br',
+    'admin',
+    '123456',
+    'Gestão e Moderação SUS'
+) ON CONFLICT (cpf) DO NOTHING;
+

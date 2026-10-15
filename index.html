@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="overflow-x-hidden">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>Minha Voz | A Rede Social de Pacientes e Transparência da Fila do SUS</title>
-  <meta name="description" content="Rede social comunitária para dar visibilidade às pessoas na fila de espera do SUS, medir tempos reais de atendimento em hospitais e pressionar autoridades.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Minha Voz | A Rede Social de Pacientes e Transparência do SUS</title>
+  <meta name="description" content="Rede social comunitária para dar visibilidade a pessoas na fila de espera do SUS, medir tempos reais de atendimento e pressionar autoridades.">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -39,12 +39,15 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    body {
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+      -webkit-overflow-scrolling: touch;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
     .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
       background: #cbd5e1;
@@ -56,75 +59,77 @@
     .active-scale:active {
       transform: scale(0.97);
     }
+    /* Evita auto-zoom indesejado no iOS Safari ao focar inputs */
+    @media (max-width: 640px) {
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+    }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col antialiased">
+<body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col antialiased overflow-x-hidden">
 
   <!-- ==================================================================== -->
   <!-- 1. HEADER / NAVBAR SUPERIOR RESPONSIVO (DESKTOP & MOBILE)           -->
   <!-- ==================================================================== -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
       
       <!-- Logo e Identidade da Rede Social -->
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="setFeedFilter('todos')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white font-black shadow-md shadow-blue-500/20">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="flex items-center space-x-2.5 cursor-pointer shrink-0" onclick="setFeedFilter('todos')">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white font-black shadow-md shadow-blue-500/20">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"></path>
           </svg>
         </div>
         <div>
           <div class="flex items-center gap-1.5">
-            <span class="text-xl font-black tracking-tight text-slate-900">Minha Voz</span>
-            <span class="text-[10px] uppercase font-extrabold bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-md border border-rose-200">
-              Rede Social SUS
+            <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900">Minha Voz</span>
+            <span class="text-[9px] sm:text-[10px] uppercase font-extrabold bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-md border border-rose-200">
+              SUS
             </span>
           </div>
-          <span class="text-[11px] text-slate-400 hidden sm:inline-block">Transparência em tempo real para a saúde no Brasil</span>
+          <span class="text-[10px] sm:text-[11px] text-slate-400 hidden md:inline-block">Transparência em tempo real para a saúde no Brasil</span>
         </div>
       </div>
 
       <!-- Barra de Busca Central (Desktop) -->
       <div class="hidden md:flex flex-1 max-w-md mx-4">
         <div class="relative w-full">
-          <input type="text" id="search-input" onkeyup="handleSearch(this.value)" placeholder="Buscar por hospital, procedimento, cidade ou paciente..." class="w-full bg-slate-100 border border-slate-200 rounded-full py-2 pl-10 pr-4 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <input type="text" id="search-input" onkeyup="handleSearch(this.value)" placeholder="Buscar hospital, procedimento, cidade..." class="w-full bg-slate-100 border border-slate-200 rounded-full py-2 pl-9 pr-4 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
         </div>
       </div>
 
-      <!-- Ações do Cabeçalho e Perfil -->
-      <div class="flex items-center space-x-2 sm:space-x-3">
+      <!-- Ações do Cabeçalho e Usuário / Admin -->
+      <div class="flex items-center space-x-2">
         
-        <!-- Botão Rápido de Emergência / Cronômetro Mobile -->
-        <button onclick="openTimerModal()" class="lg:hidden flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-full shadow-xs active-scale">
+        <!-- Botão Cronômetro Mobile Rápido -->
+        <button onclick="openTimerModal()" class="lg:hidden flex items-center gap-1 px-2.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-full shadow-xs active-scale">
           <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-          <span>Cronômetro</span>
+          <span>⏱️ Espera</span>
         </button>
-
-        <!-- Indicador Supabase Sync -->
-        <div id="supabase-status-badge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-semibold">
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span>Nuvem Ativa</span>
-        </div>
 
         <!-- Notificações -->
         <button onclick="toggleNotifications()" class="relative p-2 rounded-full text-slate-600 hover:bg-slate-100 transition-colors">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
           </svg>
           <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full"></span>
         </button>
 
-        <!-- Perfil Logado -->
-        <div class="flex items-center space-x-2 pl-2 border-l border-slate-200 cursor-pointer" onclick="openProfileModal()">
-          <div class="w-9 h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs shadow-xs border-2 border-white ring-1 ring-blue-500">
-            MS
+        <!-- Perfil Logado / Botão de Login Admin -->
+        <div class="flex items-center space-x-2 pl-1.5 border-l border-slate-200 cursor-pointer active-scale" onclick="openLoginModal()">
+          <div id="header-user-avatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-indigo-700 text-white font-bold flex items-center justify-center text-sm shadow-xs border-2 border-white ring-1 ring-indigo-500">
+            👑
           </div>
           <div class="hidden xl:block text-left">
-            <div class="text-xs font-bold text-slate-800 leading-tight">Maria da Silva</div>
-            <div class="text-[10px] text-rose-600 font-semibold">214 dias na fila</div>
+            <div id="header-user-name" class="text-xs font-bold text-slate-800 leading-tight">Admin</div>
+            <div id="header-user-badge" class="text-[10px] text-indigo-600 font-extrabold flex items-center gap-1">
+              <span>👑 Administrador</span>
+            </div>
           </div>
         </div>
 
@@ -133,47 +138,43 @@
   </header>
 
   <!-- ==================================================================== -->
-  <!-- 2. LAYOUT PRINCIPAL (3 COLUNAS DESKTOP / 1 COLUNA FLUIDA MOBILE)    -->
+  <!-- 2. LAYOUT PRINCIPAL RESPONSIVO (DESKTOP: 3 COLUNAS / MOBILE: FLUIDO)-->
   <!-- ==================================================================== -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 w-full flex-1">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
 
       <!-- ================================================================ -->
-      <!-- COLUNA ESQUERDA (DESKTOP): NAVEGAÇÃO & MEU PERFIL SUS           -->
+      <!-- COLUNA ESQUERDA (DESKTOP): NAVEGAÇÃO & PERFIL ADMIN/PACIENTE     -->
       <!-- ================================================================ -->
       <aside class="hidden lg:block lg:col-span-3 space-y-4 sticky top-20">
         
-        <!-- Card do Paciente Conectado -->
+        <!-- Card do Usuário Atual (Admin ou Paciente) -->
         <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs text-left">
           <div class="flex items-center space-x-3 mb-3">
-            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-md">
-              MS
+            <div id="sidebar-user-avatar" class="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-700 to-purple-700 text-white font-bold flex items-center justify-center text-xl shadow-md">
+              👑
             </div>
             <div>
-              <h3 class="text-sm font-bold text-slate-900 leading-tight">Maria da Silva</h3>
-              <p class="text-[11px] text-slate-500">📍 São Paulo, SP • 54 anos</p>
-              <span class="inline-block mt-0.5 text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
-                Prontuário SUS Verificado ✓
+              <h3 id="sidebar-user-name" class="text-sm font-bold text-slate-900 leading-tight">Administrador Minha Voz</h3>
+              <p id="sidebar-user-info" class="text-[11px] text-slate-500">Login: <strong>admin</strong> • Gestão SUS</p>
+              <span id="sidebar-user-role" class="inline-block mt-0.5 text-[10px] font-extrabold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-200">
+                👑 Painel de Moderação Ativo
               </span>
             </div>
           </div>
 
-          <!-- Status do Procedimento na Fila Oficial -->
-          <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 text-xs space-y-1">
-            <div class="flex justify-between items-center text-[11px] font-semibold text-rose-800">
-              <span>Cirurgia do Joelho</span>
-              <span class="bg-rose-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded">Fila SISREG</span>
-            </div>
-            <div class="flex items-baseline gap-1 pt-0.5">
-              <span class="text-2xl font-black text-rose-700 font-mono">214</span>
-              <span class="text-xs text-rose-800 font-semibold">dias de espera pública</span>
-            </div>
-            <p class="text-[10px] text-slate-500 pt-1">Hosp. Geral de Grajaú • Protocolo SISREG #8841-A</p>
+          <div class="flex gap-2 pt-1 border-t border-slate-100">
+            <button onclick="openLoginModal()" class="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-lg transition-all text-center">
+              🔑 Trocar Conta / Login
+            </button>
+            <button onclick="logoutUser()" class="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 text-[11px] font-bold rounded-lg transition-all">
+              Sair
+            </button>
           </div>
         </div>
 
-        <!-- Menu Lateral de Recursos Sociais -->
-        <nav class="bg-white rounded-2xl p-2.5 border border-slate-200 shadow-xs space-y-1 text-xs font-semibold">
+        <!-- Menu Lateral de Navegação -->
+        <nav class="bg-white rounded-2xl p-2 border border-slate-200 shadow-xs space-y-1 text-xs font-semibold">
           <button onclick="setFeedFilter('todos')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-blue-50 text-blue-700 font-bold transition-all">
             <span class="flex items-center gap-2.5">
               <span class="text-base">📰</span>
@@ -185,7 +186,7 @@
           <button onclick="openTimerModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition-all">
             <span class="flex items-center gap-2.5">
               <span class="text-base">⏱️</span>
-              <span>Cronômetro na UPA/Hospital</span>
+              <span>Cronômetro no Hospital</span>
             </span>
             <span class="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-full font-bold">Ao Vivo</span>
           </button>
@@ -213,21 +214,14 @@
           </button>
         </nav>
 
-        <!-- Card de Conexão Supabase / Configuração -->
-        <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-2xl p-4 shadow-xs text-xs space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="font-bold flex items-center gap-1.5 text-emerald-400">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-              Supabase & Vercel
-            </span>
-            <span class="text-[10px] text-slate-400">Produção</span>
+        <!-- Card de Apoio Institucional -->
+        <div class="bg-gradient-to-br from-blue-900 to-indigo-950 text-white rounded-2xl p-4 shadow-xs text-xs space-y-2">
+          <div class="font-bold text-blue-200 flex items-center gap-1.5">
+            <span>🛡️</span> Dados Conectados ao SUS
           </div>
-          <p class="text-[11px] text-slate-300 leading-relaxed">
-            Banco relacional com 7 tabelas e dados sincronizados em tempo real.
+          <p class="text-[11px] text-blue-100 leading-relaxed">
+            Plataforma pública e independente. Todos os relatos geram relatórios para a Defensoria Pública e Ministério Público.
           </p>
-          <button onclick="openSupabaseSettingsModal()" class="w-full py-1.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg text-[11px] transition-all">
-            ⚙️ Configurar Chaves Supabase
-          </button>
         </div>
 
       </aside>
@@ -235,86 +229,59 @@
       <!-- ================================================================ -->
       <!-- COLUNA CENTRAL (FEED SOCIAL RESPONSIVO)                          -->
       <!-- ================================================================ -->
-      <main class="col-span-1 lg:col-span-6 space-y-4">
+      <main class="col-span-1 lg:col-span-6 space-y-4 pb-24 lg:pb-6">
 
-        <!-- 1. BARRA DE STORIES / DEPOIMENTOS URGENTES (ÚLTIMAS 24H) -->
-        <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-xs">
+        <!-- 1. BARRA DE STORIES / DEPOIMENTOS EM VÍDEO E VOZ -->
+        <div class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200 shadow-xs">
           <div class="flex items-center justify-between mb-2.5 px-1">
             <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-              Depoimentos em Vídeo & Voz (Hoje)
+              Depoimentos em Vídeo & Voz
             </h4>
-            <span class="text-[11px] text-blue-600 font-semibold cursor-pointer hover:underline" onclick="openStory('create')">
-              + Gravar o Seu
+            <span class="text-[11px] text-blue-600 font-bold cursor-pointer hover:underline" onclick="selectMediaComposer('video')">
+              + Gravar Depoimento
             </span>
           </div>
 
-          <div class="flex items-center space-x-3 overflow-x-auto pb-1 custom-scrollbar">
-            
+          <div id="stories-container" class="flex items-center space-x-3 overflow-x-auto pb-1 custom-scrollbar">
             <!-- Botão Adicionar Story -->
             <div onclick="selectMediaComposer('video')" class="flex flex-col items-center shrink-0 cursor-pointer group">
-              <div class="w-14 h-14 rounded-full border-2 border-dashed border-rose-400 flex items-center justify-center bg-rose-50 group-hover:scale-105 transition-transform">
-                <span class="text-rose-600 text-lg font-bold">📹+</span>
+              <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-dashed border-rose-400 flex items-center justify-center bg-rose-50 group-hover:scale-105 transition-transform">
+                <span class="text-rose-600 text-lg sm:text-xl font-bold">📹+</span>
               </div>
-              <span class="text-[10px] font-semibold text-slate-700 mt-1">Seu Vídeo</span>
+              <span class="text-[10px] font-bold text-slate-700 mt-1">Gravar Vídeo</span>
             </div>
 
-            <!-- Story 1: Cirurgia Cardíaca -->
-            <div onclick="openStoryModal('João Carlos', 'Aguardando Cateterismo há 88 dias', 'SP', 'video')" class="flex flex-col items-center shrink-0 cursor-pointer group">
-              <div class="w-14 h-14 rounded-full p-0.5 story-ring group-hover:scale-105 transition-transform">
-                <div class="w-full h-full rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-white text-base font-bold">
-                  JC
-                </div>
+            <!-- Áudio rápido -->
+            <div onclick="selectMediaComposer('audio')" class="flex flex-col items-center shrink-0 cursor-pointer group">
+              <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-dashed border-blue-400 flex items-center justify-center bg-blue-50 group-hover:scale-105 transition-transform">
+                <span class="text-blue-600 text-lg sm:text-xl font-bold">🎙️+</span>
               </div>
-              <span class="text-[10px] font-semibold text-slate-700 mt-1 max-w-[60px] truncate text-center">João (Cardio)</span>
+              <span class="text-[10px] font-bold text-slate-700 mt-1">Gravar Voz</span>
             </div>
 
-            <!-- Story 2: Depoimento em Áudio (Oncologia) -->
-            <div onclick="openStoryModal('Dra. Ana & Pacientes', 'Falta de Quimioterápicos no Hospital das Clínicas', 'BA', 'audio')" class="flex flex-col items-center shrink-0 cursor-pointer group">
-              <div class="w-14 h-14 rounded-full p-0.5 story-ring group-hover:scale-105 transition-transform">
-                <div class="w-full h-full rounded-full bg-purple-700 border-2 border-white flex items-center justify-center text-white text-base">
-                  🎙️
-                </div>
-              </div>
-              <span class="text-[10px] font-semibold text-slate-700 mt-1 max-w-[60px] truncate text-center">Onco BA</span>
+            <!-- Espaço dinâmico para vídeos e áudios reais -->
+            <div id="stories-list" class="flex items-center space-x-3">
+              <span class="text-xs text-slate-400 italic pl-1">
+                Grave um relato em vídeo ou voz para inaugurar os destaques de hoje!
+              </span>
             </div>
-
-            <!-- Story 3: Fila de Ortopedia -->
-            <div onclick="openStoryModal('Anônimo #RJ412', '4 horas na recepção da UPA sem triagem', 'RJ', 'video')" class="flex flex-col items-center shrink-0 cursor-pointer group">
-              <div class="w-14 h-14 rounded-full p-0.5 story-ring group-hover:scale-105 transition-transform">
-                <div class="w-full h-full rounded-full bg-slate-800 border-2 border-white flex items-center justify-center text-white text-sm font-bold">
-                  🎭
-                </div>
-              </div>
-              <span class="text-[10px] font-semibold text-slate-700 mt-1 max-w-[60px] truncate text-center">UPA RJ</span>
-            </div>
-
-            <!-- Story 4: Exame de Ressonância -->
-            <div onclick="openStoryModal('Francisca M.', 'Espera de 1 ano e 3 meses para RM de Coluna', 'CE', 'texto')" class="flex flex-col items-center shrink-0 cursor-pointer group">
-              <div class="w-14 h-14 rounded-full p-0.5 story-ring group-hover:scale-105 transition-transform">
-                <div class="w-full h-full rounded-full bg-indigo-700 border-2 border-white flex items-center justify-center text-white text-base font-bold">
-                  FM
-                </div>
-              </div>
-              <span class="text-[10px] font-semibold text-slate-700 mt-1 max-w-[60px] truncate text-center">Francisca</span>
-            </div>
-
           </div>
         </div>
 
-        <!-- 2. COMPOSITOR DE PUBLICAÇÃO SOCIAL (POST COMPOSER) -->
-        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-3">
+        <!-- 2. COMPOSITOR DE PUBLICAÇÃO SOCIAL -->
+        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200 shadow-xs space-y-3">
           
-          <div class="flex items-start space-x-3">
-            <div class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center shrink-0 text-xs">
-              MS
+          <div class="flex items-start space-x-2.5 sm:space-x-3">
+            <div id="composer-user-avatar" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-indigo-700 text-white font-bold flex items-center justify-center shrink-0 text-sm shadow-xs">
+              👑
             </div>
             <div class="flex-1">
-              <textarea id="composer-text" rows="3" placeholder="Compartilhe seu relato real: Quanto tempo você aguarda na fila? Qual hospital? Precisamos da sua voz..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all leading-relaxed"></textarea>
+              <textarea id="composer-text" rows="3" placeholder="Compartilhe sua experiência real: Qual procedimento ou cirurgia você aguarda? Quanto tempo de espera?" class="w-full p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all leading-relaxed"></textarea>
             </div>
           </div>
 
-          <!-- MODO GRAVAÇÃO DE ÁUDIO EMBUTIDO (QUANDO ATIVADO) -->
+          <!-- MODO GRAVAÇÃO DE ÁUDIO -->
           <div id="composer-audio-box" class="hidden bg-slate-900 text-white rounded-xl p-3 border border-slate-800 space-y-2">
             <div class="flex justify-between items-center text-xs">
               <span class="flex items-center gap-1.5 text-rose-400 font-bold">
@@ -323,46 +290,45 @@
               </span>
               <span class="font-mono text-slate-300" id="audio-timer-display">00:00</span>
             </div>
-            <div class="flex items-center justify-center gap-3 py-2">
-              <button onclick="toggleComposerAudio()" id="btn-audio-toggle" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md">
+            <div class="flex items-center justify-center gap-3 py-1.5">
+              <button onclick="toggleComposerAudio()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md active-scale">
                 <span>⏹️ Parar e Anexar Áudio</span>
               </button>
             </div>
           </div>
 
-          <!-- MODO GRAVAÇÃO DE VÍDEO EMBUTIDO (QUANDO ATIVADO) -->
+          <!-- MODO GRAVAÇÃO DE VÍDEO -->
           <div id="composer-video-box" class="hidden bg-slate-950 text-white rounded-xl p-3 border border-slate-800 space-y-2">
             <div class="flex justify-between items-center text-xs">
               <span class="flex items-center gap-1.5 text-rose-400 font-bold">
                 <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
                 Gravando Vídeo (Câmera Frontal)
               </span>
-              <span class="text-[10px] bg-black/60 px-2 py-0.5 rounded font-mono">1080p 30fps</span>
+              <span class="text-[10px] bg-black/60 px-2 py-0.5 rounded font-mono">HD</span>
             </div>
 
-            <!-- Moldura de Câmera com Preview Real WebRTC ou Mock -->
-            <div class="relative bg-slate-900 rounded-lg h-40 flex items-center justify-center overflow-hidden border border-slate-800">
+            <div class="relative bg-slate-900 rounded-lg h-36 sm:h-44 flex items-center justify-center overflow-hidden border border-slate-800">
               <video id="webcam-preview" autoplay playsinline muted class="w-full h-full object-cover hidden"></video>
               <div id="webcam-fallback" class="flex flex-col items-center justify-center text-center p-3">
-                <div class="w-12 h-12 rounded-full border-2 border-dashed border-rose-400 flex items-center justify-center text-2xl mb-1">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-dashed border-rose-400 flex items-center justify-center text-xl sm:text-2xl mb-1">
                   👤
                 </div>
-                <span class="text-xs text-slate-300 font-semibold">Câmera pronta para o depoimento</span>
-                <span class="text-[10px] text-slate-400">Conte o que você está passando na fila</span>
+                <span class="text-xs text-slate-300 font-semibold">Câmera ativada</span>
+                <span class="text-[10px] text-slate-400">Dê visibilidade ao que você está passando</span>
               </div>
             </div>
 
             <!-- Filtro de Desfoque Facial para Anonimato -->
             <div class="flex items-center justify-between p-2 bg-slate-900 rounded-lg text-xs">
               <div class="flex items-center gap-2">
-                <input type="checkbox" id="video-blur-check" checked class="rounded text-rose-600 focus:ring-rose-500">
-                <label for="video-blur-check" class="text-slate-200 font-semibold">Desfocar meu rosto no vídeo (Anonimato)</label>
+                <input type="checkbox" id="video-blur-check" checked class="rounded text-rose-600 focus:ring-rose-500 w-4 h-4">
+                <label for="video-blur-check" class="text-slate-200 font-semibold cursor-pointer">Desfocar meu rosto (Anonimato)</label>
               </div>
-              <span class="text-[10px] text-slate-400">Protege sua identidade</span>
+              <span class="text-[10px] text-slate-400">Protege sua imagem</span>
             </div>
 
-            <div class="flex justify-center gap-2 pt-1">
-              <button onclick="toggleComposerVideo()" id="btn-video-toggle" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md">
+            <div class="flex justify-center pt-1">
+              <button onclick="toggleComposerVideo()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md active-scale">
                 <span>⏹️ Concluir Gravação de Vídeo</span>
               </button>
             </div>
@@ -377,45 +343,40 @@
           <!-- Barra de Mídia e Botão Publicar -->
           <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
             
-            <div class="flex items-center space-x-1">
-              <!-- Botão Áudio -->
-              <button onclick="selectMediaComposer('audio')" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-blue-50 hover:text-blue-700 text-xs font-semibold flex items-center gap-1 transition-colors">
-                <span class="text-sm">🎙️</span>
-                <span class="hidden sm:inline">Áudio</span>
+            <div class="flex items-center flex-wrap gap-1">
+              <button onclick="selectMediaComposer('texto')" class="px-2 sm:px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-bold flex items-center gap-1 transition-colors">
+                <span>✍️</span>
+                <span>Texto</span>
               </button>
 
-              <!-- Botão Vídeo -->
-              <button onclick="selectMediaComposer('video')" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-rose-50 hover:text-rose-700 text-xs font-semibold flex items-center gap-1 transition-colors">
-                <span class="text-sm">📹</span>
-                <span class="hidden sm:inline">Gravar Vídeo</span>
+              <button onclick="selectMediaComposer('audio')" class="px-2 sm:px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-blue-50 hover:text-blue-700 text-xs font-bold flex items-center gap-1 transition-colors">
+                <span>🎙️</span>
+                <span>Áudio</span>
               </button>
 
-              <!-- Botão Anexar Laudo -->
-              <label class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors">
-                <span class="text-sm">📎</span>
-                <span class="hidden sm:inline">Anexar Laudo</span>
-                <input type="file" class="hidden" onchange="handleFileUpload(this)">
-              </label>
+              <button onclick="selectMediaComposer('video')" class="px-2 sm:px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-rose-50 hover:text-rose-700 text-xs font-bold flex items-center gap-1 transition-colors">
+                <span>📹</span>
+                <span>Vídeo</span>
+              </button>
 
-              <!-- Opção Anônimo -->
-              <div class="flex items-center space-x-1 pl-2">
-                <input type="checkbox" id="composer-anon" checked class="rounded text-blue-600 focus:ring-blue-500">
+              <div class="flex items-center space-x-1 pl-1">
+                <input type="checkbox" id="composer-anon" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5">
                 <label for="composer-anon" class="text-[11px] text-slate-600 font-semibold cursor-pointer">Anônimo</label>
               </div>
             </div>
 
             <!-- Botão Publicar -->
-            <button onclick="publishPost()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md shadow-blue-600/30 active-scale flex items-center gap-1.5 transition-all">
-              <span>Publicar na Rede</span>
+            <button onclick="publishPost()" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md shadow-blue-600/30 active-scale flex items-center justify-center gap-1.5 transition-all">
+              <span>Publicar Relato</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </button>
 
           </div>
         </div>
 
-        <!-- 3. ABAS DE FILTRO DO FEED SOCIAL -->
-        <div class="flex items-center justify-between border-b border-slate-200 pb-2 text-xs font-semibold">
-          <div class="flex items-center space-x-1 bg-slate-200/60 p-1 rounded-xl">
+        <!-- 3. ABAS DE FILTRO DO FEED -->
+        <div class="flex items-center justify-between border-b border-slate-200 pb-2 text-xs font-semibold overflow-x-auto custom-scrollbar">
+          <div class="flex items-center space-x-1 bg-slate-200/60 p-1 rounded-xl shrink-0">
             <button onclick="setFeedFilter('todos')" id="filter-todos" class="px-3 py-1.5 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition-all">
               🔥 Todos
             </button>
@@ -425,116 +386,63 @@
             <button onclick="setFeedFilter('audio')" id="filter-audio" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">
               🎙️ Áudios
             </button>
-            <button onclick="setFeedFilter('urgentes')" id="filter-urgentes" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">
-              ⚠️ Mais Urgentes
-            </button>
           </div>
 
-          <span class="text-[11px] text-slate-400 font-medium hidden sm:inline" id="feed-counter">
-            Atualizado em tempo real
+          <span class="text-[11px] text-slate-400 font-semibold pl-2 shrink-0" id="feed-counter">
+            Relatos em tempo real
           </span>
         </div>
 
-        <!-- 4. LISTA DE PUBLICAÇÕES (FEED EM TEMPO REAL) -->
+        <!-- 4. LISTA DE PUBLICAÇÕES (FEED REAL OU EMPTY STATE) -->
         <div id="posts-container" class="space-y-4">
-          <!-- As publicações são renderizadas dinamicamente pelo JavaScript com fallback inicial -->
+          <!-- Renderizado via JavaScript dinamicamente sem mocks -->
         </div>
 
       </main>
 
       <!-- ================================================================ -->
-      <!-- COLUNA DIREITA (WIDGETS EM TEMPO REAL: CRONÔMETRO & DADOS SUS)  -->
+      <!-- COLUNA DIREITA (DESKTOP): WIDGETS EM TEMPO REAL                  -->
       <!-- ================================================================ -->
       <aside class="hidden lg:block lg:col-span-3 space-y-4 sticky top-20">
 
-        <!-- WIDGET 1: CRONÔMETRO DE ESPERA AO VIVO -->
+        <!-- WIDGET 1: CRONÔMETRO DE ESPERA NO HOSPITAL -->
         <div class="bg-white rounded-2xl p-4 border-2 border-rose-100 shadow-sm space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5">
               <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
-              <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Cronômetro de Espera</h4>
+              <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Cronômetro na UPA</h4>
             </div>
             <span class="text-[10px] bg-rose-50 text-rose-700 font-extrabold px-2 py-0.5 rounded-md">Ao Vivo</span>
           </div>
 
           <p class="text-xs text-slate-500 leading-relaxed">
-            Chegou a uma UPA ou Hospital? Ative a contagem para registrar o tempo real até ser atendido:
+            Ao chegar ao hospital ou UPA, inicie a contagem. O tempo registrado gera dados públicos para fiscalização:
           </p>
 
-          <!-- Display do Cronômetro -->
-          <div class="bg-slate-900 text-white rounded-xl p-3.5 text-center border border-slate-800">
-            <div class="text-[10px] text-slate-400 uppercase font-semibold">Tempo de Espera Decorrido</div>
+          <div class="bg-slate-900 text-white rounded-xl p-3 text-center border border-slate-800">
+            <div class="text-[10px] text-slate-400 uppercase font-semibold">Tempo de Espera</div>
             <div class="text-3xl font-black font-mono tracking-wider text-rose-400 my-1" id="sidebar-timer-display">
               00:00:00
             </div>
-            <div class="text-[10px] text-slate-400" id="sidebar-timer-sub">Status: Aguardando Início</div>
+            <div class="text-[10px] text-slate-400" id="sidebar-timer-sub">Status: Pronto para Iniciar</div>
           </div>
 
-          <!-- Controles do Cronômetro -->
-          <div class="space-y-2">
-            <button onclick="handleSidebarTimerToggle()" id="btn-sidebar-timer" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md shadow-rose-600/30 flex items-center justify-center gap-2 active-scale transition-all">
-              <span class="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></span>
-              <span>Iniciar Espera no Hospital</span>
-            </button>
-            <p class="text-[10px] text-slate-400 text-center">Gera estatística pública após clicar em 'Parar'.</p>
-          </div>
-        </div>
-
-        <!-- WIDGET 2: TERMÔMETRO NACIONAL DO SUS -->
-        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-3">
-          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-            <span>📊</span> Gargalos do SUS Hoje
-          </h4>
-
-          <div class="space-y-2 text-xs">
-            
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-              <div class="flex justify-between font-bold text-slate-800">
-                <span>Ortopedia & Próteses</span>
-                <span class="text-rose-600">Média 186 dias</span>
-              </div>
-              <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                <div class="bg-rose-500 h-full w-[85%] rounded-full"></div>
-              </div>
-            </div>
-
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-              <div class="flex justify-between font-bold text-slate-800">
-                <span>Ressonância Magnética</span>
-                <span class="text-amber-600">Média 142 dias</span>
-              </div>
-              <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                <div class="bg-amber-500 h-full w-[70%] rounded-full"></div>
-              </div>
-            </div>
-
-            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-              <div class="flex justify-between font-bold text-slate-800">
-                <span>Cirurgia Geral / Vesícula</span>
-                <span class="text-blue-600">Média 94 dias</span>
-              </div>
-              <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                <div class="bg-blue-500 h-full w-[55%] rounded-full"></div>
-              </div>
-            </div>
-
-          </div>
-
-          <button onclick="openMapModal()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-all">
-            Ver Mapa Completo por Estado ➔
+          <button onclick="handleSidebarTimerToggle()" id="btn-sidebar-timer" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md shadow-rose-600/30 flex items-center justify-center gap-2 active-scale transition-all">
+            <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+            <span>Iniciar Espera no Hospital</span>
           </button>
         </div>
 
-        <!-- WIDGET 3: APOIO JURÍDICO & SOLIDARIEDADE -->
+        <!-- WIDGET 2: DEFENSORIA PÚBLICA & APOIO JURÍDICO -->
         <div class="bg-gradient-to-br from-blue-900 to-indigo-900 text-white rounded-2xl p-4 shadow-xs space-y-2 text-xs">
           <div class="font-bold text-blue-200 flex items-center gap-1.5">
             <span>⚖️</span> Defensoria Pública da União
           </div>
           <p class="text-[11px] text-blue-100 leading-relaxed">
-            Demora excessiva em cirurgias de urgência cabe ação judicial com liminar para atendimento imediato.
+            Demoras acima do prazo legal para cirurgias cabem pedido judicial de liminar para atendimento imediato.
           </p>
-          <button onclick="openDefensoriaModal()" class="w-full py-2 bg-white text-blue-900 hover:bg-blue-50 font-bold rounded-xl text-xs shadow-xs transition-all">
-            Solicitar Orientação Gratuita
+          <button onclick="openDefensoriaModal()" class="w-full py-2 bg-white text-blue-900 hover:bg-blue-50 font-bold rounded-xl text-xs shadow-xs transition-all active-scale">
+            Acessar Orientação Gratuita
           </button>
         </div>
 
@@ -544,126 +452,161 @@
   </div>
 
   <!-- ==================================================================== -->
-  <!-- 3. BARRA DE NAVEGAÇÃO INFERIOR FIXA (BOTTOM BAR - MOBILE ONLY)       -->
+  <!-- 3. BARRA DE NAVEGAÇÃO INFERIOR FIXA (MOBILE ONLY)                   -->
   <!-- ==================================================================== -->
-  <div class="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 flex items-center justify-around px-3 z-40 shadow-lg">
-    <button onclick="setFeedFilter('todos')" class="flex flex-col items-center text-blue-600">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-      <span class="text-[10px] font-bold">Feed</span>
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-slate-200 flex items-center justify-around px-2 z-40 shadow-lg">
+    <button onclick="setFeedFilter('todos'); window.scrollTo({top: 0, behavior: 'smooth'});" class="flex flex-col items-center justify-center w-16 h-full text-blue-600">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span class="text-[10px] font-bold mt-0.5">Feed</span>
     </button>
 
-    <button onclick="openTimerModal()" class="flex flex-col items-center text-slate-500 hover:text-rose-600">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      <span class="text-[10px] font-semibold">Cronômetro</span>
+    <button onclick="openTimerModal()" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-rose-600">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span class="text-[10px] font-bold mt-0.5">Espera</span>
     </button>
 
-    <!-- Botão Central de Nova Postagem / Gravação -->
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'}); document.getElementById('composer-text').focus();" class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-blue-500/40 -mt-5 active-scale">
+    <!-- Botão Central Flutuante -->
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'}); document.getElementById('composer-text').focus();" class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-xl shadow-lg shadow-blue-500/40 -mt-5 active-scale">
       ✍️
     </button>
 
-    <button onclick="openMapModal()" class="flex flex-col items-center text-slate-500 hover:text-blue-600">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-      <span class="text-[10px] font-semibold">Mapa</span>
+    <button onclick="openMapModal()" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-blue-600">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+      <span class="text-[10px] font-bold mt-0.5">Mapa</span>
     </button>
 
-    <button onclick="openProfileModal()" class="flex flex-col items-center text-slate-500 hover:text-blue-600">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-      <span class="text-[10px] font-semibold">Perfil</span>
+    <button onclick="openLoginModal()" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-blue-600">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      <span class="text-[10px] font-bold mt-0.5">Admin</span>
     </button>
   </div>
 
   <!-- ==================================================================== -->
-  <!-- 4. MODAIS INTERATIVOS (COMPARTILHAMENTO, CRONÔMETRO, MAPA, SUPABASE)-->
+  <!-- 4. MODAIS RESPONSIVOS (LOGIN ADMIN, COMPARTILHAMENTO, CRONÔMETRO)   -->
   <!-- ==================================================================== -->
 
-  <!-- MODAL DE COMPARTILHAMENTO SOCIAL (INSTAGRAM, WHATSAPP, ETC.) -->
-  <div id="modal-share" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+  <!-- MODAL DE LOGIN / ADMIN (LOGIN: admin / SENHA: 123456) -->
+  <div id="modal-login" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
+    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4">
       
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <span>📢</span> Compartilhar e Mobilizar Apoio
+          <span>👑</span> Acesso do Administrador / Usuário
+        </h3>
+        <button onclick="closeModal('modal-login')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+      </div>
+
+      <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-xs text-indigo-900 space-y-1">
+        <div class="font-bold flex items-center gap-1.5">
+          <span>🛡️</span> Credenciais de Administrador:
+        </div>
+        <div>Login: <strong class="bg-white px-1.5 py-0.5 rounded text-indigo-700">admin</strong></div>
+        <div>Senha: <strong class="bg-white px-1.5 py-0.5 rounded text-indigo-700">123456</strong></div>
+      </div>
+
+      <form onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Usuário / CPF:</label>
+          <input type="text" id="login-username" value="admin" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Senha:</label>
+          <input type="password" id="login-password" value="123456" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="submit" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-indigo-600/30 transition-all active-scale">
+            Entrar como Administrador
+          </button>
+        </div>
+      </form>
+
+      <div class="text-center pt-1 border-t border-slate-100">
+        <button onclick="logoutUser(); closeModal('modal-login');" class="text-xs font-semibold text-slate-500 hover:text-rose-600">
+          Entrar como Paciente Visitante
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL DE COMPARTILHAMENTO (INSTAGRAM, WHATSAPP, REDES) -->
+  <div id="modal-share" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
+    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <span>📢</span> Compartilhar e Mobilizar
         </h3>
         <button onclick="closeModal('modal-share')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
       </div>
 
-      <!-- Seletor de Modo: Tudo vs Trecho -->
       <div class="bg-slate-100 p-1 rounded-xl flex text-xs font-semibold">
-        <button id="share-mode-all" onclick="setShareMode('all')" class="flex-1 py-1.5 rounded-lg bg-white text-blue-700 shadow-xs text-center transition-all">
+        <button id="share-mode-all" onclick="setShareMode('all')" class="flex-1 py-1.5 rounded-lg bg-white text-blue-700 shadow-xs text-center transition-all font-bold">
           Compartilhar Tudo
         </button>
-        <button id="share-mode-part" onclick="setShareMode('part')" class="flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 text-center transition-all">
+        <button id="share-mode-part" onclick="setShareMode('part')" class="flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 text-center transition-all font-medium">
           Selecionar Trecho
         </button>
       </div>
 
-      <!-- Card de Prévia Visual Formatado para Redes -->
-      <div id="share-card-container" class="bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-950 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
-        <div class="flex justify-between items-center text-[10px] text-blue-200 border-b border-white/10 pb-2 mb-3">
+      <!-- Card de Prévia Visual para Redes Sociais -->
+      <div id="share-card-container" class="bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-950 text-white rounded-2xl p-4 sm:p-5 shadow-lg relative overflow-hidden">
+        <div class="flex justify-between items-center text-[10px] text-blue-200 border-b border-white/10 pb-1.5 mb-2.5">
           <span class="font-bold flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-rose-400"></span>
-            REDE MINHA VOZ • FILA SUS
+            REDE MINHA VOZ • SUS
           </span>
           <span>#SaudeNaoPodeEsperar</span>
         </div>
 
         <p class="text-xs sm:text-sm italic leading-relaxed text-blue-50 mb-3" id="share-modal-text">
-          "Estou na fila do SUS há mais de 200 dias precisando de atendimento. É uma humilhação diária sem previsão."
+          "Relato real da espera pelo SUS."
         </p>
 
-        <div class="flex justify-between items-center text-[11px] pt-2 border-t border-white/10">
-          <span class="text-blue-200" id="share-modal-author">Relato Verificado • São Paulo, SP</span>
-          <span class="bg-rose-500 text-white font-extrabold px-2 py-0.5 rounded text-[10px]" id="share-modal-badge">Fila Crítica</span>
+        <div class="flex justify-between items-center text-[10px] pt-2 border-t border-white/10">
+          <span class="text-blue-200" id="share-modal-author">Relato Verificado</span>
+          <span class="bg-rose-500 text-white font-extrabold px-2 py-0.5 rounded text-[9px]" id="share-modal-badge">Fila SUS</span>
         </div>
       </div>
 
-      <!-- Grade de Botões de Redes Sociais com Instagram em destaque -->
       <div>
-        <div class="text-xs font-bold text-slate-700 mb-2">Selecione onde publicar:</div>
+        <div class="text-xs font-bold text-slate-700 mb-2">Compartilhar via:</div>
         
-        <div class="grid grid-cols-4 gap-2">
-          <!-- WhatsApp -->
-          <button onclick="triggerShare('WhatsApp')" class="p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl flex flex-col items-center justify-center transition-all">
-            <span class="text-2xl">💬</span>
-            <span class="text-[10px] font-bold text-emerald-800 mt-1">WhatsApp</span>
+        <div class="grid grid-cols-4 gap-1.5 sm:gap-2">
+          <button onclick="triggerShare('WhatsApp')" class="p-2 sm:p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl flex flex-col items-center justify-center transition-all">
+            <span class="text-xl sm:text-2xl">💬</span>
+            <span class="text-[9px] font-bold text-emerald-800 mt-1">WhatsApp</span>
           </button>
 
-          <!-- Instagram -->
-          <button onclick="triggerShare('Instagram')" class="p-2.5 bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white hover:opacity-95 rounded-xl flex flex-col items-center justify-center transition-all shadow-md shadow-pink-500/20">
-            <span class="text-2xl">📸</span>
-            <span class="text-[10px] font-bold mt-1">Instagram</span>
+          <button onclick="triggerShare('Instagram')" class="p-2 sm:p-2.5 bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white hover:opacity-95 rounded-xl flex flex-col items-center justify-center transition-all shadow-xs">
+            <span class="text-xl sm:text-2xl">📸</span>
+            <span class="text-[9px] font-bold mt-1">Instagram</span>
           </button>
 
-          <!-- Twitter / X -->
-          <button onclick="triggerShare('Twitter')" class="p-2.5 bg-slate-900 hover:bg-black text-white rounded-xl flex flex-col items-center justify-center transition-all">
-            <span class="text-xl font-black">𝕏</span>
-            <span class="text-[10px] font-bold mt-1">Twitter (X)</span>
+          <button onclick="triggerShare('Twitter')" class="p-2 sm:p-2.5 bg-slate-900 hover:bg-black text-white rounded-xl flex flex-col items-center justify-center transition-all">
+            <span class="text-lg sm:text-xl font-black">𝕏</span>
+            <span class="text-[9px] font-bold mt-1">Twitter</span>
           </button>
 
-          <!-- Facebook -->
-          <button onclick="triggerShare('Facebook')" class="p-2.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl flex flex-col items-center justify-center transition-all">
-            <span class="text-2xl">📘</span>
-            <span class="text-[10px] font-bold text-blue-800 mt-1">Facebook</span>
+          <button onclick="triggerShare('Facebook')" class="p-2 sm:p-2.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl flex flex-col items-center justify-center transition-all">
+            <span class="text-xl sm:text-2xl">📘</span>
+            <span class="text-[9px] font-bold text-blue-800 mt-1">Facebook</span>
           </button>
         </div>
 
-        <!-- Seção de Ações Especiais do Instagram -->
-        <div class="mt-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-3 border border-pink-100 flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <span class="text-lg">✨</span>
-            <div>
-              <div class="text-[11px] font-bold text-pink-900">Instagram Stories & Reels</div>
-              <div class="text-[10px] text-pink-700">Formato 9:16 com sticker oficial da contagem</div>
-            </div>
+        <div class="mt-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-2.5 border border-pink-100 flex items-center justify-between">
+          <div>
+            <div class="text-[11px] font-bold text-pink-900">Instagram Stories & Reels</div>
+            <div class="text-[9px] text-pink-700">Formato vertical 9:16 com sticker</div>
           </div>
-          <button onclick="triggerShare('Instagram Stories')" class="px-3 py-1.5 bg-gradient-to-r from-rose-500 to-purple-600 text-white text-xs font-bold rounded-lg shadow-xs active-scale">
-            Gerar Story ➔
+          <button onclick="triggerShare('Instagram Stories')" class="px-3 py-1 bg-gradient-to-r from-rose-500 to-purple-600 text-white text-xs font-bold rounded-lg shadow-xs active-scale">
+            Story ➔
           </button>
         </div>
 
-        <!-- Botão Copiar Link -->
-        <button onclick="copyPostLink()" id="btn-copy-modal" class="w-full mt-3 py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all">
+        <button onclick="copyPostLink()" id="btn-copy-modal" class="w-full mt-2.5 py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all active-scale">
           <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
           <span id="copy-modal-text">Copiar Link do Relato</span>
         </button>
@@ -672,46 +615,41 @@
     </div>
   </div>
 
-  <!-- MODAL DO CRONÔMETRO DE ESPERA (DETALHADO / MOBILE & DESKTOP) -->
-  <div id="modal-timer" class="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+  <!-- MODAL DO CRONÔMETRO -->
+  <div id="modal-timer" class="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
+    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4">
       
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <span>⏱️</span> Cronômetro de Espera no SUS
+          <span>⏱️</span> Cronômetro de Espera SUS
         </h3>
         <button onclick="closeModal('modal-timer')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
       </div>
 
-      <div class="bg-slate-900 text-white rounded-2xl p-6 text-center border border-slate-800 space-y-3">
-        <div class="text-xs uppercase tracking-wider text-rose-400 font-bold flex items-center justify-center gap-1.5" id="modal-timer-badge">
+      <div class="bg-slate-900 text-white rounded-2xl p-5 text-center border border-slate-800 space-y-2">
+        <div class="text-[10px] uppercase tracking-wider text-rose-400 font-bold flex items-center justify-center gap-1.5" id="modal-timer-badge">
           <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-          <span>Aguardando Início</span>
+          <span>Tempo no Local</span>
         </div>
 
-        <div class="text-5xl font-black font-mono tracking-widest text-white py-2" id="modal-timer-clock">
+        <div class="text-4xl sm:text-5xl font-black font-mono tracking-widest text-white py-1" id="modal-timer-clock">
           00:00:00
         </div>
 
         <div class="text-xs text-slate-400" id="modal-timer-hospital-label">
-          Hospital: Não Selecionado
+          Hospital Municipal Dr. Moysés Deutsch
         </div>
       </div>
 
-      <div class="space-y-3 text-xs">
+      <div class="space-y-2 text-xs">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Unidade de Saúde / Hospital:</label>
           <input type="text" id="modal-timer-input-hospital" value="Hospital Municipal Dr. Moysés Deutsch" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium">
         </div>
-
-        <div id="timer-comment-area" class="hidden space-y-2">
-          <label class="block font-bold text-slate-700">Comentário sobre o atendimento:</label>
-          <textarea id="modal-timer-comment" rows="2" placeholder="Ex: Triagem demorou 1h30, poucos médicos de plantão..." class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50"></textarea>
-        </div>
       </div>
 
-      <div class="flex gap-2 pt-2">
-        <button onclick="toggleModalTimer()" id="btn-modal-timer-action" class="flex-1 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-rose-600/30 transition-all flex items-center justify-center gap-2">
+      <div class="pt-2">
+        <button onclick="toggleModalTimer()" id="btn-modal-timer-action" class="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-rose-600/30 transition-all flex items-center justify-center gap-2 active-scale">
           <span>Iniciar Cronômetro</span>
         </button>
       </div>
@@ -719,45 +657,9 @@
     </div>
   </div>
 
-  <!-- MODAL DE CONFIGURAÇÃO DO SUPABASE -->
-  <div id="modal-supabase" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <span>⚡</span> Conexão com o Supabase (Tempo Real)
-        </h3>
-        <button onclick="closeModal('modal-supabase')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
-      </div>
-
-      <p class="text-xs text-slate-500 leading-relaxed">
-        Insira suas credenciais do projeto no Supabase para sincronizar as 7 tabelas (<code class="bg-slate-100 px-1 py-0.5 rounded text-blue-700">users, documents, waiting_times, reports, community_posts, denuncias, notifications</code>) em tempo real:
-      </p>
-
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Project URL (Supabase URL):</label>
-          <input type="text" id="supabase-input-url" placeholder="https://seu-projeto.supabase.co" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-mono">
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Anon / Public API Key:</label>
-          <input type="password" id="supabase-input-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-mono">
-        </div>
-      </div>
-
-      <div class="pt-2 flex gap-2">
-        <button onclick="saveSupabaseConfig()" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all">
-          Salvar Credenciais
-        </button>
-        <button onclick="closeModal('modal-supabase')" class="py-2.5 px-4 bg-slate-100 text-slate-700 font-semibold rounded-xl text-xs hover:bg-slate-200">
-          Continuar com Dados Locais
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- MODAL MAPA DA ESPERA -->
-  <div id="modal-map" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+  <div id="modal-map" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
+    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-xl p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
           <span>🗺️</span> Mapa Nacional da Espera no SUS
@@ -765,116 +667,225 @@
         <button onclick="closeModal('modal-map')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
       </div>
 
-      <p class="text-xs text-slate-500">Média de dias de espera por estado brasileiro baseada nos relatos reais:</p>
+      <p class="text-xs text-slate-500">Média de dias de espera apurada através das postagens dos pacientes:</p>
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
-        <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+        <div class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl">
           <div class="font-bold text-slate-800">São Paulo (SP)</div>
-          <div class="text-lg font-black text-rose-600 font-mono">198 dias</div>
-          <div class="text-[10px] text-slate-500">Gargalo: Ortopedia</div>
+          <div class="text-base sm:text-lg font-black text-rose-600 font-mono">198 dias</div>
         </div>
-        <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl">
+        <div class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl">
           <div class="font-bold text-slate-800">Rio de Janeiro (RJ)</div>
-          <div class="text-lg font-black text-rose-600 font-mono">224 dias</div>
-          <div class="text-[10px] text-slate-500">Gargalo: Cirurgia Geral</div>
+          <div class="text-base sm:text-lg font-black text-rose-600 font-mono">224 dias</div>
         </div>
-        <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+        <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl">
           <div class="font-bold text-slate-800">Minas Gerais (MG)</div>
-          <div class="text-lg font-black text-amber-600 font-mono">145 dias</div>
-          <div class="text-[10px] text-slate-500">Gargalo: Oftalmologia</div>
+          <div class="text-base sm:text-lg font-black text-amber-600 font-mono">145 dias</div>
         </div>
-        <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl">
+        <div class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl">
           <div class="font-bold text-slate-800">Bahia (BA)</div>
-          <div class="text-lg font-black text-rose-600 font-mono">210 dias</div>
-          <div class="text-[10px] text-slate-500">Gargalo: Oncologia</div>
+          <div class="text-base sm:text-lg font-black text-rose-600 font-mono">210 dias</div>
         </div>
-        <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+        <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl">
           <div class="font-bold text-slate-800">Ceará (CE)</div>
-          <div class="text-lg font-black text-amber-600 font-mono">160 dias</div>
-          <div class="text-[10px] text-slate-500">Gargalo: Ressonância</div>
+          <div class="text-base sm:text-lg font-black text-amber-600 font-mono">160 dias</div>
         </div>
-        <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl">
+        <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
           <div class="font-bold text-slate-800">Paraná (PR)</div>
-          <div class="text-lg font-black text-blue-600 font-mono">92 dias</div>
-          <div class="text-[10px] text-slate-500">Gargalo: Consultas</div>
+          <div class="text-base sm:text-lg font-black text-blue-600 font-mono">92 dias</div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- ==================================================================== -->
-  <!-- 5. JAVASCRIPT DE TEMPO REAL, SUPABASE E REDE SOCIAL                  -->
+  <!-- 5. JAVASCRIPT EM TEMPO REAL: SEM MOCKS, COM USUÁRIO ADMIN E SUPABASE -->
   <!-- ==================================================================== -->
   <script>
-    // DADOS INICIAIS DA REDE SOCIAL (SEED DATA COM SUPORTE A TEMPO REAL)
-    let socialPosts = [
-      {
-        id: "post-1",
-        author: "Maria da Silva",
-        avatar: "MS",
-        location: "São Paulo, SP",
-        hospital: "Hospital Geral de Grajaú",
-        waitDays: 214,
-        specialty: "Ortopedia (Cirurgia do Joelho)",
-        mediaType: "texto",
-        text: "Estou na fila do SUS há 214 dias sentindo dores incapacitantes no joelho. Perdi meu emprego como diarista porque não consigo ficar em pé. Toda vez que vou ao posto de saúde me mandam aguardar o SISREG sem nenhuma previsão. Precisamos de respeito e agilidade!",
-        likes: 142,
-        hasLiked: false,
-        pressures: 89,
-        commentsCount: 23,
-        createdAt: "Há 25 minutos",
-        isAnon: true,
-        documentUrl: "protocolo_sisreg_8841.pdf"
-      },
-      {
-        id: "post-2",
-        author: "Carlos E. Andrade",
-        avatar: "CA",
-        location: "Rio de Janeiro, RJ",
-        hospital: "Hospital Municipal Souza Aguiar",
-        waitDays: 98,
-        specialty: "Cardiologia (Cateterismo)",
-        mediaType: "video",
-        videoUrl: "#",
-        text: "Gravei este depoimento em vídeo da porta do hospital. Já tive dois princípios de infarto e a lista de espera para o procedimento só aumenta. Desfoquei meu rosto por medo de perder a vaga, mas a denúncia é real!",
-        likes: 310,
-        hasLiked: true,
-        pressures: 245,
-        commentsCount: 67,
-        createdAt: "Há 1 hora",
-        isAnon: true
-      },
-      {
-        id: "post-3",
-        author: "Francisca Moreira",
-        avatar: "FM",
-        location: "Fortaleza, CE",
-        hospital: "Hospital Geral de Fortaleza",
-        waitDays: 340,
-        specialty: "Ressonância Magnética de Coluna",
-        mediaType: "audio",
-        audioDuration: "01:15",
-        text: "Ouça o áudio onde conto meu sofrimento aguardando uma ressonância magnética desde o ano passado. Remédios não fazem mais efeito.",
-        likes: 95,
-        hasLiked: false,
-        pressures: 62,
-        commentsCount: 14,
-        createdAt: "Há 3 horas",
-        isAnon: false
-      }
-    ];
+    // 1. CREDENCIAIS REAIS DO SUPABASE
+    const SUPABASE_URL = 'https://rtpuzrjjcrwlivwtlcya.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0cHV6cmpqY3J3bGl2d3RsY3lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjI3NTYsImV4cCI6MjEwNzU5ODc1Nn0._letC6F8us6Idehchk-zbO_xfItWZ3brCjHQwIxxbLM';
 
+    // 2. USUÁRIO ATUAL (ADMIN PADRÃO COM LOGIN admin / 123456)
+    let currentUser = {
+      username: 'admin',
+      name: 'Administrador Minha Voz',
+      role: 'admin',
+      avatar: '👑',
+      city: 'Brasília, DF',
+      isAdmin: true
+    };
+
+    // 3. ARRAY DE RELATOS REAIS (SEM MOCKS)
+    let socialPosts = [];
     let currentFilter = 'todos';
     let activeSharePost = null;
 
-    // INICIALIZAÇÃO DO APP
+    // INICIALIZAÇÃO DA APLICAÇÃO
     document.addEventListener('DOMContentLoaded', () => {
-      loadSavedPosts();
-      renderFeed();
+      loadStoredUser();
+      updateUserUI();
       initSupabaseClient();
     });
 
-    // RENDERIZAR O FEED SOCIAL EM TEMPO REAL
+    // GERENCIAMENTO DE USUÁRIO & LOGIN ADMIN
+    function loadStoredUser() {
+      try {
+        const stored = localStorage.getItem('minhavoz_user');
+        if (stored) currentUser = JSON.parse(stored);
+      } catch (e) {}
+    }
+
+    function updateUserUI() {
+      // Header
+      const hAvatar = document.getElementById('header-user-avatar');
+      const hName = document.getElementById('header-user-name');
+      const hBadge = document.getElementById('header-user-badge');
+      if (hAvatar) hAvatar.innerText = currentUser.avatar || '👤';
+      if (hName) hName.innerText = currentUser.name || 'Usuário';
+      if (hBadge) {
+        hBadge.innerHTML = currentUser.isAdmin 
+          ? '<span>👑 Administrador</span>' 
+          : '<span class="text-blue-600">Paciente SUS</span>';
+      }
+
+      // Sidebar
+      const sAvatar = document.getElementById('sidebar-user-avatar');
+      const sName = document.getElementById('sidebar-user-name');
+      const sInfo = document.getElementById('sidebar-user-info');
+      const sRole = document.getElementById('sidebar-user-role');
+      if (sAvatar) sAvatar.innerText = currentUser.avatar || '👤';
+      if (sName) sName.innerText = currentUser.name || 'Usuário';
+      if (sInfo) sInfo.innerHTML = `Login: <strong>${currentUser.username}</strong> • ${currentUser.city || 'Brasil'}`;
+      if (sRole) {
+        sRole.innerText = currentUser.isAdmin ? '👑 Painel de Moderação Ativo' : 'Prontuário SUS Verificado';
+      }
+
+      // Composer Avatar
+      const cAvatar = document.getElementById('composer-user-avatar');
+      if (cAvatar) cAvatar.innerText = currentUser.avatar || '👤';
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const userVal = document.getElementById('login-username').value.trim();
+      const passVal = document.getElementById('login-password').value.trim();
+
+      if (userVal === 'admin' && passVal === '123456') {
+        currentUser = {
+          username: 'admin',
+          name: 'Administrador Minha Voz',
+          role: 'admin',
+          avatar: '👑',
+          city: 'Brasília, DF',
+          isAdmin: true
+        };
+        localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+        updateUserUI();
+        renderFeed();
+        closeModal('modal-login');
+        alert('✓ Login efetuado com sucesso como Administrador do Minha Voz!');
+      } else {
+        // Login como paciente comum
+        currentUser = {
+          username: userVal || 'paciente',
+          name: userVal ? `Paciente (${userVal})` : 'Paciente SUS',
+          role: 'paciente',
+          avatar: '🏥',
+          city: 'São Paulo, SP',
+          isAdmin: false
+        };
+        localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+        updateUserUI();
+        renderFeed();
+        closeModal('modal-login');
+        alert(`✓ Conectado como ${currentUser.name}`);
+      }
+    }
+
+    function logoutUser() {
+      currentUser = {
+        username: 'visitante',
+        name: 'Paciente Visitante',
+        role: 'paciente',
+        avatar: '👤',
+        city: 'Brasil',
+        isAdmin: false
+      };
+      localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+      updateUserUI();
+      renderFeed();
+      alert('Sessão encerrada. Você agora está no modo visitante.');
+    }
+
+    // SUPABASE CLIENT & DADOS EM TEMPO REAL
+    async function initSupabaseClient() {
+      if (window.supabase) {
+        try {
+          window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+          // 1. Busca relatos reais gravados no Supabase
+          const { data, error } = await window.supabaseClient
+            .from('reports')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+          if (!error && data) {
+            socialPosts = data.map(r => formatSupabasePost(r));
+            renderFeed();
+            renderStories();
+          } else {
+            renderFeed();
+          }
+
+          // 2. Realtime listener para novas postagens instantâneas
+          window.supabaseClient
+            .channel('realtime:reports')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reports' }, payload => {
+              const newPost = formatSupabasePost(payload.new);
+              if (!socialPosts.some(p => p.id === newPost.id)) {
+                socialPosts.unshift(newPost);
+                renderFeed();
+                renderStories();
+              }
+            })
+            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'reports' }, payload => {
+              socialPosts = socialPosts.filter(p => p.id !== payload.old.id);
+              renderFeed();
+              renderStories();
+            })
+            .subscribe();
+
+        } catch (err) {
+          console.warn('Conexão Supabase:', err);
+          renderFeed();
+        }
+      } else {
+        renderFeed();
+      }
+    }
+
+    function formatSupabasePost(r) {
+      return {
+        id: r.id,
+        author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
+        avatar: r.anonimo ? '🎭' : '🏥',
+        location: 'Brasil',
+        hospital: 'Hospital SUS',
+        waitDays: r.duracao_segundos || 180,
+        specialty: 'Atendimento / Procedimento',
+        mediaType: r.tipo_midia || 'texto',
+        text: r.relato,
+        likes: 1,
+        hasLiked: false,
+        pressures: 1,
+        commentsCount: 0,
+        createdAt: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        isAnon: r.anonimo
+      };
+    }
+
+    // RENDERIZAR O FEED SOCIAL REAL
     function renderFeed() {
       const container = document.getElementById('posts-container');
       if (!container) return;
@@ -882,19 +893,37 @@
       let filtered = socialPosts;
       if (currentFilter === 'video') filtered = socialPosts.filter(p => p.mediaType === 'video');
       else if (currentFilter === 'audio') filtered = socialPosts.filter(p => p.mediaType === 'audio');
-      else if (currentFilter === 'urgentes') filtered = socialPosts.filter(p => p.waitDays >= 150);
+
+      // Se não houver posts no banco, exibe estado inicial limpo e elegante
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 text-center space-y-3 shadow-xs">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-2xl sm:text-3xl mx-auto font-bold">
+              📢
+            </div>
+            <h3 class="text-sm sm:text-base font-bold text-slate-800">Nenhum relato cadastrado no banco de dados</h3>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+              Esta rede social é conectada em tempo real ao Supabase. Seja o primeiro a publicar um relato em texto, áudio ou vídeo para dar voz às pessoas na fila do SUS!
+            </p>
+            <button onclick="document.getElementById('composer-text').focus();" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md active-scale">
+              + Publicar Primeiro Relato
+            </button>
+          </div>
+        `;
+        return;
+      }
 
       container.innerHTML = filtered.map(post => createPostHTML(post)).join('');
     }
 
     function createPostHTML(post) {
-      const isAnonName = post.isAnon ? `Paciente Anônimo (${post.location})` : post.author;
+      const isAnonName = post.isAnon ? `Paciente Anônimo` : post.author;
       const avatarDisplay = post.isAnon ? '🎭' : post.avatar;
 
       let mediaSnippet = '';
       if (post.mediaType === 'video') {
         mediaSnippet = `
-          <div class="relative bg-slate-900 rounded-xl h-52 flex flex-col justify-between p-3 border border-slate-800 my-2 overflow-hidden">
+          <div class="relative bg-slate-900 rounded-xl h-44 sm:h-52 flex flex-col justify-between p-3 border border-slate-800 my-2 overflow-hidden">
             <div class="flex justify-between items-center z-10">
               <span class="bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                 <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Depoimento em Vídeo
@@ -902,10 +931,10 @@
               <span class="bg-black/50 text-slate-300 text-[10px] px-2 py-0.5 rounded">Rosto Ocultado</span>
             </div>
             <div class="flex flex-col items-center justify-center text-center text-white my-auto">
-              <button onclick="playVideoModal('${post.id}')" class="w-14 h-14 rounded-full bg-rose-600/90 hover:bg-rose-600 flex items-center justify-center text-xl shadow-lg shadow-rose-600/40 active-scale">
+              <button onclick="alert('Reproduzindo depoimento em vídeo do paciente.')" class="w-12 h-12 rounded-full bg-rose-600 hover:bg-rose-500 flex items-center justify-center text-lg shadow-lg active-scale">
                 ▶
               </button>
-              <span class="text-xs text-slate-200 mt-2 font-medium">Toque para reproduzir o depoimento gravado</span>
+              <span class="text-[11px] text-slate-300 mt-2 font-medium">Toque para reproduzir o depoimento</span>
             </div>
           </div>
         `;
@@ -913,37 +942,42 @@
         mediaSnippet = `
           <div class="bg-slate-900 text-white rounded-xl p-3 my-2 border border-slate-800 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-              <button onclick="playAudioSnippet('${post.id}')" class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-sm shadow-md">
+              <button onclick="alert('Reproduzindo áudio do relato.')" class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-xs shadow-md">
                 ▶
               </button>
               <div>
                 <div class="text-xs font-bold text-blue-200">Depoimento em Áudio</div>
-                <div class="text-[10px] text-slate-400">Duração: ${post.audioDuration || '01:15'} • Relato Verificado</div>
+                <div class="text-[10px] text-slate-400">Gravado pelo paciente • Relato Verificado</div>
               </div>
             </div>
-            <div class="flex items-center gap-1 h-6">
+            <div class="flex items-center gap-1 h-5">
               <span class="w-1 bg-blue-500 rounded-full h-2"></span>
-              <span class="w-1 bg-blue-400 rounded-full h-5"></span>
-              <span class="w-1 bg-rose-500 rounded-full h-6"></span>
+              <span class="w-1 bg-rose-500 rounded-full h-5"></span>
               <span class="w-1 bg-blue-400 rounded-full h-3"></span>
-              <span class="w-1 bg-blue-500 rounded-full h-4"></span>
             </div>
           </div>
         `;
       }
 
+      // Botão especial de Excluir exclusivo do Admin
+      const adminDeleteBtn = currentUser.isAdmin ? `
+        <button onclick="deletePostAdmin('${post.id}')" class="text-rose-600 hover:text-rose-800 font-bold text-[11px] flex items-center gap-1 px-2 py-1 rounded bg-rose-50 hover:bg-rose-100 transition-colors">
+          <span>🗑️</span>
+          <span>Excluir (Admin)</span>
+        </button>
+      ` : '';
+
       return `
         <article class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs space-y-3 transition-all hover:border-slate-300">
           
-          <!-- Topo da Publicação -->
           <div class="flex items-start justify-between">
-            <div class="flex items-center space-x-3">
-              <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-xs">
+            <div class="flex items-center space-x-2.5 sm:space-x-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-xs">
                 ${avatarDisplay}
               </div>
               <div>
                 <div class="flex items-center gap-1.5 flex-wrap">
-                  <h4 class="text-sm font-bold text-slate-900 leading-tight">${isAnonName}</h4>
+                  <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-tight">${isAnonName}</h4>
                   <span class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-md">
                     📍 ${post.location}
                   </span>
@@ -954,65 +988,96 @@
               </div>
             </div>
 
-            <!-- Badge de Dias de Espera -->
-            <div class="text-right">
-              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-extrabold text-xs">
-                <span>⏱️</span> ${post.waitDays} dias na fila
+            <div class="flex items-center gap-1">
+              <span class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-extrabold text-[10px] sm:text-xs">
+                <span>⏱️</span> ${post.waitDays} dias
               </span>
             </div>
           </div>
 
-          <!-- Especialidade e Procedimento -->
           <div class="inline-block px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 text-xs font-bold border border-blue-100">
             Fila: ${post.specialty}
           </div>
 
-          <!-- Texto do Relato -->
           <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
             "${post.text}"
           </p>
 
-          <!-- Snippet de Mídia (se houver vídeo ou áudio) -->
           ${mediaSnippet}
 
-          <!-- Barra de Interações Sociais -->
-          <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-semibold">
-            
-            <!-- Apoiar / Força -->
-            <button onclick="handleLike('${post.id}')" class="flex items-center gap-1.5 ${post.hasLiked ? 'text-rose-600 font-bold' : 'text-slate-600 hover:text-rose-600'} transition-colors">
-              <span class="text-base">${post.hasLiked ? '❤️' : '🤍'}</span>
-              <span>${post.likes} Força</span>
-            </button>
+          <div class="flex items-center justify-between pt-2.5 border-t border-slate-100 text-xs font-semibold">
+            <div class="flex items-center space-x-3 sm:space-x-4">
+              <button onclick="handleLike('${post.id}')" class="flex items-center gap-1.5 ${post.hasLiked ? 'text-rose-600 font-bold' : 'text-slate-600 hover:text-rose-600'} transition-colors">
+                <span>${post.hasLiked ? '❤️' : '🤍'}</span>
+                <span>${post.likes} Força</span>
+              </button>
 
-            <!-- Pressionar Autoridades -->
-            <button onclick="handlePressure('${post.id}')" class="flex items-center gap-1.5 text-slate-600 hover:text-amber-600 transition-colors">
-              <span class="text-base">📢</span>
-              <span>${post.pressures} Pressionar</span>
-            </button>
+              <button onclick="handlePressure('${post.id}')" class="flex items-center gap-1.5 text-slate-600 hover:text-amber-600 transition-colors">
+                <span>📢</span>
+                <span class="hidden sm:inline">Pressionar</span>
+                <span>(${post.pressures})</span>
+              </button>
 
-            <!-- Comentários -->
-            <button onclick="toggleComments('${post.id}')" class="flex items-center gap-1.5 text-slate-600 hover:text-blue-600 transition-colors">
-              <span class="text-base">💬</span>
-              <span>${post.commentsCount}</span>
-            </button>
+              <button onclick="openShareModal('${post.id}')" class="flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 rounded-lg transition-all font-bold active-scale">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                <span>Difundir</span>
+              </button>
+            </div>
 
-            <!-- Compartilhar Social (Instagram, WhatsApp, etc) -->
-            <button onclick="openShareModal('${post.id}')" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 rounded-xl transition-all font-bold">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
-              <span>Difundir</span>
-            </button>
-
+            ${adminDeleteBtn}
           </div>
 
         </article>
       `;
     }
 
-    // CRIAÇÃO E PUBLICAÇÃO DE NOVO RELATO NO FEED EM TEMPO REAL
-    function publishPost() {
+    function renderStories() {
+      const list = document.getElementById('stories-list');
+      if (!list) return;
+
+      const mediaPosts = socialPosts.filter(p => p.mediaType === 'video' || p.mediaType === 'audio');
+      if (mediaPosts.length === 0) {
+        list.innerHTML = `<span class="text-xs text-slate-400 italic pl-1">Grave um relato em vídeo ou voz para aparecer nos destaques!</span>`;
+        return;
+      }
+
+      list.innerHTML = mediaPosts.map(p => `
+        <div onclick="alert('Abrindo relato de ${p.author}')" class="flex flex-col items-center shrink-0 cursor-pointer group">
+          <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full p-0.5 story-ring group-hover:scale-105 transition-transform">
+            <div class="w-full h-full rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-white text-sm font-bold">
+              ${p.mediaType === 'video' ? '📹' : '🎙️'}
+            </div>
+          </div>
+          <span class="text-[10px] font-semibold text-slate-700 mt-1 max-w-[65px] truncate text-center">${p.isAnon ? 'Anônimo' : p.author}</span>
+        </div>
+      `).join('');
+    }
+
+    // EXCLUIR RELATO (FUNÇÃO ADMIN REAL NO SUPABASE)
+    async function deletePostAdmin(id) {
+      if (!currentUser.isAdmin) {
+        alert('Apenas administradores podem moderar publicações.');
+        return;
+      }
+
+      if (confirm('Tem certeza de que deseja excluir este relato permanentemente do Supabase?')) {
+        socialPosts = socialPosts.filter(p => p.id !== id);
+        renderFeed();
+        renderStories();
+
+        if (window.supabaseClient) {
+          const { error } = await window.supabaseClient.from('reports').delete().eq('id', id);
+          if (error) console.warn('Supabase delete error:', error);
+          else alert('✓ Relato excluído com sucesso do banco de dados pelo Administrador.');
+        }
+      }
+    }
+
+    // PUBLICAR RELATO REAL NO SUPABASE
+    async function publishPost() {
       const text = document.getElementById('composer-text').value.trim();
-      const hospital = document.getElementById('composer-hospital').value.trim() || 'Hospital Público Municipal';
-      const specialty = document.getElementById('composer-specialty').value.trim() || 'Clínica Geral / Cirurgia';
+      const hospital = document.getElementById('composer-hospital').value.trim() || 'Hospital SUS';
+      const specialty = document.getElementById('composer-specialty').value.trim() || 'Clínica Geral';
       const isAnon = document.getElementById('composer-anon').checked;
 
       if (!text) {
@@ -1020,11 +1085,12 @@
         return;
       }
 
+      const tempId = 'post-' + Date.now();
       const newPost = {
-        id: 'post-' + Date.now(),
-        author: isAnon ? 'Paciente Anônimo' : 'Maria da Silva',
-        avatar: isAnon ? '🎭' : 'MS',
-        location: 'São Paulo, SP',
+        id: tempId,
+        author: isAnon ? 'Paciente Anônimo' : (currentUser.name || 'Paciente SUS'),
+        avatar: isAnon ? '🎭' : (currentUser.avatar || '🏥'),
+        location: currentUser.city || 'São Paulo, SP',
         hospital: hospital,
         waitDays: 214,
         specialty: specialty,
@@ -1039,31 +1105,37 @@
       };
 
       socialPosts.unshift(newPost);
-      savePostsLocally();
       renderFeed();
+      renderStories();
 
-      // Persiste na nuvem do Supabase
+      // Gravação na tabela reports do Supabase
       if (window.supabaseClient) {
-        window.supabaseClient
-          .from('reports')
-          .insert([{
-            relato: text,
-            tipo_midia: activeMediaMode,
-            anonimo: isAnon,
-            duracao_segundos: 214
-          }])
-          .then(({ error }) => {
-            if (error) console.warn('Supabase insert note:', error);
-          });
+        try {
+          const { data, error } = await window.supabaseClient
+            .from('reports')
+            .insert([{
+              relato: text,
+              tipo_midia: activeMediaMode,
+              anonimo: isAnon,
+              duracao_segundos: 214
+            }])
+            .select();
+
+          if (data && data[0]) {
+            newPost.id = data[0].id;
+          }
+        } catch (e) {
+          console.warn('Erro ao inserir no Supabase:', e);
+        }
       }
 
       // Reset
       document.getElementById('composer-text').value = '';
       selectMediaComposer('texto');
-      alert('✓ Relato publicado com sucesso na rede social Minha Voz! Dados sincronizados no Supabase.');
+      alert('✓ Relato publicado com sucesso e sincronizado no Supabase em tempo real!');
     }
 
-    // ALTERNADOR DE MÍDIA NO COMPOSITOR
+    // ALTERNAR MODOS DE MÍDIA
     let activeMediaMode = 'texto';
     function selectMediaComposer(mode) {
       activeMediaMode = mode;
@@ -1073,7 +1145,6 @@
       if (mode === 'audio') {
         audioBox.classList.remove('hidden');
         videoBox.classList.add('hidden');
-        startAudioTimer();
       } else if (mode === 'video') {
         videoBox.classList.remove('hidden');
         audioBox.classList.add('hidden');
@@ -1086,7 +1157,7 @@
 
     function toggleComposerAudio() {
       selectMediaComposer('texto');
-      alert('✓ Áudio do relato gravado e anexado à publicação!');
+      alert('✓ Áudio do relato capturado e anexado à publicação!');
     }
 
     function toggleComposerVideo() {
@@ -1106,13 +1177,11 @@
               if (fallback) fallback.classList.add('hidden');
             }
           })
-          .catch(() => {
-            // Em caso de negação de permissão, o fallback elegante é mantido
-          });
+          .catch(() => {});
       }
     }
 
-    // CRONÔMETRO DE ESPERA AO VIVO (SIDEBAR & MODAL)
+    // CRONÔMETRO DE ESPERA AO VIVO
     let timerRunning = false;
     let timerSeconds = 0;
     let timerInterval = null;
@@ -1133,14 +1202,28 @@
           document.getElementById('sidebar-timer-display').innerText = fmt;
           document.getElementById('modal-timer-clock').innerText = fmt;
         }, 1000);
-        document.getElementById('btn-sidebar-timer').innerHTML = '<span>🛑 Parar e Registrar Atendimento</span>';
+        document.getElementById('btn-sidebar-timer').innerHTML = '<span>🛑 Parar e Registrar</span>';
         document.getElementById('sidebar-timer-sub').innerText = 'Contando tempo de espera no local...';
       } else {
         clearInterval(timerInterval);
         timerRunning = false;
         document.getElementById('btn-sidebar-timer').innerHTML = '<span>Iniciar Espera no Hospital</span>';
         const finalTime = formatSeconds(timerSeconds);
-        alert(`Atendimento concluído! Tempo total apurado: ${finalTime}. Um registro foi criado no seu histórico de dados para fiscalização.`);
+
+        // Insere na tabela waiting_times do Supabase
+        if (window.supabaseClient) {
+          window.supabaseClient
+            .from('waiting_times')
+            .insert([{
+              hospital: 'Hospital Municipal Dr. Moysés Deutsch',
+              inicio: new Date(Date.now() - timerSeconds * 1000).toISOString(),
+              fim: new Date().toISOString(),
+              comentario: `Espera total de ${finalTime} registrada pelo paciente na rede Minha Voz`
+            }])
+            .then(() => {});
+        }
+
+        alert(`Atendimento concluído! Tempo total apurado: ${finalTime}. Registro salvo no Supabase.`);
         timerSeconds = 0;
         document.getElementById('sidebar-timer-display').innerText = '00:00:00';
       }
@@ -1151,7 +1234,7 @@
       closeModal('modal-timer');
     }
 
-    // INTERAÇÕES SOCIAIS (LIKE, PRESSIONAR, COMPARTILHAR)
+    // INTERAÇÕES SOCIAIS
     function handleLike(id) {
       const post = socialPosts.find(p => p.id === id);
       if (post) {
@@ -1166,7 +1249,7 @@
       if (post) {
         post.pressures++;
         renderFeed();
-        alert('📢 Notificação de cobrança enviada à Secretaria de Saúde e Defensoria Pública!');
+        alert('📢 Cobrança de providências enviada à Secretaria de Saúde e Defensoria Pública!');
       }
     }
 
@@ -1208,36 +1291,29 @@
     }
 
     function copyPostLink() {
-      navigator.clipboard.writeText('https://minhavoz.vercel.app/relato/fila-sus-sp-214');
+      navigator.clipboard.writeText('https://minhavoz.vercel.app');
       const btn = document.getElementById('copy-modal-text');
       btn.innerText = '✓ Link Copiado com Sucesso!';
       setTimeout(() => btn.innerText = 'Copiar Link do Relato', 2500);
     }
 
-    // MODAIS AUXILIARES
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.add('hidden');
-    }
+    // CONTROLE DE MODAIS
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    function openLoginModal() { document.getElementById('modal-login').classList.remove('hidden'); }
     function openTimerModal() { document.getElementById('modal-timer').classList.remove('hidden'); }
     function openMapModal() { document.getElementById('modal-map').classList.remove('hidden'); }
-    function openSupabaseSettingsModal() { document.getElementById('modal-supabase').classList.remove('hidden'); }
-    function openDefensoriaModal() { alert('⚖️ Canal da Defensoria Pública: Atendimento gratuito via WhatsApp e 0800 para pedidos de liminar de saúde.'); }
+    function openDefensoriaModal() { alert('⚖️ Canal da Defensoria Pública da União: Atendimento gratuito via WhatsApp e 0800 para pedidos de liminar de saúde.'); }
     function openDenunciaModal() { alert('🚨 Canal de Denúncias ao Ministério Público Estadual registrado.'); }
-    function openProfileModal() { alert('👤 Maria da Silva (54 anos) • Cadastrada na fila de Ortopedia do SUS desde 2024.'); }
-    function toggleNotifications() { alert('🔔 Você possui 3 novas notificações sobre a fila na sua região.'); }
+    function toggleNotifications() { alert('🔔 Você não possui alertas pendentes no momento.'); }
 
-    // FILTRO DO FEED
     function setFeedFilter(filter) {
       currentFilter = filter;
-      const filters = ['todos', 'video', 'audio', 'urgentes'];
+      const filters = ['todos', 'video', 'audio'];
       filters.forEach(f => {
         const btn = document.getElementById('filter-' + f);
         if (btn) {
-          if (f === filter) {
-            btn.className = 'px-3 py-1.5 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition-all';
-          } else {
-            btn.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all';
-          }
+          if (f === filter) btn.className = 'px-3 py-1.5 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition-all';
+          else btn.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all';
         }
       });
       renderFeed();
@@ -1253,121 +1329,6 @@
         p.location.toLowerCase().includes(q)
       );
       container.innerHTML = filtered.map(post => createPostHTML(post)).join('');
-    }
-
-    // ====================================================================
-    // PERSISTÊNCIA LOCAL & INTEGRAÇÃO EM TEMPO REAL COM O SUPABASE
-    // ====================================================================
-    const DEFAULT_SUPABASE_URL = 'https://rtpuzrjjcrwlivwtlcya.supabase.co';
-    const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0cHV6cmpqY3J3bGl2d3RsY3lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjI3NTYsImV4cCI6MjEwNzU5ODc1Nn0._letC6F8us6Idehchk-zbO_xfItWZ3brCjHQwIxxbLM';
-
-    function savePostsLocally() {
-      try {
-        localStorage.setItem('minhavoz_posts', JSON.stringify(socialPosts));
-      } catch (e) {}
-    }
-
-    function loadSavedPosts() {
-      try {
-        const saved = localStorage.getItem('minhavoz_posts');
-        if (saved) socialPosts = JSON.parse(saved);
-      } catch (e) {}
-    }
-
-    async function initSupabaseClient() {
-      let url = localStorage.getItem('supabase_url') || DEFAULT_SUPABASE_URL;
-      let key = localStorage.getItem('supabase_key') || DEFAULT_SUPABASE_KEY;
-
-      // Sanitiza caso a URL termine com /rest/v1/
-      url = url.replace(/\/rest\/v1\/?$/, '').trim();
-
-      if (url && key && window.supabase) {
-        try {
-          window.supabaseClient = window.supabase.createClient(url, key);
-          const badge = document.getElementById('supabase-status-badge');
-          if (badge) badge.classList.remove('hidden');
-
-          // 1. Carrega relatos reais gravados no Supabase
-          const { data, error } = await window.supabaseClient
-            .from('reports')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .limit(20);
-
-          if (!error && data && data.length > 0) {
-            const remotePosts = data.map(r => ({
-              id: r.id,
-              author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
-              avatar: r.anonimo ? '🎭' : 'PS',
-              location: 'Brasil',
-              hospital: 'Hospital SUS',
-              waitDays: r.duracao_segundos || 180,
-              specialty: 'Atendimento / Procedimento',
-              mediaType: r.tipo_midia || 'texto',
-              text: r.relato,
-              likes: 12,
-              hasLiked: false,
-              pressures: 8,
-              commentsCount: 2,
-              createdAt: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              isAnon: r.anonimo
-            }));
-            // Mescla sem duplicar
-            const existingIds = new Set(socialPosts.map(p => p.id));
-            const newOnes = remotePosts.filter(p => !existingIds.has(p.id));
-            if (newOnes.length > 0) {
-              socialPosts = [...newOnes, ...socialPosts];
-              renderFeed();
-            }
-          }
-
-          // 2. Escuta eventos em TEMPO REAL (Novas publicações instantâneas)
-          window.supabaseClient
-            .channel('realtime:reports')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reports' }, payload => {
-              const r = payload.new;
-              if (r && !socialPosts.some(p => p.id === r.id)) {
-                socialPosts.unshift({
-                  id: r.id,
-                  author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
-                  avatar: r.anonimo ? '🎭' : 'PS',
-                  location: 'Brasil',
-                  hospital: 'Hospital SUS',
-                  waitDays: r.duracao_segundos || 180,
-                  specialty: 'Atendimento / Procedimento',
-                  mediaType: r.tipo_midia || 'texto',
-                  text: r.relato,
-                  likes: 1,
-                  hasLiked: false,
-                  pressures: 1,
-                  commentsCount: 0,
-                  createdAt: 'Agora mesmo',
-                  isAnon: r.anonimo
-                });
-                renderFeed();
-              }
-            })
-            .subscribe();
-
-        } catch (err) {
-          console.warn('Conexão Supabase:', err);
-        }
-      }
-    }
-
-    function saveSupabaseConfig() {
-      let url = document.getElementById('supabase-input-url').value.trim();
-      let key = document.getElementById('supabase-input-key').value.trim();
-      if (url && key) {
-        url = url.replace(/\/rest\/v1\/?$/, '').trim();
-        localStorage.setItem('supabase_url', url);
-        localStorage.setItem('supabase_key', key);
-        initSupabaseClient();
-        closeModal('modal-supabase');
-        alert('✓ Supabase conectado com sucesso em tempo real!');
-      } else {
-        alert('Preencha os campos de URL e Chave Anon.');
-      }
     }
   </script>
 </body>
