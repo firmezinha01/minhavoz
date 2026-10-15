@@ -177,4 +177,17 @@ VALUES (
     'Ortopedia / Fila Cirurgia'
 ) ON CONFLICT (cpf) DO NOTHING;
 
+-- 3. Usuária Maria (Login: maria / Senha: 123456)
+INSERT INTO public.users (id, nome, idade, cidade, email, cpf, senha_hash, condicao_saude)
+VALUES (
+    'a0000000-0000-0000-0000-000000000003',
+    'Maria Silva',
+    42,
+    'São Paulo, SP',
+    'maria@minhavoz.org.br',
+    'maria',
+    '123456',
+    'Paciente SUS / Consultas e Exames'
+) ON CONFLICT (cpf) DO NOTHING;
+
 

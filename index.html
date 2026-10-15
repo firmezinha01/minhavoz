@@ -111,25 +111,38 @@
           <span>⏱️ Espera</span>
         </button>
 
-        <!-- Botão Login / Perfil -->
+        <!-- Seção Usuário / Login no Header -->
         <div id="header-user-section" class="flex items-center space-x-2 pl-1 border-l border-slate-200">
-          <div onclick="openLoginModal()" class="flex items-center space-x-2 cursor-pointer p-1 rounded-xl hover:bg-slate-50 transition-colors">
-            <div id="header-user-avatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shadow-xs border-2 border-white ring-1 ring-blue-500">
-              👨
-            </div>
-            <div class="hidden xl:block text-left">
-              <div id="header-user-name" class="text-xs font-bold text-slate-800 leading-tight">José</div>
-              <div id="header-user-badge" class="text-[10px] text-blue-600 font-extrabold flex items-center gap-0.5">
-                <span>Paciente SUS</span>
+          
+          <!-- Estado: Logado -->
+          <div id="header-user-logged-in" class="flex items-center space-x-2">
+            <div onclick="openLoginModal()" class="flex items-center space-x-2 cursor-pointer p-1 rounded-xl hover:bg-slate-50 transition-colors">
+              <div id="header-user-avatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shadow-xs border-2 border-white ring-1 ring-blue-500">
+                👨
+              </div>
+              <div class="hidden xl:block text-left">
+                <div id="header-user-name" class="text-xs font-bold text-slate-800 leading-tight">José Silva</div>
+                <div id="header-user-badge" class="text-[10px] text-blue-600 font-extrabold flex items-center gap-0.5">
+                  <span>Paciente SUS</span>
+                </div>
               </div>
             </div>
+
+            <!-- Botão Sair Visível no Header -->
+            <button onclick="logoutUser()" id="btn-header-logout" title="Sair da Conta" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors flex items-center gap-1 text-xs font-bold active-scale">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+              <span class="hidden sm:inline">Sair</span>
+            </button>
           </div>
 
-          <!-- Botão Sair Visível no Header -->
-          <button onclick="logoutUser()" id="btn-header-logout" title="Sair da Conta" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors flex items-center gap-1 text-xs font-bold">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-            <span class="hidden sm:inline">Sair</span>
-          </button>
+          <!-- Estado: Deslogado (Botão Login) -->
+          <div id="header-user-logged-out" class="hidden">
+            <button onclick="openLoginModal()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all active-scale">
+              <span>🔑</span>
+              <span>Login</span>
+            </button>
+          </div>
+
         </div>
 
       </div>
@@ -147,8 +160,8 @@
       <!-- ================================================================ -->
       <aside class="hidden lg:block lg:col-span-3 space-y-4 sticky top-20">
         
-        <!-- Card do Usuário Atual (José ou Admin) -->
-        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs text-left">
+        <!-- Card do Usuário Logado -->
+        <div id="sidebar-user-card" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs text-left">
           <div class="flex items-center space-x-3 mb-3">
             <div id="sidebar-user-avatar" class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold flex items-center justify-center text-xl shadow-md">
               👨
@@ -163,13 +176,29 @@
           </div>
 
           <div class="flex gap-2 pt-2 border-t border-slate-100">
-            <button onclick="openLoginModal()" class="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-all text-center">
+            <button onclick="openLoginModal()" class="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-all text-center active-scale">
               🔑 Trocar Conta
             </button>
-            <button onclick="logoutUser()" class="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-lg transition-all flex items-center gap-1">
+            <button onclick="logoutUser()" class="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-lg transition-all flex items-center gap-1 active-scale">
               <span>Sair</span>
             </button>
           </div>
+        </div>
+
+        <!-- Card Quando Deslogado (NÃO MOSTRA PACIENTE VISITANTE!) -->
+        <div id="sidebar-logged-out-card" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs text-center space-y-2.5 hidden">
+          <div class="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl mx-auto font-bold shadow-xs border border-blue-100">
+            🔑
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-slate-800">Conecte sua Conta</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+              Faça login para registrar relatos, medir sua espera e acompanhar suas filas no SUS.
+            </p>
+          </div>
+          <button onclick="openLoginModal()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all active-scale flex items-center justify-center gap-1.5">
+            <span>🔑 Fazer Login</span>
+          </button>
         </div>
 
         <!-- Menu Lateral -->
@@ -600,7 +629,7 @@
   <!-- 4. MODAIS RESPONSIVOS (LOGIN, CRONÔMETRO, COMPARTILHAMENTO)          -->
   <!-- ==================================================================== -->
 
-  <!-- MODAL DE LOGIN (USUÁRIOS: jose OU admin / SENHA: 123456) -->
+  <!-- MODAL DE LOGIN (USUÁRIOS: jose, maria OU admin / SENHA: 123456) -->
   <div id="modal-login" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
     <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4">
       
@@ -611,31 +640,49 @@
         <button onclick="closeModal('modal-login')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
       </div>
 
-      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-700 space-y-1">
-        <div class="font-bold text-slate-900">Usuários disponíveis no sistema:</div>
-        <div>• <strong>jose</strong> (senha: <code>123456</code>) → Paciente SUS</div>
-        <div>• <strong>admin</strong> (senha: <code>123456</code>) → Administrador</div>
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-700 space-y-2">
+        <div class="font-bold text-slate-900">Selecione uma conta para preencher:</div>
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <button type="button" onclick="quickFillLogin('jose')" class="p-2 bg-white border border-slate-200 rounded-xl font-bold hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-all flex flex-col items-center active-scale">
+            <span class="text-lg">👨</span>
+            <span class="text-xs font-bold mt-0.5">jose</span>
+            <span class="text-[9px] text-slate-400 font-normal">Paciente</span>
+          </button>
+          <button type="button" onclick="quickFillLogin('maria')" class="p-2 bg-white border border-slate-200 rounded-xl font-bold hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 transition-all flex flex-col items-center active-scale">
+            <span class="text-lg">👩</span>
+            <span class="text-xs font-bold mt-0.5">maria</span>
+            <span class="text-[9px] text-slate-400 font-normal">Paciente</span>
+          </button>
+          <button type="button" onclick="quickFillLogin('admin')" class="p-2 bg-white border border-slate-200 rounded-xl font-bold hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-300 transition-all flex flex-col items-center active-scale">
+            <span class="text-lg">👑</span>
+            <span class="text-xs font-bold mt-0.5">admin</span>
+            <span class="text-[9px] text-slate-400 font-normal">Moderador</span>
+          </button>
+        </div>
+        <div class="text-[10px] text-slate-500 text-center pt-1 border-t border-slate-200">
+          Senha para todas as contas: <code class="bg-white px-1.5 py-0.5 rounded font-mono font-bold text-slate-700 border border-slate-200">123456</code>
+        </div>
       </div>
 
       <form onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Usuário:</label>
-          <input type="text" id="login-username" value="jose" placeholder="jose ou admin" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+          <input type="text" id="login-username" value="jose" placeholder="jose, maria ou admin" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden">
         </div>
 
         <div>
           <label class="block font-bold text-slate-700 mb-1">Senha:</label>
-          <input type="password" id="login-password" value="123456" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+          <input type="password" id="login-password" value="123456" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden">
         </div>
 
-        <div class="pt-2">
+        <div class="pt-1">
           <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-blue-600/30 transition-all active-scale">
-            Login
+            Entrar / Fazer Login
           </button>
         </div>
       </form>
 
-      <div class="text-center pt-2 border-t border-slate-100">
+      <div id="modal-login-logout-btn" class="text-center pt-2 border-t border-slate-100 hidden">
         <button onclick="logoutUser(); closeModal('modal-login');" class="text-xs font-bold text-rose-600 hover:underline">
           Sair da Conta Atual
         </button>
@@ -926,7 +973,7 @@
     const SUPABASE_URL = 'https://rtpuzrjjcrwlivwtlcya.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0cHV6cmpqY3J3bGl2d3RsY3lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjI3NTYsImV4cCI6MjEwNzU5ODc1Nn0._letC6F8us6Idehchk-zbO_xfItWZ3brCjHQwIxxbLM';
 
-    // 2. CONTAS DISPONÍVEIS (JOSE E ADMIN COM SENHA 123456)
+    // 2. CONTAS DISPONÍVEIS (JOSE, MARIA E ADMIN COM SENHA 123456)
     const KNOWN_ACCOUNTS = {
       'jose': {
         id: 'a0000000-0000-0000-0000-000000000002',
@@ -934,6 +981,15 @@
         name: 'José Silva',
         role: 'paciente',
         avatar: '👨',
+        city: 'São Paulo, SP',
+        isAdmin: false
+      },
+      'maria': {
+        id: 'a0000000-0000-0000-0000-000000000003',
+        username: 'maria',
+        name: 'Maria Silva',
+        role: 'paciente',
+        avatar: '👩',
         city: 'São Paulo, SP',
         isAdmin: false
       },
@@ -948,8 +1004,8 @@
       }
     };
 
-    // Usuário padrão: José Silva
-    let currentUser = KNOWN_ACCOUNTS['jose'];
+    // Usuário atual (inicia null quando deslogado ou recupera do localStorage)
+    let currentUser = null;
 
     // ====================================================================
     // BASE DE DADOS REAL: ESPERA POR HOSPITAL, SETOR E FILAS (HMU, ETC.)
@@ -1331,41 +1387,81 @@
         const stored = localStorage.getItem('minhavoz_user');
         if (stored) {
           currentUser = JSON.parse(stored);
+        } else {
+          currentUser = null;
         }
-      } catch (e) {}
+      } catch (e) {
+        currentUser = null;
+      }
+    }
+
+    function quickFillLogin(u) {
+      const inputUser = document.getElementById('login-username');
+      const inputPass = document.getElementById('login-password');
+      if (inputUser) inputUser.value = u;
+      if (inputPass) inputPass.value = '123456';
     }
 
     function updateUserUI() {
+      const isLogged = (currentUser !== null && currentUser.username !== 'visitante');
+
       // Header
+      const headerLoggedIn = document.getElementById('header-user-logged-in');
+      const headerLoggedOut = document.getElementById('header-user-logged-out');
       const hAvatar = document.getElementById('header-user-avatar');
       const hName = document.getElementById('header-user-name');
       const hBadge = document.getElementById('header-user-badge');
-      if (hAvatar) hAvatar.innerText = currentUser.avatar || '👨';
-      if (hName) hName.innerText = currentUser.name || 'José';
-      if (hBadge) {
-        hBadge.innerHTML = currentUser.isAdmin 
-          ? '<span class="text-indigo-600 font-extrabold">👑 Administrador</span>' 
-          : '<span class="text-blue-600 font-bold">Paciente SUS</span>';
+
+      if (isLogged) {
+        if (headerLoggedIn) headerLoggedIn.classList.remove('hidden');
+        if (headerLoggedOut) headerLoggedOut.classList.add('hidden');
+        if (hAvatar) hAvatar.innerText = currentUser.avatar || '👤';
+        if (hName) hName.innerText = currentUser.name || currentUser.username;
+        if (hBadge) {
+          hBadge.innerHTML = currentUser.isAdmin 
+            ? '<span class="text-indigo-600 font-extrabold">👑 Administrador</span>' 
+            : '<span class="text-blue-600 font-bold">Paciente SUS</span>';
+        }
+      } else {
+        if (headerLoggedIn) headerLoggedIn.classList.add('hidden');
+        if (headerLoggedOut) headerLoggedOut.classList.remove('hidden');
       }
 
       // Sidebar
+      const sCard = document.getElementById('sidebar-user-card');
+      const sLoggedOut = document.getElementById('sidebar-logged-out-card');
       const sAvatar = document.getElementById('sidebar-user-avatar');
       const sName = document.getElementById('sidebar-user-name');
       const sInfo = document.getElementById('sidebar-user-info');
       const sRole = document.getElementById('sidebar-user-role');
-      if (sAvatar) sAvatar.innerText = currentUser.avatar || '👨';
-      if (sName) sName.innerText = currentUser.name || 'José Silva';
-      if (sInfo) sInfo.innerHTML = `Login: <strong>${currentUser.username}</strong> • ${currentUser.city || 'São Paulo, SP'}`;
-      if (sRole) {
-        sRole.innerText = currentUser.isAdmin ? '👑 Painel de Moderação Ativo' : 'Prontuário SUS Ativo';
-        sRole.className = currentUser.isAdmin 
-          ? 'inline-block mt-0.5 text-[10px] font-extrabold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-200'
-          : 'inline-block mt-0.5 text-[10px] font-extrabold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full border border-blue-200';
+
+      if (isLogged) {
+        if (sCard) sCard.classList.remove('hidden');
+        if (sLoggedOut) sLoggedOut.classList.add('hidden');
+        if (sAvatar) sAvatar.innerText = currentUser.avatar || '👤';
+        if (sName) sName.innerText = currentUser.name || currentUser.username;
+        if (sInfo) sInfo.innerHTML = `Login: <strong>${currentUser.username}</strong> • ${currentUser.city || 'São Paulo, SP'}`;
+        if (sRole) {
+          sRole.innerText = currentUser.isAdmin ? '👑 Painel de Moderação Ativo' : 'Prontuário SUS Ativo';
+          sRole.className = currentUser.isAdmin 
+            ? 'inline-block mt-0.5 text-[10px] font-extrabold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-200'
+            : 'inline-block mt-0.5 text-[10px] font-extrabold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full border border-blue-200';
+        }
+      } else {
+        if (sCard) sCard.classList.add('hidden');
+        if (sLoggedOut) sLoggedOut.classList.remove('hidden');
       }
 
       // Composer
       const cAvatar = document.getElementById('composer-user-avatar');
-      if (cAvatar) cAvatar.innerText = currentUser.avatar || '👨';
+      if (cAvatar) cAvatar.innerText = isLogged ? (currentUser.avatar || '👤') : '👤';
+
+      // Modal Login logout button
+      const modalLogoutBtn = document.getElementById('modal-login-logout-btn');
+      if (modalLogoutBtn) {
+        if (isLogged) modalLogoutBtn.classList.remove('hidden');
+        else modalLogoutBtn.classList.add('hidden');
+      }
     }
 
     function handleLoginSubmit(e) {
@@ -1384,10 +1480,10 @@
         currentUser = {
           id: null,
           username: userVal || 'paciente',
-          name: userVal ? `Paciente ${userVal}` : 'Paciente SUS',
+          name: userVal ? `Paciente ${userVal.charAt(0).toUpperCase() + userVal.slice(1)}` : 'Paciente SUS',
           role: 'paciente',
           avatar: '🏥',
-          city: 'Brasil',
+          city: 'São Paulo, SP',
           isAdmin: false
         };
       }
@@ -1396,25 +1492,15 @@
       updateUserUI();
       renderFeed();
       closeModal('modal-login');
-      alert(`✓ Bem-vindo, ${currentUser.name}!`);
+      alert(`✓ Bem-vindo(a), ${currentUser.name}!`);
     }
 
     function logoutUser() {
-      if (confirm('Deseja realmente sair da sua conta?')) {
-        currentUser = {
-          id: null,
-          username: 'visitante',
-          name: 'Paciente Visitante',
-          role: 'visitante',
-          avatar: '👤',
-          city: 'Brasil',
-          isAdmin: false
-        };
-        localStorage.removeItem('minhavoz_user');
-        updateUserUI();
-        renderFeed();
-        alert('Você saiu da conta. Para publicar ou moderar, faça login novamente.');
-      }
+      currentUser = null;
+      localStorage.removeItem('minhavoz_user');
+      updateUserUI();
+      renderFeed();
+      alert('✓ Você saiu da sua conta com sucesso.');
     }
 
     // ====================================================================
@@ -1718,8 +1804,8 @@
         const sectorName = (inputSector && inputSector.value) || 'Emergência';
         const elapsedHours = parseFloat((Math.max(timerSeconds, 60) / 3600).toFixed(2));
 
-        const city = currentUser.city ? currentUser.city.split(',')[0].trim() : 'São Paulo';
-        const state = currentUser.city && currentUser.city.includes(',') ? currentUser.city.split(',')[1].trim() : 'SP';
+        const city = (currentUser && currentUser.city) ? currentUser.city.split(',')[0].trim() : 'São Paulo';
+        const state = (currentUser && currentUser.city && currentUser.city.includes(',')) ? currentUser.city.split(',')[1].trim() : 'SP';
 
         // 1. Registra no banco de dados local do Mapa
         const waitRecord = {
@@ -1732,8 +1818,8 @@
           waitUnit: 'horas',
           city: city,
           state: state,
-          author: currentUser.name || 'Paciente SUS',
-          avatar: currentUser.avatar || '👨',
+          author: (currentUser && currentUser.name) || 'Paciente SUS',
+          avatar: (currentUser && currentUser.avatar) || '👨',
           createdAt: 'Agora mesmo',
           text: `Atendimento no setor ${sectorName} do ${hospName} cronometrado em ${finalTime}.`
         };
@@ -1803,7 +1889,7 @@
       const waitVal = parseFloat(document.getElementById('composer-wait-val').value) || 2;
       const waitUnit = document.getElementById('composer-wait-unit').value;
       const hospital = document.getElementById('composer-hospital').value.trim() || detectedLocationName;
-      const locationVal = document.getElementById('composer-location').value.trim() || (currentUser.city || 'São Paulo, SP');
+      const locationVal = document.getElementById('composer-location').value.trim() || ((currentUser && currentUser.city) || 'São Paulo, SP');
       const isAnon = document.getElementById('composer-anon').checked;
 
       if (!text && !recordedVideoBlobUrl && !recordedAudioBlobUrl) {
@@ -1832,8 +1918,8 @@
         waitUnit: waitUnit,
         city: city,
         state: state,
-        author: isAnon ? 'Paciente Anônimo' : (currentUser.name || 'Paciente SUS'),
-        avatar: isAnon ? '🎭' : (currentUser.avatar || '👨'),
+        author: isAnon ? 'Paciente Anônimo' : ((currentUser && currentUser.name) || 'Paciente SUS'),
+        avatar: isAnon ? '🎭' : ((currentUser && currentUser.avatar) || '👨'),
         createdAt: 'Agora mesmo',
         text: text || (activeMediaMode === 'video' ? 'Depoimento gravado em vídeo pelo paciente.' : 'Depoimento em áudio gravado.')
       };
@@ -1888,7 +1974,7 @@
             cidade: city,
             estado: state
           };
-          if (currentUser.id) insertPayload.user_id = currentUser.id;
+          if (currentUser && currentUser.id) insertPayload.user_id = currentUser.id;
 
           const { data } = await window.supabaseClient
             .from('reports')
@@ -2536,7 +2622,7 @@
       const spec = document.getElementById('map-add-specialty').value.trim() || 'Geral';
       const val = parseFloat(document.getElementById('map-add-wait-val').value) || 2;
       const unit = document.getElementById('map-add-wait-unit').value;
-      const cityState = document.getElementById('map-add-city').value.trim() || (currentUser.city || 'São Paulo, SP');
+      const cityState = document.getElementById('map-add-city').value.trim() || ((currentUser && currentUser.city) || 'São Paulo, SP');
 
       if (!hosp) {
         alert('Por favor, informe o nome do hospital.');
@@ -2563,8 +2649,8 @@
         waitUnit: unit,
         city: city,
         state: state,
-        author: currentUser.name || 'Paciente SUS',
-        avatar: currentUser.avatar || '👨',
+        author: (currentUser && currentUser.name) || 'Paciente SUS',
+        avatar: (currentUser && currentUser.avatar) || '👨',
         createdAt: 'Agora mesmo',
         text: `Registro de espera no ${hosp} (${cat} - ${spec}): ${val} ${unit}.`
       };
@@ -2685,7 +2771,7 @@
         `;
       }
 
-      const adminDeleteBtn = currentUser.isAdmin ? `
+      const adminDeleteBtn = (currentUser && currentUser.isAdmin) ? `
         <button onclick="deletePostAdmin('${post.id}')" class="text-rose-600 hover:text-rose-800 font-bold text-[11px] flex items-center gap-1 px-2 py-1 rounded bg-rose-50 hover:bg-rose-100 transition-colors">
           <span>🗑️</span>
           <span>Excluir (Admin)</span>
@@ -2785,7 +2871,7 @@
     }
 
     async function deletePostAdmin(id) {
-      if (!currentUser.isAdmin) {
+      if (!currentUser || !currentUser.isAdmin) {
         alert('Apenas administradores podem moderar publicações.');
         return;
       }
