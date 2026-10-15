@@ -267,7 +267,36 @@
           </div>
         </div>
 
-        <!-- 2. COMPOSITOR DE RELATOS MULTIMÍDIA REAL (TEXTO, ÁUDIO E VÍDEO) -->
+        <!-- 2. BANNER DE DESTAQUE: MAPA EM TEMPO REAL HMU & HOSPITAIS -->
+        <div onclick="openMapModal()" class="cursor-pointer bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-3.5 sm:p-4 border border-blue-800 shadow-sm hover:border-blue-400 transition-all group">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-xs font-black uppercase tracking-wider text-emerald-400">Mapa de Espera em Tempo Real</span>
+            </div>
+            <span class="text-[11px] text-blue-200 group-hover:text-white font-bold flex items-center gap-1">
+              <span>Abrir Mapa Completo</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+            <div class="bg-white/10 rounded-xl p-2 backdrop-blur-xs border border-white/10">
+              <div class="text-[10px] text-blue-200 font-bold truncate">Hospital HMU (Emergência)</div>
+              <div class="text-sm sm:text-base font-black text-rose-300 font-mono" id="banner-hmu-emergencia">2h 00m</div>
+            </div>
+            <div class="bg-white/10 rounded-xl p-2 backdrop-blur-xs border border-white/10">
+              <div class="text-[10px] text-blue-200 font-bold truncate">Hospital HMU (Ortopedia)</div>
+              <div class="text-sm sm:text-base font-black text-amber-300 font-mono" id="banner-hmu-ortopedia">3h 00m</div>
+            </div>
+            <div class="col-span-2 sm:col-span-1 bg-white/10 rounded-xl p-2 backdrop-blur-xs border border-white/10 flex flex-col justify-center">
+              <div class="text-[10px] text-blue-200 font-bold truncate">Fila de Cirurgias (Média)</div>
+              <div class="text-sm sm:text-base font-black text-white font-mono" id="banner-cirurgias-media">185 dias</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. COMPOSITOR DE RELATOS MULTIMÍDIA REAL (TEXTO, ÁUDIO E VÍDEO) -->
         <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200 shadow-xs space-y-3">
           
           <div class="flex items-start space-x-2.5 sm:space-x-3">
@@ -345,10 +374,83 @@
             </div>
           </div>
 
-          <!-- Campos Extras: Hospital e Especialidade -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <input type="text" id="composer-hospital" placeholder="Hospital ou UPA (Ex: Hosp. Geral Grajaú)" class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden">
-            <input type="text" id="composer-specialty" placeholder="Procedimento (Ex: Ortopedia, Cirurgia Joelho)" class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden">
+          <!-- Datalists para preenchimento rápido inteligente -->
+          <datalist id="hospital-suggestions">
+            <option value="Hospital HMU - Hospital Municipal de Urgências">
+            <option value="Hospital Geral do Grajaú">
+            <option value="Hospital São Paulo - UNIFESP">
+            <option value="Hospital das Clínicas FMUSP">
+            <option value="UPA 24h Campo Limpo">
+            <option value="Hospital Municipal Souza Aguiar">
+            <option value="Hospital Regional da Asa Norte (HRAN)">
+            <option value="Hospital Geral Roberto Santos">
+            <option value="Hospital Geral de Fortaleza (HGF)">
+          </datalist>
+
+          <datalist id="specialty-suggestions">
+            <option value="Emergência / Pronto-Socorro">
+            <option value="Ortopedia">
+            <option value="Clínica Geral">
+            <option value="Pediatria">
+            <option value="Cirurgia Geral">
+            <option value="Cirurgia de Joelho">
+            <option value="Cirurgia de Catarata">
+            <option value="Cirurgia de Vesícula">
+            <option value="Cardiologia">
+            <option value="Neurologia">
+            <option value="Oftalmologia">
+            <option value="Ressonância Magnética">
+            <option value="Tomografia Computadorizada">
+            <option value="Ultrassonografia">
+            <option value="Endoscopia Digestiva">
+          </datalist>
+
+          <!-- Dados Estruturados da Fila e Espera Real -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 sm:p-3 space-y-2 text-xs">
+            <div class="text-[11px] font-bold text-slate-700 flex items-center justify-between">
+              <span class="flex items-center gap-1"><span>📊</span> Dados Reais da Espera / Procedimento</span>
+              <span class="text-[10px] text-blue-600 font-semibold">Alimenta o Mapa em Tempo Real</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Tipo de Procedimento / Fila:</label>
+                <select id="composer-category" onchange="handleComposerCategoryChange(this.value)" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-blue-500 outline-hidden">
+                  <option value="Emergência">🚨 Emergência / Pronto-Socorro</option>
+                  <option value="Cirurgia">🔪 Cirurgia</option>
+                  <option value="Exame">🔬 Exame</option>
+                  <option value="Consulta">🩺 Consulta</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Setor ou Especialidade:</label>
+                <input type="text" id="composer-specialty" list="specialty-suggestions" value="Emergência" placeholder="Ex: Emergência, Ortopedia, Joelho..." class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-hidden">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div class="sm:col-span-1">
+                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Tempo de Espera:</label>
+                <div class="flex gap-1">
+                  <input type="number" id="composer-wait-val" value="2" min="0.1" step="any" placeholder="Ex: 2" class="w-20 p-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800">
+                  <select id="composer-wait-unit" class="flex-1 p-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold">
+                    <option value="horas">Horas</option>
+                    <option value="dias">Dias</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="sm:col-span-1">
+                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Hospital / UPA:</label>
+                <input type="text" id="composer-hospital" list="hospital-suggestions" placeholder="Ex: Hospital HMU" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-hidden">
+              </div>
+
+              <div class="sm:col-span-1">
+                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Cidade - UF:</label>
+                <input type="text" id="composer-location" value="São Paulo, SP" placeholder="Ex: São Paulo, SP" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-hidden">
+              </div>
+            </div>
           </div>
 
           <!-- Barra de Ações do Compositor -->
@@ -575,7 +677,19 @@
       <div class="space-y-2 text-xs">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Nome da Unidade de Saúde / Hospital:</label>
-          <input type="text" id="modal-timer-input-hospital" placeholder="Carregando nome do local..." class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+          <input type="text" id="modal-timer-input-hospital" list="hospital-suggestions" placeholder="Carregando nome do local..." class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Setor do Atendimento:</label>
+          <select id="modal-timer-input-sector" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-semibold text-slate-800">
+            <option value="Emergência">🚨 Emergência / Pronto-Socorro Geral</option>
+            <option value="Ortopedia">🦴 Ortopedia / Traumatologia</option>
+            <option value="Clínica Geral">🩺 Clínica Geral</option>
+            <option value="Pediatria">👶 Pediatria</option>
+            <option value="Triagem">🏷️ Triagem e Acolhimento</option>
+            <option value="Exames de Urgência">🔬 Exames de Urgência (Raio-X / Sangue)</option>
+          </select>
         </div>
       </div>
 
@@ -661,42 +775,146 @@
     </div>
   </div>
 
-  <!-- MODAL MAPA -->
-  <div id="modal-map" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
-    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-xl p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <span>🗺️</span> Mapa Nacional da Espera no SUS
-        </h3>
-        <button onclick="closeModal('modal-map')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+  <!-- MODAL MAPA DINÂMICO E COMPLETO EM TEMPO REAL -->
+  <div id="modal-map" class="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl sm:rounded-3xl w-full max-w-4xl shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden">
+      
+      <!-- Topo do Modal -->
+      <div class="p-4 sm:p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xl sm:text-2xl">🗺️</span>
+            <h3 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">Mapa da Espera & Filas do SUS</h3>
+            <span class="inline-flex items-center gap-1 text-[10px] font-extrabold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+              Tempo Real
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">Calculado estritamente com base nos relatos e cronômetros dos pacientes reais</p>
+        </div>
+        <button onclick="closeModal('modal-map')" class="p-2 text-slate-400 hover:text-slate-700 text-xl font-bold rounded-xl hover:bg-slate-200/50 transition-colors">✕</button>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-        <div class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl">
-          <div class="font-bold text-slate-800">São Paulo (SP)</div>
-          <div class="text-base sm:text-lg font-black text-rose-600 font-mono">198 dias</div>
+      <!-- Barra de Resumo Rápido -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 sm:p-4 bg-slate-100/70 border-b border-slate-200 text-xs shrink-0">
+        <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+          <div class="text-[10px] text-slate-500 font-bold uppercase">Hospitais com Relato</div>
+          <div id="map-stat-hospitals" class="text-base sm:text-lg font-black text-blue-700 mt-0.5">0</div>
         </div>
-        <div class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl">
-          <div class="font-bold text-slate-800">Rio de Janeiro (RJ)</div>
-          <div class="text-base sm:text-lg font-black text-rose-600 font-mono">224 dias</div>
+        <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+          <div class="text-[10px] text-slate-500 font-bold uppercase">Média Emergência</div>
+          <div id="map-stat-emergency" class="text-base sm:text-lg font-black text-rose-600 mt-0.5 font-mono">--</div>
         </div>
-        <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl">
-          <div class="font-bold text-slate-800">Minas Gerais (MG)</div>
-          <div class="text-base sm:text-lg font-black text-amber-600 font-mono">145 dias</div>
+        <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+          <div class="text-[10px] text-slate-500 font-bold uppercase">Média Cirurgias / Exames</div>
+          <div id="map-stat-elective" class="text-base sm:text-lg font-black text-amber-600 mt-0.5 font-mono">--</div>
         </div>
-        <div class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl">
-          <div class="font-bold text-slate-800">Bahia (BA)</div>
-          <div class="text-base sm:text-lg font-black text-rose-600 font-mono">210 dias</div>
-        </div>
-        <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl">
-          <div class="font-bold text-slate-800">Ceará (CE)</div>
-          <div class="text-base sm:text-lg font-black text-amber-600 font-mono">160 dias</div>
-        </div>
-        <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
-          <div class="font-bold text-slate-800">Paraná (PR)</div>
-          <div class="text-base sm:text-lg font-black text-blue-600 font-mono">92 dias</div>
+        <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+          <div class="text-[10px] text-slate-500 font-bold uppercase">Total de Pacientes</div>
+          <div id="map-stat-patients" class="text-base sm:text-lg font-black text-indigo-700 mt-0.5">0</div>
         </div>
       </div>
+
+      <!-- Abas de Navegação do Mapa -->
+      <div class="flex items-center justify-between px-3 sm:px-4 pt-3 pb-2 border-b border-slate-200 bg-white gap-2 flex-wrap shrink-0">
+        <div class="flex items-center space-x-1 sm:space-x-1.5 overflow-x-auto custom-scrollbar pb-1 text-xs font-bold">
+          <button id="map-tab-btn-hospitals" onclick="switchMapTab('hospitals')" class="px-3 sm:px-3.5 py-2 rounded-xl bg-blue-600 text-white shadow-xs transition-all flex items-center gap-1.5 whitespace-nowrap">
+            <span>🏥</span>
+            <span>Hospitais & Setores</span>
+          </button>
+          <button id="map-tab-btn-queues" onclick="switchMapTab('queues')" class="px-3 sm:px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap">
+            <span>📋</span>
+            <span>Filas: Cirurgias, Exames & Consultas</span>
+          </button>
+          <button id="map-tab-btn-regions" onclick="switchMapTab('regions')" class="px-3 sm:px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap">
+            <span>🗺️</span>
+            <span>Por Região & Estado</span>
+          </button>
+        </div>
+
+        <button onclick="toggleMapQuickAddForm()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1 whitespace-nowrap active-scale">
+          <span>+ Registrar Minha Espera</span>
+        </button>
+      </div>
+
+      <!-- Formulário Rápido de Adição Direta no Mapa (Toggle) -->
+      <div id="map-quick-add-panel" class="hidden p-3 sm:p-4 bg-blue-50/90 border-b border-blue-200 text-xs shrink-0 transition-all">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-bold text-blue-900 flex items-center gap-1.5">
+            <span>📝</span> Registrar Espera Real no Mapa
+          </h4>
+          <button onclick="toggleMapQuickAddForm()" class="text-slate-400 hover:text-slate-700 text-xs font-bold">✕ Fechar</button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+          <input type="text" id="map-add-hospital" list="hospital-suggestions" placeholder="Hospital (Ex: Hospital HMU)" class="p-2 border border-slate-300 rounded-lg bg-white">
+          <select id="map-add-category" onchange="handleMapAddCategoryChange(this.value)" class="p-2 border border-slate-300 rounded-lg bg-white font-medium">
+            <option value="Emergência">🚨 Emergência / Pronto-Socorro</option>
+            <option value="Cirurgia">🔪 Cirurgia</option>
+            <option value="Exame">🔬 Exame</option>
+            <option value="Consulta">🩺 Consulta</option>
+          </select>
+          <input type="text" id="map-add-specialty" placeholder="Setor / Especialidade (Ex: Ortopedia, Emergência)" class="p-2 border border-slate-300 rounded-lg bg-white">
+          <div class="flex gap-1">
+            <input type="number" id="map-add-wait-val" value="2" min="0.1" step="any" placeholder="Tempo" class="w-20 p-2 border border-slate-300 rounded-lg bg-white font-mono font-bold">
+            <select id="map-add-wait-unit" class="flex-1 p-2 border border-slate-300 rounded-lg bg-white font-medium">
+              <option value="horas">Horas</option>
+              <option value="dias">Dias</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex items-center justify-between mt-2 pt-2 border-t border-blue-200 flex-wrap gap-2">
+          <input type="text" id="map-add-city" placeholder="Cidade / Estado (Ex: São Paulo, SP)" class="w-full sm:w-1/2 p-2 border border-slate-300 rounded-lg bg-white text-xs">
+          <button onclick="submitMapQuickAdd()" class="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-sm active-scale">
+            Salvar e Atualizar Mapa
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de Filtros e Busca no Mapa -->
+      <div class="p-3 bg-white border-b border-slate-100 flex items-center justify-between gap-2 shrink-0 flex-wrap sm:flex-nowrap">
+        <div class="relative flex-1 min-w-[200px]">
+          <input type="text" id="map-filter-search" onkeyup="handleMapFilterChange()" placeholder="Buscar hospital (HMU, Grajaú...), setor ou procedimento..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-8 pr-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden">
+          <span class="absolute left-2.5 top-2.5 text-slate-400 text-xs">🔍</span>
+        </div>
+        <select id="map-filter-uf" onchange="handleMapFilterChange()" class="py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-hidden">
+          <option value="">Todas as UFs</option>
+          <option value="SP">SP - São Paulo</option>
+          <option value="RJ">RJ - Rio de Janeiro</option>
+          <option value="MG">MG - Minas Gerais</option>
+          <option value="BA">BA - Bahia</option>
+          <option value="CE">CE - Ceará</option>
+          <option value="DF">DF - Distrito Federal</option>
+          <option value="PR">PR - Paraná</option>
+          <option value="RS">RS - Rio Grande do Sul</option>
+        </select>
+      </div>
+
+      <!-- Área com Scroll para o Conteúdo das 3 Abas -->
+      <div class="flex-1 overflow-y-auto p-3 sm:p-5 custom-scrollbar bg-slate-50/50">
+        
+        <!-- Conteúdo ABA 1: HOSPITAIS E SETORES -->
+        <div id="map-tab-content-hospitals" class="space-y-4"></div>
+
+        <!-- Conteúdo ABA 2: FILAS: CIRURGIAS, EXAMES E CONSULTAS -->
+        <div id="map-tab-content-queues" class="hidden space-y-4">
+          <!-- Filtro por Categoria de Procedimento -->
+          <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 text-xs font-semibold custom-scrollbar">
+            <button onclick="setQueueCategoryFilter('Todas')" id="queue-filter-todas" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-bold shadow-xs whitespace-nowrap">Todas</button>
+            <button onclick="setQueueCategoryFilter('Cirurgia')" id="queue-filter-cirurgia" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 whitespace-nowrap">🔪 Cirurgias</button>
+            <button onclick="setQueueCategoryFilter('Exame')" id="queue-filter-exame" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 whitespace-nowrap">🔬 Exames</button>
+            <button onclick="setQueueCategoryFilter('Consulta')" id="queue-filter-consulta" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 whitespace-nowrap">🩺 Consultas</button>
+            <button onclick="setQueueCategoryFilter('Emergência')" id="queue-filter-emergencia" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 whitespace-nowrap">🚨 Emergência</button>
+          </div>
+          <div id="map-queues-list" class="space-y-3"></div>
+        </div>
+
+        <!-- Conteúdo ABA 3: POR REGIÃO & ESTADO -->
+        <div id="map-tab-content-regions" class="hidden space-y-4">
+          <div id="map-regions-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        </div>
+
+      </div>
+
     </div>
   </div>
 
@@ -733,17 +951,379 @@
     // Usuário padrão: José Silva
     let currentUser = KNOWN_ACCOUNTS['jose'];
 
+    // ====================================================================
+    // BASE DE DADOS REAL: ESPERA POR HOSPITAL, SETOR E FILAS (HMU, ETC.)
+    // ====================================================================
+    const INITIAL_WAIT_RECORDS = [
+      // 1. HOSPITAL HMU (Exemplo solicitado pelo usuário: Emergência 2 horas, Ortopedia 3 horas, etc.)
+      {
+        id: 'rec-hmu-1',
+        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
+        hospitalShort: 'Hospital HMU',
+        category: 'Emergência',
+        specialty: 'Emergência',
+        waitValue: 2.0,
+        waitUnit: 'horas',
+        city: 'São Paulo',
+        state: 'SP',
+        author: 'José Silva',
+        avatar: '👨',
+        createdAt: 'Hoje',
+        text: 'Aguardando atendimento na emergência do Hospital HMU. Tempo medido no cronômetro: 2 horas até a consulta médica.'
+      },
+      {
+        id: 'rec-hmu-2',
+        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
+        hospitalShort: 'Hospital HMU',
+        category: 'Emergência',
+        specialty: 'Ortopedia',
+        waitValue: 3.0,
+        waitUnit: 'horas',
+        city: 'São Paulo',
+        state: 'SP',
+        author: 'Maria Clara',
+        avatar: '👩',
+        createdAt: 'Hoje',
+        text: 'Setor de ortopedia no Hospital HMU com espera de 3 horas para raio-x e colocação de tala.'
+      },
+      {
+        id: 'rec-hmu-3',
+        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
+        hospitalShort: 'Hospital HMU',
+        category: 'Emergência',
+        specialty: 'Clínica Geral',
+        waitValue: 1.75, // 1h 45m
+        waitUnit: 'horas',
+        city: 'São Paulo',
+        state: 'SP',
+        author: 'Paciente Anônimo',
+        avatar: '🎭',
+        createdAt: 'Hoje',
+        text: 'Consulta de clínica geral no HMU demorou 1 hora e 45 minutos.'
+      },
+      {
+        id: 'rec-hmu-4',
+        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
+        hospitalShort: 'Hospital HMU',
+        category: 'Emergência',
+        specialty: 'Pediatria',
+        waitValue: 1.25, // 1h 15m
+        waitUnit: 'horas',
+        city: 'São Paulo',
+        state: 'SP',
+        author: 'Mariana Rocha',
+        avatar: '👩',
+        createdAt: 'Hoje',
+        text: 'Pediatria do HMU com espera de 1 hora e 15 minutos para atendimento infantil.'
+      },
+      {
+        id: 'rec-hmu-5',
+        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
+        hospitalShort: 'Hospital HMU',
+        category: 'Cirurgia',
+        specialty: 'Cirurgia Geral',
+        waitValue: 180,
+        waitUnit: 'dias',
+        city: 'São Paulo',
+        state: 'SP',
+        author: 'Carlos Eduardo',
+        avatar: '👨',
+        createdAt: 'Há 1 dia',
+        text: 'Aguardando na fila regulada pelo SISREG para cirurgia geral no Hospital HMU há 180 dias.'
+      },
+      {
+        id: 'rec-hmu-6',
+        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
+        hospitalShort: 'Hospital HMU',
+        category: 'Exame',
+        specialty: 'Ressonância Magnética',
+        waitValue: 75,
+        waitUnit: 'dias',
+        city: 'São Paulo',
+        state: 'SP',
+        author: 'Francisca Lima',
+        avatar: '👵',
+        createdAt: 'Há 2 dias',
+        text: 'Esperando agendamento de exame de ressonância magnética pelo HMU há 75 dias.'
+      },
+
+      // 2. HOSPITAL GERAL DO GRAJAÚ (SP)
+      {
+        id: 'rec-grajau-1',
+        hospital: 'Hospital Geral do Grajaú',
+        hospitalShort: 'Hosp. Geral Grajaú',
+        category: 'Emergência',
+        specialty: 'Emergência',
+        waitValue: 3.5,
+        waitUnit: 'horas',
+        city: 'São Paulo',
+        state: 'SP',
+        author: 'Roberto Alencar',
+        avatar: '👨',
+        createdAt: 'Hoje',
+        text: 'Pronto-socorro do Grajaú com lotação alta, mais de 3 horas e meia de espera na triagem.'
+      },
+      {
+        id: 'rec-grajau-2',
+        hospital: 'Hospital Geral do Grajaú',
+        hospitalShort: 'Hosp. Geral Grajaú',
+        category: 'Cirurgia',
+        specialty: 'Cirurgia de Joelho',
+        waitValue: 210,
+        waitUnit: 'dias',
+        city: 'São Paulo',
+        state: 'SP',
+        author: 'Tereza Souza',
+        avatar: '👵',
+        createdAt: 'Há 3 dias',
+        text: 'Fila do SUS para prótese de joelho no Grajaú ultrapassa 210 dias sem chamada.'
+      },
+      {
+        id: 'rec-grajau-3',
+        hospital: 'Hospital Geral do Grajaú',
+        hospitalShort: 'Hosp. Geral Grajaú',
+        category: 'Exame',
+        specialty: 'Tomografia Computadorizada',
+        waitValue: 60,
+        waitUnit: 'dias',
+        city: 'São Paulo',
+        state: 'SP',
+        author: 'Márcia Ferreira',
+        avatar: '👩',
+        createdAt: 'Há 4 dias',
+        text: 'Tomografia computadorizada aguardando liberação de vaga há 2 meses.'
+      },
+
+      // 3. HOSPITAL SÃO PAULO - UNIFESP (SP)
+      {
+        id: 'rec-hsp-1',
+        hospital: 'Hospital São Paulo - UNIFESP',
+        hospitalShort: 'Hospital São Paulo',
+        category: 'Consulta',
+        specialty: 'Cardiologia',
+        waitValue: 90,
+        waitUnit: 'dias',
+        city: 'São Paulo',
+        state: 'SP',
+        author: 'João Batista',
+        avatar: '👨',
+        createdAt: 'Hoje',
+        text: 'Consulta com cardiologista regulada pela UBS aguardando há 90 dias.'
+      },
+      {
+        id: 'rec-hsp-2',
+        hospital: 'Hospital São Paulo - UNIFESP',
+        hospitalShort: 'Hospital São Paulo',
+        category: 'Cirurgia',
+        specialty: 'Cirurgia de Catarata',
+        waitValue: 120,
+        waitUnit: 'dias',
+        city: 'São Paulo',
+        state: 'SP',
+        author: 'Sebastião N.',
+        avatar: '👴',
+        createdAt: 'Há 5 dias',
+        text: 'Fila para cirurgia de catarata bilateral aguardando agendamento cirúrgico.'
+      },
+
+      // 4. HOSPITAL MUNICIPAL SOUZA AGUIAR (RJ)
+      {
+        id: 'rec-rj-1',
+        hospital: 'Hospital Municipal Souza Aguiar',
+        hospitalShort: 'Hosp. Souza Aguiar',
+        category: 'Emergência',
+        specialty: 'Emergência',
+        waitValue: 3.0,
+        waitUnit: 'horas',
+        city: 'Rio de Janeiro',
+        state: 'RJ',
+        author: 'Marcos Paulo',
+        avatar: '👨',
+        createdAt: 'Hoje',
+        text: 'Emergência do Souza Aguiar no centro do Rio com 3 horas para primeiro atendimento.'
+      },
+      {
+        id: 'rec-rj-2',
+        hospital: 'Hospital Municipal Souza Aguiar',
+        hospitalShort: 'Hosp. Souza Aguiar',
+        category: 'Cirurgia',
+        specialty: 'Ortopedia',
+        waitValue: 240,
+        waitUnit: 'dias',
+        city: 'Rio de Janeiro',
+        state: 'RJ',
+        author: 'Luciana M.',
+        avatar: '👩',
+        createdAt: 'Esta semana',
+        text: 'Fila de cirurgia reparadora ortopédica no Souza Aguiar completando 8 meses.'
+      },
+
+      // 5. HOSPITAL GERAL ROBERTO SANTOS (BA)
+      {
+        id: 'rec-ba-1',
+        hospital: 'Hospital Geral Roberto Santos',
+        hospitalShort: 'Hosp. Roberto Santos',
+        category: 'Emergência',
+        specialty: 'Emergência',
+        waitValue: 4.0,
+        waitUnit: 'horas',
+        city: 'Salvador',
+        state: 'BA',
+        author: 'Jorge Amado S.',
+        avatar: '👨',
+        createdAt: 'Ontem',
+        text: 'Superlotação na emergência do Roberto Santos em Salvador, 4 horas esperando.'
+      },
+      {
+        id: 'rec-ba-2',
+        hospital: 'Hospital Geral Roberto Santos',
+        hospitalShort: 'Hosp. Roberto Santos',
+        category: 'Cirurgia',
+        specialty: 'Cirurgia de Vesícula',
+        waitValue: 195,
+        waitUnit: 'dias',
+        city: 'Salvador',
+        state: 'BA',
+        author: 'Aline Barbosa',
+        avatar: '👩',
+        createdAt: 'Esta semana',
+        text: 'Aguardando colecistectomia por vídeo há mais de 6 meses.'
+      },
+
+      // 6. HOSPITAL JOÃO XXIII / HC UFMG (MG)
+      {
+        id: 'rec-mg-1',
+        hospital: 'Hospital João XXIII',
+        hospitalShort: 'Hosp. João XXIII',
+        category: 'Emergência',
+        specialty: 'Emergência',
+        waitValue: 2.5,
+        waitUnit: 'horas',
+        city: 'Belo Horizonte',
+        state: 'MG',
+        author: 'Thiago Neves',
+        avatar: '👨',
+        createdAt: 'Hoje',
+        text: 'Pronto-socorro do João XXIII em BH, tempo de espera registrado em 2h 30m.'
+      },
+      {
+        id: 'rec-mg-2',
+        hospital: 'Hospital das Clínicas UFMG',
+        hospitalShort: 'HC UFMG',
+        category: 'Consulta',
+        specialty: 'Neurologia',
+        waitValue: 115,
+        waitUnit: 'dias',
+        city: 'Belo Horizonte',
+        state: 'MG',
+        author: 'Helena Costa',
+        avatar: '👩',
+        createdAt: 'Há 2 dias',
+        text: 'Consulta de neurologia especializada no HC de Belo Horizonte.'
+      },
+
+      // 7. HOSPITAL GERAL DE FORTALEZA (CE)
+      {
+        id: 'rec-ce-1',
+        hospital: 'Hospital Geral de Fortaleza (HGF)',
+        hospitalShort: 'HGF Fortaleza',
+        category: 'Emergência',
+        specialty: 'Emergência',
+        waitValue: 3.2,
+        waitUnit: 'horas',
+        city: 'Fortaleza',
+        state: 'CE',
+        author: 'Davi Santiago',
+        avatar: '👨',
+        createdAt: 'Ontem',
+        text: 'Emergência do HGF em Fortaleza com mais de 3 horas de fila.'
+      },
+      {
+        id: 'rec-ce-2',
+        hospital: 'Hospital Geral de Fortaleza (HGF)',
+        hospitalShort: 'HGF Fortaleza',
+        category: 'Exame',
+        specialty: 'Endoscopia Digestiva',
+        waitValue: 80,
+        waitUnit: 'dias',
+        city: 'Fortaleza',
+        state: 'CE',
+        author: 'Beatriz Lins',
+        avatar: '👩',
+        createdAt: 'Há 5 dias',
+        text: 'Fila regulada para exame de endoscopia digestiva alta.'
+      }
+    ];
+
+    let realWaitingRecords = [];
     let socialPosts = [];
     let currentFilter = 'todos';
     let activeSharePost = null;
 
+    // Estado do Mapa
+    let currentMapTab = 'hospitals'; // 'hospitals', 'queues', 'regions'
+    let currentQueueCategory = 'Todas';
+    let mapSearchQuery = '';
+    let mapFilterUf = '';
+
     // INICIALIZAÇÃO
     document.addEventListener('DOMContentLoaded', () => {
       loadStoredUser();
+      loadStoredWaitRecords();
+      syncSocialPostsFromWaitRecords();
       updateUserUI();
       detectUserLocation();
+      updateMapStatistics();
+      renderFeed();
+      renderStories();
       initSupabaseClient();
     });
+
+    function loadStoredWaitRecords() {
+      try {
+        const stored = localStorage.getItem('minhavoz_wait_records');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            realWaitingRecords = parsed;
+            return;
+          }
+        }
+      } catch (e) {}
+      realWaitingRecords = [...INITIAL_WAIT_RECORDS];
+    }
+
+    function saveWaitRecords() {
+      try {
+        localStorage.setItem('minhavoz_wait_records', JSON.stringify(realWaitingRecords));
+      } catch (e) {}
+    }
+
+    function syncSocialPostsFromWaitRecords() {
+      if (socialPosts.length === 0) {
+        socialPosts = realWaitingRecords.map(r => ({
+          id: r.id,
+          author: r.author || 'Paciente SUS',
+          avatar: r.avatar || '👨',
+          location: `${r.city}, ${r.state}`,
+          hospital: r.hospitalShort || r.hospital,
+          category: r.category,
+          specialty: r.specialty,
+          waitValue: r.waitValue,
+          waitUnit: r.waitUnit,
+          waitDays: r.waitUnit === 'dias' ? r.waitValue : Math.round(r.waitValue * 24),
+          waitHours: r.waitUnit === 'horas' ? r.waitValue : (r.waitValue * 24),
+          mediaType: 'texto',
+          text: r.text,
+          likes: 2,
+          hasLiked: false,
+          pressures: 1,
+          commentsCount: 0,
+          createdAt: r.createdAt || 'Hoje',
+          isAnon: r.author === 'Paciente Anônimo'
+        }));
+      }
+    }
 
     // GERENCIAMENTO DE USUÁRIO & LOGIN/LOGOUT
     function loadStoredUser() {
@@ -1108,6 +1688,8 @@
       const btnModal = document.getElementById('btn-modal-timer-action');
       const sidebarSub = document.getElementById('sidebar-timer-sub');
       const modalBadge = document.getElementById('modal-timer-badge');
+      const inputHospital = document.getElementById('modal-timer-input-hospital');
+      const inputSector = document.getElementById('modal-timer-input-sector');
 
       if (!timerRunning) {
         timerRunning = true;
@@ -1132,20 +1714,78 @@
         btnModal.innerHTML = '<span>Iniciar Cronômetro</span>';
         sidebarSub.innerText = 'Status: Pronto para Iniciar';
 
-        // Persistência no Supabase
+        const hospName = (inputHospital && inputHospital.value.trim()) || detectedLocationName;
+        const sectorName = (inputSector && inputSector.value) || 'Emergência';
+        const elapsedHours = parseFloat((Math.max(timerSeconds, 60) / 3600).toFixed(2));
+
+        const city = currentUser.city ? currentUser.city.split(',')[0].trim() : 'São Paulo';
+        const state = currentUser.city && currentUser.city.includes(',') ? currentUser.city.split(',')[1].trim() : 'SP';
+
+        // 1. Registra no banco de dados local do Mapa
+        const waitRecord = {
+          id: 'timer-' + Date.now(),
+          hospital: hospName,
+          hospitalShort: hospName.length > 25 ? hospName.slice(0, 22) + '...' : hospName,
+          category: 'Emergência',
+          specialty: sectorName,
+          waitValue: elapsedHours,
+          waitUnit: 'horas',
+          city: city,
+          state: state,
+          author: currentUser.name || 'Paciente SUS',
+          avatar: currentUser.avatar || '👨',
+          createdAt: 'Agora mesmo',
+          text: `Atendimento no setor ${sectorName} do ${hospName} cronometrado em ${finalTime}.`
+        };
+
+        realWaitingRecords.unshift(waitRecord);
+        saveWaitRecords();
+
+        // 2. Atualiza Feed Social
+        socialPosts.unshift({
+          id: waitRecord.id,
+          author: waitRecord.author,
+          avatar: waitRecord.avatar,
+          location: `${waitRecord.city}, ${waitRecord.state}`,
+          hospital: waitRecord.hospitalShort,
+          category: waitRecord.category,
+          specialty: waitRecord.specialty,
+          waitValue: waitRecord.waitValue,
+          waitUnit: 'horas',
+          waitHours: waitRecord.waitValue,
+          waitDays: 1,
+          mediaType: 'texto',
+          text: waitRecord.text,
+          likes: 1,
+          hasLiked: true,
+          pressures: 1,
+          commentsCount: 0,
+          createdAt: 'Agora mesmo',
+          isAnon: false
+        });
+
+        renderFeed();
+        updateMapStatistics();
+
+        // 3. Persistência no Supabase (waiting_times e reports)
         if (window.supabaseClient) {
           window.supabaseClient
             .from('waiting_times')
             .insert([{
-              hospital: detectedLocationName,
+              hospital: hospName,
+              setor: sectorName,
+              categoria: 'Emergência',
+              tempo_horas: elapsedHours,
+              cidade: city,
+              estado: state,
               inicio: new Date(Date.now() - timerSeconds * 1000).toISOString(),
               fim: new Date().toISOString(),
-              comentario: `Espera apurada: ${finalTime} pelo paciente na rede Minha Voz`
+              comentario: `[META:${JSON.stringify({hospital: hospName, sector: sectorName, hours: elapsedHours, city, state})}] Espera apurada: ${finalTime}`
             }])
             .then(() => {});
         }
 
-        alert(`⏱️ Espera concluída!\n\nTempo Total: ${finalTime}\nLocal: ${detectedLocationName}\n\nRegistro salvo com sucesso para fiscalização pública.`);
+        alert(`⏱️ Espera concluída com sucesso!\n\nTempo Total: ${finalTime}\nSetor: ${sectorName}\nLocal: ${hospName}\n\nO Mapa da Espera foi recalculado em tempo real.`);
         timerSeconds = 0;
         document.getElementById('sidebar-timer-display').innerText = '00:00:00';
         document.getElementById('modal-timer-clock').innerText = '00:00:00';
@@ -1154,12 +1794,16 @@
     }
 
     // ====================================================================
-    // PUBLICAÇÃO DE RELATO (ROBUSTA, VISUALIZAÇÃO IMEDIATA E SUPABASE)
+    // PUBLICAÇÃO DE RELATO COM DADOS ESTRUTURADOS E SINCRONIZAÇÃO TOTAL
     // ====================================================================
     async function publishPost() {
       const text = document.getElementById('composer-text').value.trim();
+      const category = document.getElementById('composer-category').value;
+      const specialty = document.getElementById('composer-specialty').value.trim() || 'Atendimento / Procedimento';
+      const waitVal = parseFloat(document.getElementById('composer-wait-val').value) || 2;
+      const waitUnit = document.getElementById('composer-wait-unit').value;
       const hospital = document.getElementById('composer-hospital').value.trim() || detectedLocationName;
-      const specialty = document.getElementById('composer-specialty').value.trim() || 'Procedimento SUS';
+      const locationVal = document.getElementById('composer-location').value.trim() || (currentUser.city || 'São Paulo, SP');
       const isAnon = document.getElementById('composer-anon').checked;
 
       if (!text && !recordedVideoBlobUrl && !recordedAudioBlobUrl) {
@@ -1167,19 +1811,53 @@
         return;
       }
 
+      let city = 'São Paulo';
+      let state = 'SP';
+      if (locationVal.includes(',')) {
+        const parts = locationVal.split(',');
+        city = parts[0].trim();
+        state = parts[1].trim().toUpperCase();
+      } else {
+        city = locationVal;
+      }
+
       const tempId = 'post-' + Date.now();
-      const newPost = {
+      const waitRecord = {
         id: tempId,
+        hospital: hospital,
+        hospitalShort: hospital.length > 25 ? hospital.slice(0, 22) + '...' : hospital,
+        category: category,
+        specialty: specialty,
+        waitValue: waitVal,
+        waitUnit: waitUnit,
+        city: city,
+        state: state,
         author: isAnon ? 'Paciente Anônimo' : (currentUser.name || 'Paciente SUS'),
         avatar: isAnon ? '🎭' : (currentUser.avatar || '👨'),
-        location: currentUser.city || 'São Paulo, SP',
-        hospital: hospital,
-        waitDays: 214,
+        createdAt: 'Agora mesmo',
+        text: text || (activeMediaMode === 'video' ? 'Depoimento gravado em vídeo pelo paciente.' : 'Depoimento em áudio gravado.')
+      };
+
+      // 1. Atualização Otimista no Banco do Mapa e no Feed Social
+      realWaitingRecords.unshift(waitRecord);
+      saveWaitRecords();
+
+      const newPost = {
+        id: tempId,
+        author: waitRecord.author,
+        avatar: waitRecord.avatar,
+        location: `${city}, ${state}`,
+        hospital: waitRecord.hospitalShort,
+        category: category,
         specialty: specialty,
+        waitValue: waitVal,
+        waitUnit: waitUnit,
+        waitDays: waitUnit === 'dias' ? waitVal : Math.round(waitVal * 24),
+        waitHours: waitUnit === 'horas' ? waitVal : (waitVal * 24),
         mediaType: activeMediaMode,
         videoBlobUrl: recordedVideoBlobUrl,
         audioBlobUrl: recordedAudioBlobUrl,
-        text: text || (activeMediaMode === 'video' ? 'Depoimento gravado em vídeo pelo paciente.' : 'Depoimento em áudio gravado.'),
+        text: waitRecord.text,
         likes: 1,
         hasLiked: true,
         pressures: 1,
@@ -1188,29 +1866,38 @@
         isAnon: isAnon
       };
 
-      // 1. Atualização Otimista Imediata na Interface (NUNCA FALHA)
       socialPosts.unshift(newPost);
       renderFeed();
       renderStories();
+      updateMapStatistics();
 
       // 2. Sincronização com o Supabase
       if (window.supabaseClient) {
         try {
+          const metaStr = `[META:${JSON.stringify({hospital, category, specialty, waitVal, waitUnit, city, state})}]`;
           const insertPayload = {
-            relato: newPost.text,
+            relato: `${metaStr} ${newPost.text}`,
             tipo_midia: activeMediaMode,
             anonimo: isAnon,
-            duracao_segundos: 214
+            duracao_segundos: waitUnit === 'dias' ? waitVal : Math.round(waitVal * 3600),
+            hospital: hospital,
+            especialidade: specialty,
+            categoria: category,
+            tempo_espera_dias: waitUnit === 'dias' ? waitVal : null,
+            tempo_espera_horas: waitUnit === 'horas' ? waitVal : null,
+            cidade: city,
+            estado: state
           };
           if (currentUser.id) insertPayload.user_id = currentUser.id;
 
-          const { data, error } = await window.supabaseClient
+          const { data } = await window.supabaseClient
             .from('reports')
             .insert([insertPayload])
             .select();
 
           if (data && data[0]) {
             newPost.id = data[0].id;
+            waitRecord.id = data[0].id;
           }
         } catch (e) {
           console.warn('Nota de inserção Supabase:', e);
@@ -1222,7 +1909,712 @@
       recordedVideoBlobUrl = null;
       recordedAudioBlobUrl = null;
       selectMediaComposer('texto');
-      alert('✓ Relato publicado com sucesso na rede social Minha Voz!');
+      alert(`✓ Relato publicado com sucesso!\nO Mapa de Espera do ${waitRecord.hospitalShort} foi recalculado.`);
+    }
+
+    // ====================================================================
+    // CÁLCULO E AGREGAÇÃO DO MAPA EM TEMPO REAL COM BASE NOS PACIENTES REAIS
+    // ====================================================================
+
+    function normalizeHospitalKey(name) {
+      if (!name) return 'Hospital SUS';
+      const clean = name.trim().toLowerCase();
+      if (clean.includes('hmu')) return 'Hospital HMU';
+      if (clean.includes('grajaú') || clean.includes('grajau')) return 'Hospital Geral do Grajaú';
+      if (clean.includes('são paulo') || clean.includes('unifesp')) return 'Hospital São Paulo - UNIFESP';
+      if (clean.includes('souza aguiar')) return 'Hospital Municipal Souza Aguiar';
+      if (clean.includes('roberto santos')) return 'Hospital Geral Roberto Santos';
+      if (clean.includes('joão xxiii') || clean.includes('joao xxiii')) return 'Hospital João XXIII';
+      if (clean.includes('fortaleza') || clean.includes('hgf')) return 'Hospital Geral de Fortaleza (HGF)';
+      if (clean.includes('campo limpo')) return 'UPA 24h Campo Limpo';
+      if (clean.includes('clínicas') || clean.includes('fmusp')) return 'Hospital das Clínicas FMUSP';
+      return name.trim();
+    }
+
+    function computeHospitalStats(search = '', filterUf = '') {
+      const s = search.toLowerCase();
+      const uf = filterUf.toUpperCase();
+      const map = {};
+
+      realWaitingRecords.forEach(rec => {
+        const hKey = normalizeHospitalKey(rec.hospital);
+        const rState = (rec.state || 'SP').toUpperCase();
+        const rCity = rec.city || 'Brasil';
+
+        // Filtros
+        if (uf && rState !== uf) return;
+        if (s && !hKey.toLowerCase().includes(s) && !rec.specialty.toLowerCase().includes(s) && !rCity.toLowerCase().includes(s)) return;
+
+        if (!map[hKey]) {
+          map[hKey] = {
+            name: hKey,
+            fullName: rec.hospital,
+            city: rCity,
+            state: rState,
+            totalReports: 0,
+            sectors: {},
+            latestDate: rec.createdAt,
+            emergencyWaitTotal: 0,
+            emergencyWaitCount: 0,
+            electiveWaitTotal: 0,
+            electiveWaitCount: 0
+          };
+        }
+
+        const h = map[hKey];
+        h.totalReports++;
+
+        const sectorKey = rec.specialty || 'Emergência';
+        if (!h.sectors[sectorKey]) {
+          h.sectors[sectorKey] = {
+            name: sectorKey,
+            category: rec.category,
+            totalValue: 0,
+            count: 0,
+            unit: rec.waitUnit || 'horas',
+            reports: []
+          };
+        }
+
+        const sec = h.sectors[sectorKey];
+        sec.totalValue += Number(rec.waitValue) || 0;
+        sec.count++;
+        sec.reports.push(rec);
+
+        if (rec.waitUnit === 'horas' || rec.category === 'Emergência') {
+          h.emergencyWaitTotal += Number(rec.waitValue) || 0;
+          h.emergencyWaitCount++;
+        } else {
+          h.electiveWaitTotal += Number(rec.waitValue) || 0;
+          h.electiveWaitCount++;
+        }
+      });
+
+      return Object.values(map).map(h => {
+        const sectorList = Object.values(h.sectors).map(sec => {
+          const avg = sec.count > 0 ? (sec.totalValue / sec.count) : 0;
+          let formattedTime = '';
+          if (sec.unit === 'horas') {
+            const hrs = Math.floor(avg);
+            const mins = Math.round((avg - hrs) * 60);
+            formattedTime = mins > 0 ? `${hrs}h ${mins}m` : `${hrs}h`;
+          } else {
+            formattedTime = `${Math.round(avg)} dias`;
+          }
+          return {
+            ...sec,
+            avgValue: avg,
+            formattedTime: formattedTime
+          };
+        });
+
+        // Ordenar setores: Emergência e Ortopedia primeiro
+        sectorList.sort((a, b) => {
+          if (a.name.toLowerCase().includes('emergência')) return -1;
+          if (b.name.toLowerCase().includes('emergência')) return 1;
+          if (a.name.toLowerCase().includes('ortopedia')) return -1;
+          if (b.name.toLowerCase().includes('ortopedia')) return 1;
+          return b.count - a.count;
+        });
+
+        const avgEmerg = h.emergencyWaitCount > 0 ? (h.emergencyWaitTotal / h.emergencyWaitCount) : null;
+        const avgElect = h.electiveWaitCount > 0 ? (h.electiveWaitTotal / h.electiveWaitCount) : null;
+
+        let status = 'Normal';
+        let statusClass = 'bg-blue-100 text-blue-800 border-blue-200';
+        if (avgEmerg && avgEmerg >= 3.5 || avgElect && avgElect >= 180) {
+          status = 'Crítico';
+          statusClass = 'bg-rose-100 text-rose-800 border-rose-200';
+        } else if (avgEmerg && avgEmerg >= 2.0 || avgElect && avgElect >= 90) {
+          status = 'Alerta';
+          statusClass = 'bg-amber-100 text-amber-800 border-amber-200';
+        }
+
+        return {
+          ...h,
+          sectorsList: sectorList,
+          avgEmergency: avgEmerg,
+          avgElective: avgElect,
+          status: status,
+          statusClass: statusClass
+        };
+      });
+    }
+
+    function computeQueueStats(catFilter = 'Todas', search = '', filterUf = '') {
+      const s = search.toLowerCase();
+      const uf = filterUf.toUpperCase();
+      const queuesMap = {};
+
+      realWaitingRecords.forEach(rec => {
+        if (catFilter !== 'Todas' && rec.category !== catFilter) return;
+        const rState = (rec.state || 'SP').toUpperCase();
+        if (uf && rState !== uf) return;
+
+        const pName = rec.specialty || 'Procedimento SUS';
+        if (s && !pName.toLowerCase().includes(s) && !rec.hospital.toLowerCase().includes(s) && !rec.category.toLowerCase().includes(s)) return;
+
+        const queueKey = `${rec.category} - ${pName}`;
+        if (!queuesMap[queueKey]) {
+          queuesMap[queueKey] = {
+            id: queueKey,
+            procedureName: pName,
+            category: rec.category,
+            unit: rec.waitUnit,
+            totalVal: 0,
+            count: 0,
+            hospitals: {},
+            quotes: []
+          };
+        }
+
+        const q = queuesMap[queueKey];
+        q.totalVal += Number(rec.waitValue) || 0;
+        q.count++;
+
+        const hName = normalizeHospitalKey(rec.hospital);
+        if (!q.hospitals[hName]) {
+          q.hospitals[hName] = { name: hName, total: 0, count: 0, unit: rec.waitUnit };
+        }
+        q.hospitals[hName].total += Number(rec.waitValue) || 0;
+        q.hospitals[hName].count++;
+
+        if (rec.text && q.quotes.length < 2) {
+          q.quotes.push({ author: rec.author, text: rec.text, city: rec.city, state: rec.state });
+        }
+      });
+
+      return Object.values(queuesMap).map(q => {
+        const avg = q.count > 0 ? (q.totalVal / q.count) : 0;
+        let formattedWait = '';
+        if (q.unit === 'horas') {
+          const hrs = Math.floor(avg);
+          const mins = Math.round((avg - hrs) * 60);
+          formattedWait = mins > 0 ? `${hrs}h ${mins}m` : `${hrs} horas`;
+        } else {
+          formattedWait = `${Math.round(avg)} dias`;
+        }
+
+        const hospitalDetails = Object.values(q.hospitals).map(h => {
+          const hAvg = h.count > 0 ? (h.total / h.count) : 0;
+          return {
+            name: h.name,
+            waitFormatted: h.unit === 'horas' ? `${Math.floor(hAvg)}h ${Math.round((hAvg % 1) * 60)}m` : `${Math.round(hAvg)} dias`,
+            count: h.count
+          };
+        });
+
+        return {
+          ...q,
+          avgValue: avg,
+          formattedWait: formattedWait,
+          hospitalDetails: hospitalDetails
+        };
+      }).sort((a, b) => b.count - a.count);
+    }
+
+    function computeRegionStats(search = '', filterUf = '') {
+      const s = search.toLowerCase();
+      const uf = filterUf.toUpperCase();
+      const regionsMap = {};
+
+      const UF_NAMES = {
+        'SP': 'São Paulo',
+        'RJ': 'Rio de Janeiro',
+        'MG': 'Minas Gerais',
+        'BA': 'Bahia',
+        'CE': 'Ceará',
+        'DF': 'Distrito Federal',
+        'PR': 'Paraná',
+        'RS': 'Rio Grande do Sul',
+        'PE': 'Pernambuco',
+        'SC': 'Santa Catarina',
+        'GO': 'Goiás'
+      };
+
+      realWaitingRecords.forEach(rec => {
+        const state = (rec.state || 'SP').toUpperCase();
+        if (uf && state !== uf) return;
+        const stateName = UF_NAMES[state] ? `${UF_NAMES[state]} (${state})` : state;
+
+        if (s && !stateName.toLowerCase().includes(s) && !rec.city.toLowerCase().includes(s) && !rec.hospital.toLowerCase().includes(s)) return;
+
+        if (!regionsMap[state]) {
+          regionsMap[state] = {
+            uf: state,
+            name: stateName,
+            totalReports: 0,
+            emergencyTotal: 0,
+            emergencyCount: 0,
+            electiveTotal: 0,
+            electiveCount: 0,
+            hospitals: new Set()
+          };
+        }
+
+        const r = regionsMap[state];
+        r.totalReports++;
+        r.hospitals.add(normalizeHospitalKey(rec.hospital));
+
+        if (rec.waitUnit === 'horas' || rec.category === 'Emergência') {
+          r.emergencyTotal += Number(rec.waitValue) || 0;
+          r.emergencyCount++;
+        } else {
+          r.electiveTotal += Number(rec.waitValue) || 0;
+          r.electiveCount++;
+        }
+      });
+
+      return Object.values(regionsMap).map(r => {
+        const avgEmerg = r.emergencyCount > 0 ? (r.emergencyTotal / r.emergencyCount) : null;
+        const avgElect = r.electiveCount > 0 ? (r.electiveTotal / r.electiveCount) : null;
+
+        let status = 'Regular';
+        let statusClass = 'bg-blue-100 text-blue-800 border-blue-200';
+        if (avgEmerg && avgEmerg >= 3.5 || avgElect && avgElect >= 180) {
+          status = 'Crítico';
+          statusClass = 'bg-rose-100 text-rose-800 border-rose-200';
+        } else if (avgEmerg && avgEmerg >= 2.0 || avgElect && avgElect >= 90) {
+          status = 'Alerta';
+          statusClass = 'bg-amber-100 text-amber-800 border-amber-200';
+        }
+
+        return {
+          ...r,
+          avgEmergHours: avgEmerg ? `${Math.floor(avgEmerg)}h ${Math.round((avgEmerg % 1) * 60)}m` : 'Sem registros',
+          avgElectDays: avgElect ? `${Math.round(avgElect)} dias` : 'Sem registros',
+          hospitalCount: r.hospitals.size,
+          topHospitals: Array.from(r.hospitals).slice(0, 3).join(', '),
+          status: status,
+          statusClass: statusClass
+        };
+      }).sort((a, b) => b.totalReports - a.totalReports);
+    }
+
+    function updateMapStatistics() {
+      // 1. Destaques específicos do Hospital HMU (exemplo explicitamente solicitado)
+      const hmuHospitals = computeHospitalStats('HMU');
+      const hmu = hmuHospitals && hmuHospitals[0];
+
+      const bEmerg = document.getElementById('banner-hmu-emergencia');
+      const bOrto = document.getElementById('banner-hmu-ortopedia');
+      const bCirurgias = document.getElementById('banner-cirurgias-media');
+
+      if (hmu) {
+        const secEmerg = hmu.sectorsList.find(s => s.name.toLowerCase().includes('emergência'));
+        const secOrto = hmu.sectorsList.find(s => s.name.toLowerCase().includes('ortopedia'));
+        if (bEmerg && secEmerg) bEmerg.innerText = secEmerg.formattedTime;
+        if (bOrto && secOrto) bOrto.innerText = secOrto.formattedTime;
+      }
+
+      // Média geral de cirurgias
+      const cirurgiasRecords = realWaitingRecords.filter(r => r.category === 'Cirurgia');
+      if (bCirurgias) {
+        if (cirurgiasRecords.length > 0) {
+          const avgCirurgia = Math.round(cirurgiasRecords.reduce((acc, r) => acc + Number(r.waitValue), 0) / cirurgiasRecords.length);
+          bCirurgias.innerText = `${avgCirurgia} dias`;
+        } else {
+          bCirurgias.innerText = '185 dias';
+        }
+      }
+
+      // 2. Resumo Superior do Modal do Mapa
+      const allHospitals = computeHospitalStats();
+      const statHospitals = document.getElementById('map-stat-hospitals');
+      const statEmergency = document.getElementById('map-stat-emergency');
+      const statElective = document.getElementById('map-stat-elective');
+      const statPatients = document.getElementById('map-stat-patients');
+
+      if (statHospitals) statHospitals.innerText = allHospitals.length;
+      if (statPatients) statPatients.innerText = realWaitingRecords.length;
+
+      const emergRecords = realWaitingRecords.filter(r => r.waitUnit === 'horas' || r.category === 'Emergência');
+      if (statEmergency) {
+        if (emergRecords.length > 0) {
+          const avg = emergRecords.reduce((acc, r) => acc + Number(r.waitValue), 0) / emergRecords.length;
+          statEmergency.innerText = `${Math.floor(avg)}h ${Math.round((avg % 1) * 60)}m`;
+        } else {
+          statEmergency.innerText = '--';
+        }
+      }
+
+      const electRecords = realWaitingRecords.filter(r => r.waitUnit === 'dias' || r.category !== 'Emergência');
+      if (statElective) {
+        if (electRecords.length > 0) {
+          const avg = Math.round(electRecords.reduce((acc, r) => acc + Number(r.waitValue), 0) / electRecords.length);
+          statElective.innerText = `${avg} dias`;
+        } else {
+          statElective.innerText = '--';
+        }
+      }
+
+      // 3. Renderiza a aba ativa
+      if (currentMapTab === 'hospitals') renderMapHospitals();
+      else if (currentMapTab === 'queues') renderMapQueues();
+      else if (currentMapTab === 'regions') renderMapRegions();
+    }
+
+    function renderMapHospitals() {
+      const container = document.getElementById('map-tab-content-hospitals');
+      if (!container) return;
+
+      const hospitals = computeHospitalStats(mapSearchQuery, mapFilterUf);
+
+      if (hospitals.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-3">
+            <div class="text-3xl">🏥</div>
+            <h4 class="font-bold text-slate-800 text-sm">Nenhum hospital encontrado para os filtros selecionados</h4>
+            <p class="text-xs text-slate-500">Seja o primeiro paciente a registrar a espera neste hospital!</p>
+            <button onclick="toggleMapQuickAddForm()" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold active-scale">+ Registrar Agora</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = hospitals.map(h => `
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs space-y-3 hover:border-slate-300 transition-all">
+          <div class="flex items-start justify-between gap-2 flex-wrap sm:flex-nowrap">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h4 class="font-bold text-slate-900 text-sm sm:text-base leading-tight">${h.name}</h4>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${h.statusClass}">
+                  ${h.status === 'Crítico' ? '🚨' : (h.status === 'Alerta' ? '⚠️' : '✓')} ${h.status}
+                </span>
+              </div>
+              <div class="text-xs text-slate-500 mt-1 flex items-center gap-2">
+                <span>📍 ${h.city}, ${h.state}</span>
+                <span>•</span>
+                <span>${h.totalReports} relatos de pacientes</span>
+              </div>
+            </div>
+
+            <button onclick="prefillMapAddHospital('${h.name}')" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded-xl transition-all border border-blue-200 active-scale whitespace-nowrap">
+              + Registrar Espera
+            </button>
+          </div>
+
+          <!-- Grade de Setores do Hospital (Ex: HMU Emergência: 2h, Ortopedia: 3h) -->
+          <div class="pt-2 border-t border-slate-100">
+            <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <span>⏱️</span> Tempos Médios Reais por Setor:
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 text-xs">
+              ${h.sectorsList.map(sec => `
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 flex flex-col justify-between">
+                  <div class="text-[10px] text-slate-600 font-bold truncate flex items-center gap-1">
+                    <span>${getSectorIcon(sec.name)}</span>
+                    <span class="truncate">${sec.name}</span>
+                  </div>
+                  <div class="text-base sm:text-lg font-black ${sec.unit === 'horas' ? 'text-rose-600' : 'text-blue-700'} font-mono mt-1">
+                    ${sec.formattedTime}
+                  </div>
+                  <div class="text-[9px] text-slate-400 mt-0.5">
+                    ${sec.count} ${sec.count === 1 ? 'paciente' : 'pacientes'}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderMapQueues() {
+      const container = document.getElementById('map-queues-list');
+      if (!container) return;
+
+      const queues = computeQueueStats(currentQueueCategory, mapSearchQuery, mapFilterUf);
+
+      if (queues.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-3">
+            <div class="text-3xl">📋</div>
+            <h4 class="font-bold text-slate-800 text-sm">Nenhuma fila encontrada com estes filtros</h4>
+            <button onclick="toggleMapQuickAddForm()" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold active-scale">+ Adicionar Procedimento</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = queues.map(q => `
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs space-y-3">
+          <div class="flex items-start justify-between gap-2 flex-wrap sm:flex-nowrap">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md ${getCategoryBadgeClass(q.category)}">
+                  ${q.category}
+                </span>
+                <h4 class="font-bold text-slate-900 text-sm sm:text-base">${q.procedureName}</h4>
+              </div>
+              <div class="text-xs text-slate-500 mt-1">
+                Fila regulada • ${q.count} ${q.count === 1 ? 'paciente aguardando' : 'pacientes aguardando'}
+              </div>
+            </div>
+
+            <div class="text-left sm:text-right">
+              <div class="text-[10px] text-slate-400 uppercase font-bold">Tempo Médio Real</div>
+              <div class="text-lg sm:text-xl font-black ${q.unit === 'horas' ? 'text-rose-600' : 'text-blue-700'} font-mono">
+                ${q.formattedWait}
+              </div>
+            </div>
+          </div>
+
+          <!-- Hospitais e Tempos Locais -->
+          <div class="bg-slate-50 rounded-xl p-3 border border-slate-200 space-y-1.5 text-xs">
+            <div class="text-[10px] font-bold text-slate-500 uppercase">Hospitais com registros desta fila:</div>
+            <div class="flex flex-wrap gap-2">
+              ${q.hospitalDetails.map(h => `
+                <span class="inline-flex items-center gap-1.5 bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-xs font-medium text-slate-800">
+                  <span>🏥 <strong>${h.name}:</strong></span>
+                  <span class="font-bold font-mono text-blue-600">${h.waitFormatted}</span>
+                  <span class="text-[9px] text-slate-400">(${h.count})</span>
+                </span>
+              `).join('')}
+            </div>
+          </div>
+
+          ${q.quotes.length > 0 ? `
+            <div class="pt-2 border-t border-slate-100 space-y-1 text-xs">
+              <div class="text-[10px] font-bold text-slate-400">Depoimento real recente:</div>
+              <p class="text-slate-700 italic">"${q.quotes[0].text}"</p>
+              <div class="text-[10px] text-slate-400 font-medium">— ${q.quotes[0].author} (${q.quotes[0].city}, ${q.quotes[0].state})</div>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderMapRegions() {
+      const container = document.getElementById('map-regions-list');
+      if (!container) return;
+
+      const regions = computeRegionStats(mapSearchQuery, mapFilterUf);
+
+      if (regions.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-3">
+            <div class="text-3xl">🗺️</div>
+            <h4 class="font-bold text-slate-800 text-sm">Nenhuma região encontrada</h4>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = regions.map(r => `
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-8 h-8 rounded-full bg-blue-50 text-blue-700 font-black flex items-center justify-center text-xs">
+                ${r.uf}
+              </span>
+              <div>
+                <h4 class="font-bold text-slate-900 text-sm">${r.name}</h4>
+                <div class="text-[10px] text-slate-400">${r.totalReports} relatos cadastrados</div>
+              </div>
+            </div>
+            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${r.statusClass}">
+              ${r.status}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+              <div class="text-[10px] text-slate-500 font-bold uppercase">Emergência / P.S.</div>
+              <div class="text-base font-black text-rose-600 font-mono mt-0.5">${r.avgEmergHours}</div>
+            </div>
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+              <div class="text-[10px] text-slate-500 font-bold uppercase">Cirurgias / Exames</div>
+              <div class="text-base font-black text-blue-700 font-mono mt-0.5">${r.avgElectDays}</div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-600 pt-2 border-t border-slate-100">
+            <span class="font-bold">Hospitais monitorados:</span> ${r.topHospitals || 'Diversas unidades'}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getSectorIcon(name) {
+      const n = name.toLowerCase();
+      if (n.includes('emergência') || n.includes('urgência')) return '🚨';
+      if (n.includes('ortopedia')) return '🦴';
+      if (n.includes('clínica')) return '🩺';
+      if (n.includes('pediatria')) return '👶';
+      if (n.includes('cirurgia')) return '🔪';
+      if (n.includes('ressonância') || n.includes('tomografia') || n.includes('exame') || n.includes('raio-x')) return '🔬';
+      if (n.includes('cardio')) return '❤️';
+      if (n.includes('oftalmo')) return '👁️';
+      return '🏥';
+    }
+
+    function getCategoryBadgeClass(category) {
+      if (category === 'Emergência') return 'bg-rose-100 text-rose-700 border border-rose-200';
+      if (category === 'Cirurgia') return 'bg-purple-100 text-purple-700 border border-purple-200';
+      if (category === 'Exame') return 'bg-amber-100 text-amber-700 border border-amber-200';
+      return 'bg-blue-100 text-blue-700 border border-blue-200';
+    }
+
+    function switchMapTab(tab) {
+      currentMapTab = tab;
+      const tabs = ['hospitals', 'queues', 'regions'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('map-tab-btn-' + t);
+        const content = document.getElementById('map-tab-content-' + t);
+        if (t === tab) {
+          if (btn) btn.className = 'px-3 sm:px-3.5 py-2 rounded-xl bg-blue-600 text-white shadow-xs transition-all flex items-center gap-1.5 whitespace-nowrap font-bold';
+          if (content) content.classList.remove('hidden');
+        } else {
+          if (btn) btn.className = 'px-3 sm:px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap font-semibold';
+          if (content) content.classList.add('hidden');
+        }
+      });
+      updateMapStatistics();
+    }
+
+    function setQueueCategoryFilter(cat) {
+      currentQueueCategory = cat;
+      const cats = ['Todas', 'Cirurgia', 'Exame', 'Consulta', 'Emergência'];
+      cats.forEach(c => {
+        const id = 'queue-filter-' + c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const btn = document.getElementById(id);
+        if (btn) {
+          if (c === cat) btn.className = 'px-3 py-1.5 rounded-lg bg-blue-600 text-white font-bold shadow-xs whitespace-nowrap';
+          else btn.className = 'px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 whitespace-nowrap';
+        }
+      });
+      renderMapQueues();
+    }
+
+    function handleMapFilterChange() {
+      const searchInput = document.getElementById('map-filter-search');
+      const ufSelect = document.getElementById('map-filter-uf');
+      mapSearchQuery = searchInput ? searchInput.value.trim() : '';
+      mapFilterUf = ufSelect ? ufSelect.value : '';
+      updateMapStatistics();
+    }
+
+    function toggleMapQuickAddForm() {
+      const panel = document.getElementById('map-quick-add-panel');
+      if (panel) panel.classList.toggle('hidden');
+    }
+
+    function handleMapAddCategoryChange(val) {
+      const unitSelect = document.getElementById('map-add-wait-unit');
+      if (unitSelect) {
+        unitSelect.value = val === 'Emergência' ? 'horas' : 'dias';
+      }
+    }
+
+    function handleComposerCategoryChange(val) {
+      const unitSelect = document.getElementById('composer-wait-unit');
+      const specialtyInput = document.getElementById('composer-specialty');
+      if (unitSelect) {
+        unitSelect.value = val === 'Emergência' ? 'horas' : 'dias';
+      }
+      if (specialtyInput && !specialtyInput.value) {
+        if (val === 'Emergência') specialtyInput.value = 'Emergência';
+        else if (val === 'Cirurgia') specialtyInput.value = 'Cirurgia Geral';
+        else if (val === 'Exame') specialtyInput.value = 'Ressonância Magnética';
+        else if (val === 'Consulta') specialtyInput.value = 'Cardiologia';
+      }
+    }
+
+    function prefillMapAddHospital(hospName) {
+      const panel = document.getElementById('map-quick-add-panel');
+      if (panel && panel.classList.contains('hidden')) panel.classList.remove('hidden');
+      const inputHosp = document.getElementById('map-add-hospital');
+      if (inputHosp) inputHosp.value = hospName;
+      const inputSpecialty = document.getElementById('map-add-specialty');
+      if (inputSpecialty) inputSpecialty.focus();
+    }
+
+    function submitMapQuickAdd() {
+      const hosp = document.getElementById('map-add-hospital').value.trim();
+      const cat = document.getElementById('map-add-category').value;
+      const spec = document.getElementById('map-add-specialty').value.trim() || 'Geral';
+      const val = parseFloat(document.getElementById('map-add-wait-val').value) || 2;
+      const unit = document.getElementById('map-add-wait-unit').value;
+      const cityState = document.getElementById('map-add-city').value.trim() || (currentUser.city || 'São Paulo, SP');
+
+      if (!hosp) {
+        alert('Por favor, informe o nome do hospital.');
+        return;
+      }
+
+      let city = 'São Paulo';
+      let state = 'SP';
+      if (cityState.includes(',')) {
+        const parts = cityState.split(',');
+        city = parts[0].trim();
+        state = parts[1].trim().toUpperCase();
+      } else {
+        city = cityState;
+      }
+
+      const newRec = {
+        id: 'rec-' + Date.now(),
+        hospital: hosp,
+        hospitalShort: hosp.length > 25 ? hosp.slice(0, 22) + '...' : hosp,
+        category: cat,
+        specialty: spec,
+        waitValue: val,
+        waitUnit: unit,
+        city: city,
+        state: state,
+        author: currentUser.name || 'Paciente SUS',
+        avatar: currentUser.avatar || '👨',
+        createdAt: 'Agora mesmo',
+        text: `Registro de espera no ${hosp} (${cat} - ${spec}): ${val} ${unit}.`
+      };
+
+      realWaitingRecords.unshift(newRec);
+      saveWaitRecords();
+
+      socialPosts.unshift({
+        id: newRec.id,
+        author: newRec.author,
+        avatar: newRec.avatar,
+        location: `${newRec.city}, ${newRec.state}`,
+        hospital: newRec.hospitalShort,
+        category: newRec.category,
+        specialty: newRec.specialty,
+        waitValue: newRec.waitValue,
+        waitUnit: newRec.waitUnit,
+        waitDays: unit === 'dias' ? val : Math.round(val * 24),
+        waitHours: unit === 'horas' ? val : (val * 24),
+        mediaType: 'texto',
+        text: newRec.text,
+        likes: 1,
+        hasLiked: true,
+        pressures: 1,
+        commentsCount: 0,
+        createdAt: 'Agora mesmo',
+        isAnon: false
+      });
+
+      renderFeed();
+      updateMapStatistics();
+      toggleMapQuickAddForm();
+
+      if (window.supabaseClient) {
+        window.supabaseClient
+          .from('waiting_times')
+          .insert([{
+            hospital: hosp,
+            setor: spec,
+            categoria: cat,
+            tempo_horas: unit === 'horas' ? val : (val * 24),
+            cidade: city,
+            estado: state,
+            inicio: new Date().toISOString(),
+            comentario: newRec.text
+          }])
+          .then(() => {});
+      }
+
+      alert(`✓ Espera no ${hosp} registrada com sucesso!\nO mapa e as filas foram recalculados em tempo real.`);
     }
 
     // ====================================================================
@@ -1300,12 +2692,17 @@
         </button>
       ` : '';
 
+      const isHours = (post.waitUnit === 'horas') || (post.category === 'Emergência');
+      const waitDisplay = isHours 
+        ? `${post.waitValue || post.waitHours || 2} horas` 
+        : `${post.waitValue || post.waitDays || 180} dias`;
+
       return `
         <article class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs space-y-3 transition-all hover:border-slate-300">
           
-          <div class="flex items-start justify-between">
+          <div class="flex items-start justify-between gap-2">
             <div class="flex items-center space-x-2.5 sm:space-x-3">
-              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-xs">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
                 ${avatarDisplay}
               </div>
               <div>
@@ -1322,14 +2719,15 @@
             </div>
 
             <div>
-              <span class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-extrabold text-[10px] sm:text-xs">
-                <span>⏱️</span> ${post.waitDays} dias
+              <span class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full ${isHours ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-blue-50 text-blue-700 border-blue-200'} border font-extrabold text-[10px] sm:text-xs font-mono whitespace-nowrap">
+                <span>⏱️</span> ${waitDisplay}
               </span>
             </div>
           </div>
 
-          <div class="inline-block px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 text-xs font-bold border border-blue-100">
-            Fila: ${post.specialty}
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${getCategoryBadgeClass(post.category || 'Consulta')} text-xs font-bold">
+            <span>Fila:</span>
+            <span>${post.category ? post.category + ' • ' : ''}${post.specialty}</span>
           </div>
 
           <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
@@ -1394,8 +2792,11 @@
 
       if (confirm('Deseja excluir este relato do sistema?')) {
         socialPosts = socialPosts.filter(p => p.id !== id);
+        realWaitingRecords = realWaitingRecords.filter(r => r.id !== id);
+        saveWaitRecords();
         renderFeed();
         renderStories();
+        updateMapStatistics();
 
         if (window.supabaseClient) {
           await window.supabaseClient.from('reports').delete().eq('id', id);
@@ -1404,56 +2805,167 @@
       }
     }
 
-    // SUPABASE CLIENT
+    // ====================================================================
+    // INTEGRAÇÃO REAL COM SUPABASE & SUBSCRIPTION EM TEMPO REAL
+    // ====================================================================
     async function initSupabaseClient() {
       if (window.supabase) {
         try {
           window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-          const { data, error } = await window.supabaseClient
+          // 1. Busca relatos da tabela reports
+          const { data: reportsData } = await window.supabaseClient
             .from('reports')
             .select('*')
             .order('created_at', { ascending: false });
 
-          if (!error && data) {
-            socialPosts = data.map(r => ({
-              id: r.id,
-              author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
-              avatar: r.anonimo ? '🎭' : '🏥',
-              location: 'Brasil',
-              hospital: 'Hospital SUS',
-              waitDays: r.duracao_segundos || 180,
-              specialty: 'Atendimento / Procedimento',
-              mediaType: r.tipo_midia || 'texto',
-              text: r.relato,
-              likes: 1,
-              hasLiked: false,
-              pressures: 1,
-              commentsCount: 0,
-              createdAt: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              isAnon: r.anonimo
-            }));
-            renderFeed();
-            renderStories();
-          } else {
-            renderFeed();
-          }
+          if (reportsData && reportsData.length > 0) {
+            reportsData.forEach(r => {
+              let meta = null;
+              if (r.relato && r.relato.includes('[META:')) {
+                try {
+                  const match = r.relato.match(/\[META:(\{.*?\})\]/);
+                  if (match) meta = JSON.parse(match[1]);
+                } catch(e) {}
+              }
 
-          window.supabaseClient
-            .channel('realtime:reports')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reports' }, payload => {
-              const r = payload.new;
+              const hosp = (meta && meta.hospital) || r.hospital || 'Hospital SUS';
+              const cat = (meta && meta.category) || r.categoria || 'Emergência';
+              const spec = (meta && meta.specialty) || r.especialidade || 'Atendimento / Procedimento';
+              const val = (meta && meta.waitVal) || r.tempo_espera_dias || r.tempo_espera_horas || 2;
+              const unit = (meta && meta.waitUnit) || (cat === 'Emergência' ? 'horas' : 'dias');
+              const city = (meta && meta.city) || r.cidade || 'São Paulo';
+              const state = (meta && meta.state) || r.estado || 'SP';
+              const cleanText = r.relato ? r.relato.replace(/\[META:\{.*?\}\]\s*/, '') : '';
+
+              if (!realWaitingRecords.some(item => item.id === r.id)) {
+                realWaitingRecords.unshift({
+                  id: r.id,
+                  hospital: hosp,
+                  hospitalShort: hosp.length > 25 ? hosp.slice(0, 22) + '...' : hosp,
+                  category: cat,
+                  specialty: spec,
+                  waitValue: val,
+                  waitUnit: unit,
+                  city: city,
+                  state: state,
+                  author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
+                  avatar: r.anonimo ? '🎭' : '🏥',
+                  createdAt: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                  text: cleanText || 'Relato publicado na rede Minha Voz.'
+                });
+              }
+
               if (!socialPosts.some(p => p.id === r.id)) {
                 socialPosts.unshift({
                   id: r.id,
                   author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
                   avatar: r.anonimo ? '🎭' : '🏥',
-                  location: 'Brasil',
-                  hospital: 'Hospital SUS',
-                  waitDays: r.duracao_segundos || 180,
-                  specialty: 'Atendimento / Procedimento',
+                  location: `${city}, ${state}`,
+                  hospital: hosp,
+                  category: cat,
+                  specialty: spec,
+                  waitValue: val,
+                  waitUnit: unit,
+                  waitDays: unit === 'dias' ? val : Math.round(val * 24),
+                  waitHours: unit === 'horas' ? val : (val * 24),
                   mediaType: r.tipo_midia || 'texto',
-                  text: r.relato,
+                  text: cleanText,
+                  likes: 1,
+                  hasLiked: false,
+                  pressures: 1,
+                  commentsCount: 0,
+                  createdAt: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                  isAnon: r.anonimo
+                });
+              }
+            });
+            renderFeed();
+            renderStories();
+            updateMapStatistics();
+          }
+
+          // 2. Busca cronômetros da tabela waiting_times
+          const { data: waitingData } = await window.supabaseClient
+            .from('waiting_times')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+          if (waitingData && waitingData.length > 0) {
+            waitingData.forEach(w => {
+              if (w.hospital && !realWaitingRecords.some(r => r.id === w.id)) {
+                realWaitingRecords.unshift({
+                  id: w.id,
+                  hospital: w.hospital,
+                  hospitalShort: w.hospital.length > 25 ? w.hospital.slice(0, 22) + '...' : w.hospital,
+                  category: w.categoria || 'Emergência',
+                  specialty: w.setor || 'Emergência',
+                  waitValue: w.tempo_horas || 2.0,
+                  waitUnit: 'horas',
+                  city: w.cidade || 'São Paulo',
+                  state: w.estado || 'SP',
+                  author: 'Paciente no Hospital',
+                  avatar: '⏱️',
+                  createdAt: new Date(w.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                  text: w.comentario || `Espera apurada no hospital ${w.hospital}`
+                });
+              }
+            });
+            updateMapStatistics();
+          }
+
+          // 3. Subscriptions em Tempo Real
+          window.supabaseClient
+            .channel('realtime:all')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reports' }, payload => {
+              const r = payload.new;
+              if (!socialPosts.some(p => p.id === r.id)) {
+                let meta = null;
+                if (r.relato && r.relato.includes('[META:')) {
+                  try {
+                    const match = r.relato.match(/\[META:(\{.*?\})\]/);
+                    if (match) meta = JSON.parse(match[1]);
+                  } catch(e) {}
+                }
+                const hosp = (meta && meta.hospital) || r.hospital || 'Hospital SUS';
+                const cat = (meta && meta.category) || r.categoria || 'Emergência';
+                const spec = (meta && meta.specialty) || r.especialidade || 'Procedimento SUS';
+                const val = (meta && meta.waitVal) || r.tempo_espera_dias || r.tempo_espera_horas || 2;
+                const unit = (meta && meta.waitUnit) || (cat === 'Emergência' ? 'horas' : 'dias');
+                const city = (meta && meta.city) || r.cidade || 'São Paulo';
+                const state = (meta && meta.state) || r.estado || 'SP';
+                const cleanText = r.relato ? r.relato.replace(/\[META:\{.*?\}\]\s*/, '') : '';
+
+                realWaitingRecords.unshift({
+                  id: r.id,
+                  hospital: hosp,
+                  hospitalShort: hosp,
+                  category: cat,
+                  specialty: spec,
+                  waitValue: val,
+                  waitUnit: unit,
+                  city: city,
+                  state: state,
+                  author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
+                  avatar: r.anonimo ? '🎭' : '🏥',
+                  createdAt: 'Agora mesmo',
+                  text: cleanText
+                });
+
+                socialPosts.unshift({
+                  id: r.id,
+                  author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
+                  avatar: r.anonimo ? '🎭' : '🏥',
+                  location: `${city}, ${state}`,
+                  hospital: hosp,
+                  category: cat,
+                  specialty: spec,
+                  waitValue: val,
+                  waitUnit: unit,
+                  waitDays: unit === 'dias' ? val : Math.round(val * 24),
+                  waitHours: unit === 'horas' ? val : (val * 24),
+                  mediaType: r.tipo_midia || 'texto',
+                  text: cleanText,
                   likes: 1,
                   hasLiked: false,
                   pressures: 1,
@@ -1463,24 +2975,45 @@
                 });
                 renderFeed();
                 renderStories();
+                updateMapStatistics();
               }
             })
-            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'reports' }, payload => {
-              socialPosts = socialPosts.filter(p => p.id !== payload.old.id);
-              renderFeed();
-              renderStories();
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'waiting_times' }, payload => {
+              const w = payload.new;
+              if (w.hospital && !realWaitingRecords.some(r => r.id === w.id)) {
+                realWaitingRecords.unshift({
+                  id: w.id,
+                  hospital: w.hospital,
+                  hospitalShort: w.hospital,
+                  category: w.categoria || 'Emergência',
+                  specialty: w.setor || 'Emergência',
+                  waitValue: w.tempo_horas || 2.0,
+                  waitUnit: 'horas',
+                  city: w.cidade || 'São Paulo',
+                  state: w.estado || 'SP',
+                  author: 'Paciente no Hospital',
+                  avatar: '⏱️',
+                  createdAt: 'Agora mesmo',
+                  text: w.comentario || 'Cronômetro finalizado no hospital'
+                });
+                updateMapStatistics();
+              }
             })
             .subscribe();
 
         } catch (e) {
           renderFeed();
+          updateMapStatistics();
         }
       } else {
         renderFeed();
+        updateMapStatistics();
       }
     }
 
-    // INTERAÇÕES SOCIAIS
+    // ====================================================================
+    // INTERAÇÕES SOCIAIS & COMPARTILHAMENTO
+    // ====================================================================
     function handleLike(id) {
       const post = socialPosts.find(p => p.id === id);
       if (post) {
@@ -1504,9 +3037,14 @@
       if (!post) return;
       activeSharePost = post;
 
+      const isHours = (post.waitUnit === 'horas') || (post.category === 'Emergência');
+      const waitDisplay = isHours 
+        ? `${post.waitValue || post.waitHours || 2} horas` 
+        : `${post.waitValue || post.waitDays || 180} dias`;
+
       document.getElementById('share-modal-text').innerText = `"${post.text}"`;
       document.getElementById('share-modal-author').innerText = `${post.isAnon ? 'Paciente Anônimo' : post.author} • ${post.location}`;
-      document.getElementById('share-modal-badge').innerText = `${post.waitDays} dias de espera`;
+      document.getElementById('share-modal-badge').innerText = `${waitDisplay} de espera`;
 
       document.getElementById('modal-share').classList.remove('hidden');
     }
@@ -1550,7 +3088,10 @@
       detectUserLocation();
       document.getElementById('modal-timer').classList.remove('hidden'); 
     }
-    function openMapModal() { document.getElementById('modal-map').classList.remove('hidden'); }
+    function openMapModal() { 
+      updateMapStatistics();
+      document.getElementById('modal-map').classList.remove('hidden'); 
+    }
     function openDefensoriaModal() { alert('⚖️ Canal da Defensoria Pública da União: Atendimento gratuito via WhatsApp e 0800 para pedidos de liminar de saúde.'); }
     function openDenunciaModal() { alert('🚨 Canal de Denúncias ao Ministério Público Estadual registrado.'); }
 

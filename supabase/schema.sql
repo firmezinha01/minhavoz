@@ -127,6 +127,26 @@ CREATE POLICY "Public delete reports" ON public.reports FOR DELETE USING (true);
 DROP POLICY IF EXISTS "Public insert waiting_times" ON public.waiting_times;
 CREATE POLICY "Public insert waiting_times" ON public.waiting_times FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Public read waiting_times" ON public.waiting_times;
+CREATE POLICY "Public read waiting_times" ON public.waiting_times FOR SELECT USING (true);
+
+-- ====================================================================
+-- CAMPOS DINÂMICOS PARA MAPA EM TEMPO REAL POR HOSPITAL E REGIÃO
+-- ====================================================================
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS hospital TEXT;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS especialidade TEXT;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS categoria TEXT;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS tempo_espera_dias INT;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS tempo_espera_horas NUMERIC;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS cidade TEXT;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS estado TEXT;
+
+ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS setor TEXT;
+ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS categoria TEXT;
+ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS tempo_horas NUMERIC;
+ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS cidade TEXT;
+ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS estado TEXT;
+
 -- ====================================================================
 -- USUÁRIOS PADRÃO (SENHA: 123456)
 -- ====================================================================
