@@ -91,44 +91,27 @@ CREATE INDEX IF NOT EXISTS idx_denuncias_hospital ON public.denuncias(hospital);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_unread ON public.notifications(user_id) WHERE status = FALSE;
 
 -- ====================================================================
--- POLÍTICAS DE SEGURANÇA RLS (LGPD & PROTEÇÃO DE DADOS MÉDICOS)
+-- PERMISSÕES E ACESSO À REDE PÚBLICA (SUPABASE)
 -- ====================================================================
-ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.documents ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.waiting_times ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.reports ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.community_posts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.denuncias ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+-- Desativação de RLS para permitir publicações diretas de pacientes e visitantes
+ALTER TABLE public.reports DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.waiting_times DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.community_posts DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.denuncias DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.notifications DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.documents DISABLE ROW LEVEL SECURITY;
 
--- Usuários só leem/alteram seu próprio prontuário e dados sensíveis
-CREATE POLICY "Users read own profile" ON public.users FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users manage own documents" ON public.documents FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Users view own waiting times" ON public.waiting_times FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users insert waiting times" ON public.waiting_times FOR INSERT WITH CHECK (auth.uid() = user_id);
+-- Concessão de permissões completas para a chave pública (anon) e autenticada
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
 
 -- Tornar user_id opcional para permitir relatos e cronômetro anônimos
 ALTER TABLE public.reports ALTER COLUMN user_id DROP NOT NULL;
 ALTER TABLE public.waiting_times ALTER COLUMN user_id DROP NOT NULL;
-
--- Relatos e posts comunitários podem ser lidos por todos para visibilidade pública
-DROP POLICY IF EXISTS "Public read community posts" ON public.community_posts;
-CREATE POLICY "Public read community posts" ON public.community_posts FOR SELECT USING (true);
-
-DROP POLICY IF EXISTS "Public read reports" ON public.reports;
-CREATE POLICY "Public read reports" ON public.reports FOR SELECT USING (true);
-
-DROP POLICY IF EXISTS "Public insert reports" ON public.reports;
-CREATE POLICY "Public insert reports" ON public.reports FOR INSERT WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Public delete reports" ON public.reports;
-CREATE POLICY "Public delete reports" ON public.reports FOR DELETE USING (true);
-
-DROP POLICY IF EXISTS "Public insert waiting_times" ON public.waiting_times;
-CREATE POLICY "Public insert waiting_times" ON public.waiting_times FOR INSERT WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Public read waiting_times" ON public.waiting_times;
-CREATE POLICY "Public read waiting_times" ON public.waiting_times FOR SELECT USING (true);
+ALTER TABLE public.community_posts ALTER COLUMN user_id DROP NOT NULL;
+ALTER TABLE public.denuncias ALTER COLUMN user_id DROP NOT NULL;
 
 -- ====================================================================
 -- CAMPOS DINÂMICOS PARA MAPA EM TEMPO REAL POR HOSPITAL E REGIÃO

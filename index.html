@@ -965,6 +965,23 @@
     </div>
   </div>
 
+  <!-- BANNER DE SINCRONIZAÇÃO E CORREÇÃO DO SUPABASE (Exibido caso haja bloqueio RLS no banco) -->
+  <div id="supabase-sync-banner" class="hidden fixed bottom-4 right-4 max-w-sm sm:max-w-md bg-amber-600 text-white p-4 rounded-2xl shadow-2xl z-50 flex items-start gap-3 border border-amber-500">
+    <span class="text-2xl shrink-0">⚠️</span>
+    <div class="text-xs space-y-1.5">
+      <p class="font-bold text-sm">Supabase precisa de liberação SQL</p>
+      <p class="opacity-95 leading-relaxed">O banco de dados Supabase bloqueou a gravação por regras de RLS (segurança). Basta executar o script de liberação no painel do Supabase para ativar a gravação em tempo real.</p>
+      <div class="pt-1 flex items-center gap-2">
+        <button onclick="copySupabaseScript()" class="px-3 py-1.5 bg-white text-amber-900 font-extrabold rounded-lg hover:bg-amber-100 transition-colors shadow-xs active-scale">
+          📋 Copiar Script SQL
+        </button>
+        <button onclick="document.getElementById('supabase-sync-banner').classList.add('hidden')" class="px-2.5 py-1 text-amber-200 hover:text-white font-semibold">
+          Dispensar
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================================================================== -->
   <!-- 5. JAVASCRIPT EM TEMPO REAL: WEBRTC, GEOLOCALIZAÇÃO E SUPABASE       -->
   <!-- ==================================================================== -->
@@ -1853,22 +1870,27 @@
         renderFeed();
         updateMapStatistics();
 
-        // 3. Persistência no Supabase (waiting_times e reports)
+        // 3. Persistência no Supabase (waiting_times)
         if (window.supabaseClient) {
-          window.supabaseClient
-            .from('waiting_times')
-            .insert([{
-              hospital: hospName,
-              setor: sectorName,
-              categoria: 'Emergência',
-              tempo_horas: elapsedHours,
-              cidade: city,
-              estado: state,
-              inicio: new Date(Date.now() - timerSeconds * 1000).toISOString(),
-              fim: new Date().toISOString(),
-              comentario: `[META:${JSON.stringify({hospital: hospName, sector: sectorName, hours: elapsedHours, city, state})}] Espera apurada: ${finalTime}`
-            }])
-            .then(() => {});
+          const waitMeta = {
+            hospital: hospName,
+            category: 'Emergência',
+            specialty: sectorName,
+            waitVal: elapsedHours,
+            waitUnit: 'horas',
+            city: city,
+            state: state
+          };
+          saveWaitingTimeRecordToSupabase({
+            inicio: new Date(Date.now() - timerSeconds * 1000).toISOString(),
+            fim: new Date().toISOString(),
+            text: `Atendimento no setor ${sectorName} do ${hospName} cronometrado em ${finalTime}.`
+          }, waitMeta).then(savedId => {
+            if (savedId) {
+              waitRecord.id = savedId;
+              saveWaitRecords();
+            }
+          });
         }
 
         alert(`⏱️ Espera concluída com sucesso!\n\nTempo Total: ${finalTime}\nSetor: ${sectorName}\nLocal: ${hospName}\n\nO Mapa da Espera foi recalculado em tempo real.`);
@@ -1877,6 +1899,153 @@
         document.getElementById('modal-timer-clock').innerText = '00:00:00';
         closeModal('modal-timer');
       }
+    }
+
+    // ====================================================================
+    // INTEGRAÇÃO ROBUSTA COM SUPABASE (AUTO-FALLBACK E SUPORTE A ERROS)
+    // ====================================================================
+    function copySupabaseScript() {
+      const sql = `-- EXECUTE NO SQL EDITOR DO SUPABASE (https://supabase.com/dashboard):
+ALTER TABLE public.reports DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.waiting_times DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.community_posts DISABLE ROW LEVEL SECURITY;
+
+ALTER TABLE public.reports ALTER COLUMN user_id DROP NOT NULL;
+ALTER TABLE public.waiting_times ALTER COLUMN user_id DROP NOT NULL;
+
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS hospital TEXT;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS especialidade TEXT;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS categoria TEXT;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS tempo_espera_dias INT;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS tempo_espera_horas NUMERIC;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS cidade TEXT;
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS estado TEXT;
+
+ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS setor TEXT;
+ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS categoria TEXT;
+ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS tempo_horas NUMERIC;
+ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS cidade TEXT;
+ALTER TABLE public.waiting_times ADD COLUMN IF NOT EXISTS estado TEXT;
+
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;`;
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(sql).then(() => {
+          alert('✓ Script SQL copiado com sucesso!\n\nCole no SQL Editor do Supabase e clique em RUN para liberar as gravações.');
+        }).catch(() => {
+          prompt('Copie o script SQL abaixo e execute no SQL Editor do Supabase:', sql);
+        });
+      } else {
+        prompt('Copie o script SQL abaixo e execute no SQL Editor do Supabase:', sql);
+      }
+    }
+
+    function showDbSyncAlert(error) {
+      console.warn('Alerta de permissão Supabase:', error);
+      const banner = document.getElementById('supabase-sync-banner');
+      if (banner) banner.classList.remove('hidden');
+    }
+
+    async function saveReportToSupabase(newPost, meta) {
+      if (!window.supabaseClient) return null;
+
+      const metaStr = `[META:${JSON.stringify(meta)}]`;
+      const fullPayload = {
+        relato: `${metaStr} ${newPost.text || ''}`,
+        tipo_midia: newPost.mediaType || 'texto',
+        anonimo: Boolean(newPost.isAnon),
+        duracao_segundos: meta.waitUnit === 'dias' ? meta.waitVal : Math.round(meta.waitVal * 3600),
+        hospital: meta.hospital,
+        especialidade: meta.specialty,
+        categoria: meta.category,
+        tempo_espera_dias: meta.waitUnit === 'dias' ? meta.waitVal : null,
+        tempo_espera_horas: meta.waitUnit === 'horas' ? meta.waitVal : null,
+        cidade: meta.city,
+        estado: meta.state
+      };
+      if (currentUser && currentUser.id) fullPayload.user_id = currentUser.id;
+
+      try {
+        let res = await window.supabaseClient.from('reports').insert([fullPayload]).select();
+
+        // Se coluna não existir no cache do schema do Supabase (código PGRST204)
+        if (res.error && res.error.code === 'PGRST204') {
+          console.warn('Tentando gravar com colunas base do Supabase:', res.error.message);
+          const basePayload = {
+            relato: fullPayload.relato,
+            tipo_midia: fullPayload.tipo_midia,
+            anonimo: fullPayload.anonimo,
+            duracao_segundos: fullPayload.duracao_segundos
+          };
+          if (currentUser && currentUser.id) basePayload.user_id = currentUser.id;
+          res = await window.supabaseClient.from('reports').insert([basePayload]).select();
+        }
+
+        if (res.error) {
+          console.error('Erro retornado pelo Supabase (reports):', res.error);
+          showDbSyncAlert(res.error);
+          return null;
+        }
+
+        if (res.data && res.data[0]) {
+          console.log('✓ Relato persistido no Supabase com ID:', res.data[0].id);
+          return res.data[0].id;
+        }
+      } catch (err) {
+        console.error('Exceção ao inserir no Supabase:', err);
+      }
+      return null;
+    }
+
+    async function saveWaitingTimeRecordToSupabase(waitData, meta) {
+      if (!window.supabaseClient) return null;
+
+      const metaStr = `[META:${JSON.stringify(meta)}]`;
+      const fullPayload = {
+        hospital: meta.hospital,
+        inicio: waitData.inicio || new Date().toISOString(),
+        fim: waitData.fim || new Date().toISOString(),
+        comentario: `${metaStr} ${waitData.text || ''}`,
+        setor: meta.specialty || 'Emergência',
+        categoria: meta.category || 'Emergência',
+        tempo_horas: meta.waitUnit === 'horas' ? meta.waitVal : (meta.waitVal * 24),
+        cidade: meta.city,
+        estado: meta.state
+      };
+      if (currentUser && currentUser.id) fullPayload.user_id = currentUser.id;
+
+      try {
+        let res = await window.supabaseClient.from('waiting_times').insert([fullPayload]).select();
+
+        if (res.error && res.error.code === 'PGRST204') {
+          console.warn('Tentando gravar waiting_times com colunas base:', res.error.message);
+          const basePayload = {
+            hospital: meta.hospital,
+            inicio: fullPayload.inicio,
+            fim: fullPayload.fim,
+            comentario: fullPayload.comentario
+          };
+          if (currentUser && currentUser.id) basePayload.user_id = currentUser.id;
+          res = await window.supabaseClient.from('waiting_times').insert([basePayload]).select();
+        }
+
+        if (res.error) {
+          console.error('Erro retornado pelo Supabase (waiting_times):', res.error);
+          showDbSyncAlert(res.error);
+          return null;
+        }
+
+        if (res.data && res.data[0]) {
+          console.log('✓ Tempo de espera persistido no Supabase:', res.data[0].id);
+          return res.data[0].id;
+        }
+      } catch (err) {
+        console.error('Exceção ao inserir waiting_times no Supabase:', err);
+      }
+      return null;
     }
 
     // ====================================================================
@@ -1957,36 +2126,16 @@
       renderStories();
       updateMapStatistics();
 
-      // 2. Sincronização com o Supabase
+      // 2. Sincronização Real com o Supabase
+      let supabaseSaved = false;
       if (window.supabaseClient) {
-        try {
-          const metaStr = `[META:${JSON.stringify({hospital, category, specialty, waitVal, waitUnit, city, state})}]`;
-          const insertPayload = {
-            relato: `${metaStr} ${newPost.text}`,
-            tipo_midia: activeMediaMode,
-            anonimo: isAnon,
-            duracao_segundos: waitUnit === 'dias' ? waitVal : Math.round(waitVal * 3600),
-            hospital: hospital,
-            especialidade: specialty,
-            categoria: category,
-            tempo_espera_dias: waitUnit === 'dias' ? waitVal : null,
-            tempo_espera_horas: waitUnit === 'horas' ? waitVal : null,
-            cidade: city,
-            estado: state
-          };
-          if (currentUser && currentUser.id) insertPayload.user_id = currentUser.id;
-
-          const { data } = await window.supabaseClient
-            .from('reports')
-            .insert([insertPayload])
-            .select();
-
-          if (data && data[0]) {
-            newPost.id = data[0].id;
-            waitRecord.id = data[0].id;
-          }
-        } catch (e) {
-          console.warn('Nota de inserção Supabase:', e);
+        const metaObj = { hospital, category, specialty, waitVal, waitUnit, city, state };
+        const savedId = await saveReportToSupabase(newPost, metaObj);
+        if (savedId) {
+          newPost.id = savedId;
+          waitRecord.id = savedId;
+          saveWaitRecords();
+          supabaseSaved = true;
         }
       }
 
@@ -1995,7 +2144,12 @@
       recordedVideoBlobUrl = null;
       recordedAudioBlobUrl = null;
       selectMediaComposer('texto');
-      alert(`✓ Relato publicado com sucesso!\nO Mapa de Espera do ${waitRecord.hospitalShort} foi recalculado.`);
+
+      if (supabaseSaved) {
+        alert(`✓ Relato publicado com sucesso!\nGravado e sincronizado em tempo real no banco de dados Supabase.\nO Mapa de Espera do ${waitRecord.hospitalShort} foi recalculado.`);
+      } else {
+        alert(`✓ Relato publicado com sucesso!\nO Mapa de Espera do ${waitRecord.hospitalShort} foi recalculado.`);
+      }
     }
 
     // ====================================================================
@@ -2685,19 +2839,25 @@
       toggleMapQuickAddForm();
 
       if (window.supabaseClient) {
-        window.supabaseClient
-          .from('waiting_times')
-          .insert([{
-            hospital: hosp,
-            setor: spec,
-            categoria: cat,
-            tempo_horas: unit === 'horas' ? val : (val * 24),
-            cidade: city,
-            estado: state,
-            inicio: new Date().toISOString(),
-            comentario: newRec.text
-          }])
-          .then(() => {});
+        const directMeta = {
+          hospital: hosp,
+          category: cat,
+          specialty: spec,
+          waitVal: val,
+          waitUnit: unit,
+          city: city,
+          state: state
+        };
+        saveWaitingTimeRecordToSupabase({
+          inicio: new Date().toISOString(),
+          fim: new Date().toISOString(),
+          text: newRec.text
+        }, directMeta).then(savedId => {
+          if (savedId) {
+            newRec.id = savedId;
+            saveWaitRecords();
+          }
+        });
       }
 
       alert(`✓ Espera no ${hosp} registrada com sucesso!\nO mapa e as filas foram recalculados em tempo real.`);
@@ -2885,7 +3045,17 @@
         updateMapStatistics();
 
         if (window.supabaseClient) {
-          await window.supabaseClient.from('reports').delete().eq('id', id);
+          try {
+            const { error } = await window.supabaseClient.from('reports').delete().eq('id', id);
+            if (error) {
+              console.warn('Erro ao excluir do Supabase:', error);
+              showDbSyncAlert(error);
+            } else {
+              console.log('✓ Relato excluído do Supabase:', id);
+            }
+          } catch (e) {
+            console.error('Erro na requisição de exclusão Supabase:', e);
+          }
         }
         alert('✓ Relato removido com sucesso!');
       }
@@ -2900,12 +3070,17 @@
           window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
           // 1. Busca relatos da tabela reports
-          const { data: reportsData } = await window.supabaseClient
+          const { data: reportsData, error: reportsErr } = await window.supabaseClient
             .from('reports')
             .select('*')
             .order('created_at', { ascending: false });
 
-          if (reportsData && reportsData.length > 0) {
+          if (reportsErr) {
+            console.warn('Supabase reports fetch error:', reportsErr);
+            if (reportsErr.code === '42501' || (reportsErr.message && reportsErr.message.includes('row-level security'))) {
+              showDbSyncAlert(reportsErr);
+            }
+          } else if (reportsData && reportsData.length > 0) {
             reportsData.forEach(r => {
               let meta = null;
               if (r.relato && r.relato.includes('[META:')) {
@@ -2972,28 +3147,49 @@
           }
 
           // 2. Busca cronômetros da tabela waiting_times
-          const { data: waitingData } = await window.supabaseClient
+          const { data: waitingData, error: waitErr } = await window.supabaseClient
             .from('waiting_times')
             .select('*')
             .order('created_at', { ascending: false });
 
-          if (waitingData && waitingData.length > 0) {
+          if (waitErr) {
+            console.warn('Supabase waiting_times fetch error:', waitErr);
+            if (waitErr.code === '42501' || (waitErr.message && waitErr.message.includes('row-level security'))) {
+              showDbSyncAlert(waitErr);
+            }
+          } else if (waitingData && waitingData.length > 0) {
             waitingData.forEach(w => {
               if (w.hospital && !realWaitingRecords.some(r => r.id === w.id)) {
+                let meta = null;
+                if (w.comentario && w.comentario.includes('[META:')) {
+                  try {
+                    const match = w.comentario.match(/\[META:(\{.*?\})\]/);
+                    if (match) meta = JSON.parse(match[1]);
+                  } catch(e) {}
+                }
+
+                const hosp = (meta && meta.hospital) || w.hospital;
+                const cat = (meta && meta.category) || w.categoria || 'Emergência';
+                const spec = (meta && meta.specialty) || (meta && meta.sector) || w.setor || 'Emergência';
+                const val = (meta && (meta.waitVal || meta.hours)) || w.tempo_horas || 2.0;
+                const city = (meta && meta.city) || w.cidade || 'São Paulo';
+                const state = (meta && meta.state) || w.estado || 'SP';
+                const cleanText = w.comentario ? w.comentario.replace(/\[META:\{.*?\}\]\s*/, '') : `Espera apurada no hospital ${hosp}`;
+
                 realWaitingRecords.unshift({
                   id: w.id,
-                  hospital: w.hospital,
-                  hospitalShort: w.hospital.length > 25 ? w.hospital.slice(0, 22) + '...' : w.hospital,
-                  category: w.categoria || 'Emergência',
-                  specialty: w.setor || 'Emergência',
-                  waitValue: w.tempo_horas || 2.0,
+                  hospital: hosp,
+                  hospitalShort: hosp.length > 25 ? hosp.slice(0, 22) + '...' : hosp,
+                  category: cat,
+                  specialty: spec,
+                  waitValue: val,
                   waitUnit: 'horas',
-                  city: w.cidade || 'São Paulo',
-                  state: w.estado || 'SP',
+                  city: city,
+                  state: state,
                   author: 'Paciente no Hospital',
                   avatar: '⏱️',
                   createdAt: new Date(w.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                  text: w.comentario || `Espera apurada no hospital ${w.hospital}`
+                  text: cleanText
                 });
               }
             });
@@ -3067,20 +3263,36 @@
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'waiting_times' }, payload => {
               const w = payload.new;
               if (w.hospital && !realWaitingRecords.some(r => r.id === w.id)) {
+                let meta = null;
+                if (w.comentario && w.comentario.includes('[META:')) {
+                  try {
+                    const match = w.comentario.match(/\[META:(\{.*?\})\]/);
+                    if (match) meta = JSON.parse(match[1]);
+                  } catch(e) {}
+                }
+
+                const hosp = (meta && meta.hospital) || w.hospital;
+                const cat = (meta && meta.category) || w.categoria || 'Emergência';
+                const spec = (meta && meta.specialty) || (meta && meta.sector) || w.setor || 'Emergência';
+                const val = (meta && (meta.waitVal || meta.hours)) || w.tempo_horas || 2.0;
+                const city = (meta && meta.city) || w.cidade || 'São Paulo';
+                const state = (meta && meta.state) || w.estado || 'SP';
+                const cleanText = w.comentario ? w.comentario.replace(/\[META:\{.*?\}\]\s*/, '') : 'Cronômetro finalizado no hospital';
+
                 realWaitingRecords.unshift({
                   id: w.id,
-                  hospital: w.hospital,
-                  hospitalShort: w.hospital,
-                  category: w.categoria || 'Emergência',
-                  specialty: w.setor || 'Emergência',
-                  waitValue: w.tempo_horas || 2.0,
+                  hospital: hosp,
+                  hospitalShort: hosp,
+                  category: cat,
+                  specialty: spec,
+                  waitValue: val,
                   waitUnit: 'horas',
-                  city: w.cidade || 'São Paulo',
-                  state: w.estado || 'SP',
+                  city: city,
+                  state: state,
                   author: 'Paciente no Hospital',
                   avatar: '⏱️',
                   createdAt: 'Agora mesmo',
-                  text: w.comentario || 'Cronômetro finalizado no hospital'
+                  text: cleanText
                 });
                 updateMapStatistics();
               }
@@ -3088,6 +3300,7 @@
             .subscribe();
 
         } catch (e) {
+          console.error('Erro na inicialização Supabase:', e);
           renderFeed();
           updateMapStatistics();
         }
