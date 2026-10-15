@@ -107,16 +107,31 @@ CREATE POLICY "Users manage own documents" ON public.documents FOR ALL USING (au
 CREATE POLICY "Users view own waiting times" ON public.waiting_times FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users insert waiting times" ON public.waiting_times FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+-- Tornar user_id opcional para permitir relatos e cronômetro anônimos
+ALTER TABLE public.reports ALTER COLUMN user_id DROP NOT NULL;
+ALTER TABLE public.waiting_times ALTER COLUMN user_id DROP NOT NULL;
+
 -- Relatos e posts comunitários podem ser lidos por todos para visibilidade pública
+DROP POLICY IF EXISTS "Public read community posts" ON public.community_posts;
 CREATE POLICY "Public read community posts" ON public.community_posts FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public read reports" ON public.reports;
 CREATE POLICY "Public read reports" ON public.reports FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public insert reports" ON public.reports;
 CREATE POLICY "Public insert reports" ON public.reports FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public delete reports" ON public.reports;
 CREATE POLICY "Public delete reports" ON public.reports FOR DELETE USING (true);
+
+DROP POLICY IF EXISTS "Public insert waiting_times" ON public.waiting_times;
 CREATE POLICY "Public insert waiting_times" ON public.waiting_times FOR INSERT WITH CHECK (true);
 
 -- ====================================================================
--- USUÁRIO ADMINISTRADOR PADRÃO (LOGIN: admin / SENHA: 123456)
+-- USUÁRIOS PADRÃO (SENHA: 123456)
 -- ====================================================================
+
+-- 1. Usuário Admin (Login: admin / Senha: 123456)
 INSERT INTO public.users (id, nome, idade, cidade, email, cpf, senha_hash, condicao_saude)
 VALUES (
     'a0000000-0000-0000-0000-000000000001',
@@ -128,4 +143,18 @@ VALUES (
     '123456',
     'Gestão e Moderação SUS'
 ) ON CONFLICT (cpf) DO NOTHING;
+
+-- 2. Usuário José (Login: jose / Senha: 123456)
+INSERT INTO public.users (id, nome, idade, cidade, email, cpf, senha_hash, condicao_saude)
+VALUES (
+    'a0000000-0000-0000-0000-000000000002',
+    'José Silva',
+    48,
+    'São Paulo, SP',
+    'jose@minhavoz.org.br',
+    'jose',
+    '123456',
+    'Ortopedia / Fila Cirurgia'
+) ON CONFLICT (cpf) DO NOTHING;
+
 
