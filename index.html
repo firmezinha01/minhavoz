@@ -115,13 +115,13 @@
         <div id="header-user-section" class="flex items-center space-x-2 pl-1 border-l border-slate-200">
           
           <!-- Estado: Logado -->
-          <div id="header-user-logged-in" class="flex items-center space-x-2">
+          <div id="header-user-logged-in" class="flex items-center space-x-2 hidden">
             <div onclick="openLoginModal()" class="flex items-center space-x-2 cursor-pointer p-1 rounded-xl hover:bg-slate-50 transition-colors">
               <div id="header-user-avatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shadow-xs border-2 border-white ring-1 ring-blue-500">
-                👨
+                👤
               </div>
               <div class="hidden xl:block text-left">
-                <div id="header-user-name" class="text-xs font-bold text-slate-800 leading-tight">José Silva</div>
+                <div id="header-user-name" class="text-xs font-bold text-slate-800 leading-tight">Usuário</div>
                 <div id="header-user-badge" class="text-[10px] text-blue-600 font-extrabold flex items-center gap-0.5">
                   <span>Paciente SUS</span>
                 </div>
@@ -135,11 +135,14 @@
             </button>
           </div>
 
-          <!-- Estado: Deslogado (Botão Login) -->
-          <div id="header-user-logged-out" class="hidden">
-            <button onclick="openLoginModal()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all active-scale">
+          <!-- Estado: Deslogado (Botões Entrar e Cadastrar) -->
+          <div id="header-user-logged-out" class="flex items-center space-x-1.5">
+            <button onclick="openLoginModal('login')" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all active-scale">
               <span>🔑</span>
-              <span>Login</span>
+              <span>Entrar</span>
+            </button>
+            <button onclick="openLoginModal('register')" class="hidden sm:flex px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs items-center gap-1 transition-all active-scale">
+              <span>Cadastrar</span>
             </button>
           </div>
 
@@ -161,14 +164,14 @@
       <aside class="hidden lg:block lg:col-span-3 space-y-4 sticky top-20">
         
         <!-- Card do Usuário Logado -->
-        <div id="sidebar-user-card" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs text-left">
+        <div id="sidebar-user-card" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs text-left hidden">
           <div class="flex items-center space-x-3 mb-3">
             <div id="sidebar-user-avatar" class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold flex items-center justify-center text-xl shadow-md">
-              👨
+              👤
             </div>
             <div class="overflow-hidden">
-              <h3 id="sidebar-user-name" class="text-sm font-bold text-slate-900 leading-tight truncate">José Silva</h3>
-              <p id="sidebar-user-info" class="text-[11px] text-slate-500">Login: <strong>jose</strong> • São Paulo, SP</p>
+              <h3 id="sidebar-user-name" class="text-sm font-bold text-slate-900 leading-tight truncate">Cidadão SUS</h3>
+              <p id="sidebar-user-info" class="text-[11px] text-slate-500">Login: <strong>--</strong></p>
               <span id="sidebar-user-role" class="inline-block mt-0.5 text-[10px] font-extrabold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full border border-blue-200">
                 Prontuário SUS Ativo
               </span>
@@ -186,19 +189,24 @@
         </div>
 
         <!-- Card Quando Deslogado (NÃO MOSTRA PACIENTE VISITANTE!) -->
-        <div id="sidebar-logged-out-card" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs text-center space-y-2.5 hidden">
+        <div id="sidebar-logged-out-card" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs text-center space-y-2.5">
           <div class="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl mx-auto font-bold shadow-xs border border-blue-100">
             🔑
           </div>
           <div>
             <h4 class="text-xs font-bold text-slate-800">Conecte sua Conta</h4>
             <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-              Faça login para registrar relatos, medir sua espera e acompanhar suas filas no SUS.
+              Faça login ou cadastre-se para registrar relatos, medir sua espera e acompanhar suas filas no SUS.
             </p>
           </div>
-          <button onclick="openLoginModal()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all active-scale flex items-center justify-center gap-1.5">
-            <span>🔑 Fazer Login</span>
-          </button>
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="openLoginModal('login')" class="py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all active-scale flex items-center justify-center gap-1">
+              <span>🔑 Entrar</span>
+            </button>
+            <button onclick="openLoginModal('register')" class="py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all active-scale flex items-center justify-center gap-1">
+              <span>📝 Cadastrar</span>
+            </button>
+          </div>
         </div>
 
         <!-- Menu Lateral -->
@@ -629,55 +637,86 @@
   <!-- 4. MODAIS RESPONSIVOS (LOGIN, CRONÔMETRO, COMPARTILHAMENTO)          -->
   <!-- ==================================================================== -->
 
-  <!-- MODAL DE LOGIN (USUÁRIOS: jose, maria OU admin / SENHA: 123456) -->
+  <!-- MODAL DE AUTENTICAÇÃO REAL (LOGIN & CADASTRO) -->
   <div id="modal-login" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
     <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4">
       
+      <!-- Cabeçalho do Modal -->
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+        <h3 id="auth-modal-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
           <span>🔑</span> Entrar na Rede Minha Voz
         </h3>
-        <button onclick="closeModal('modal-login')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+        <button onclick="closeModal('modal-login')" class="text-slate-400 hover:text-slate-600 text-lg p-1">✕</button>
       </div>
 
-      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-700 space-y-2">
-        <div class="font-bold text-slate-900">Selecione uma conta para preencher:</div>
-        <div class="grid grid-cols-3 gap-2 text-center">
-          <button type="button" onclick="quickFillLogin('jose')" class="p-2 bg-white border border-slate-200 rounded-xl font-bold hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-all flex flex-col items-center active-scale">
-            <span class="text-lg">👨</span>
-            <span class="text-xs font-bold mt-0.5">jose</span>
-            <span class="text-[9px] text-slate-400 font-normal">Paciente</span>
-          </button>
-          <button type="button" onclick="quickFillLogin('maria')" class="p-2 bg-white border border-slate-200 rounded-xl font-bold hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 transition-all flex flex-col items-center active-scale">
-            <span class="text-lg">👩</span>
-            <span class="text-xs font-bold mt-0.5">maria</span>
-            <span class="text-[9px] text-slate-400 font-normal">Paciente</span>
-          </button>
-          <button type="button" onclick="quickFillLogin('admin')" class="p-2 bg-white border border-slate-200 rounded-xl font-bold hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-300 transition-all flex flex-col items-center active-scale">
-            <span class="text-lg">👑</span>
-            <span class="text-xs font-bold mt-0.5">admin</span>
-            <span class="text-[9px] text-slate-400 font-normal">Moderador</span>
-          </button>
-        </div>
-        <div class="text-[10px] text-slate-500 text-center pt-1 border-t border-slate-200">
-          Senha para todas as contas: <code class="bg-white px-1.5 py-0.5 rounded font-mono font-bold text-slate-700 border border-slate-200">123456</code>
-        </div>
+      <!-- Abas: Entrar / Cadastrar -->
+      <div class="flex p-1 bg-slate-100 rounded-xl text-xs font-bold">
+        <button type="button" id="tab-auth-login" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-white text-blue-700 shadow-xs transition-all text-center">
+          Entrar
+        </button>
+        <button type="button" id="tab-auth-register" onclick="switchAuthTab('register')" class="flex-1 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all text-center">
+          Criar Cadastro
+        </button>
       </div>
 
-      <form onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
+      <!-- FORMULÁRIO 1: LOGIN -->
+      <form id="form-auth-login" onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Usuário:</label>
-          <input type="text" id="login-username" value="jose" placeholder="jose, maria ou admin" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden">
+          <label class="block font-bold text-slate-700 mb-1">Usuário, E-mail ou CPF:</label>
+          <input type="text" id="login-username" required placeholder="Digite seu usuário, e-mail ou CPF" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
         </div>
 
         <div>
           <label class="block font-bold text-slate-700 mb-1">Senha:</label>
-          <input type="password" id="login-password" value="123456" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden">
+          <input type="password" id="login-password" required placeholder="Digite sua senha" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
         </div>
 
         <div class="pt-1">
           <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-blue-600/30 transition-all active-scale">
-            Entrar / Fazer Login
+            Entrar
+          </button>
+        </div>
+
+        <div class="text-center pt-2 text-[11px] text-slate-500">
+          Ainda não tem conta? 
+          <button type="button" onclick="switchAuthTab('register')" class="text-blue-600 font-bold hover:underline">
+            Cadastre-se gratuitamente
+          </button>
+        </div>
+      </form>
+
+      <!-- FORMULÁRIO 2: CADASTRO -->
+      <form id="form-auth-register" onsubmit="handleRegisterSubmit(event)" class="space-y-3 text-xs hidden">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nome Completo:</label>
+          <input type="text" id="register-fullname" required placeholder="Ex: Maria dos Santos" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Usuário ou E-mail:</label>
+          <input type="text" id="register-username" required placeholder="Ex: mariasantos ou maria@email.com" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Cidade / Estado:</label>
+          <input type="text" id="register-city" placeholder="Ex: São Paulo, SP ou Guarulhos, SP" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Crie uma Senha:</label>
+          <input type="password" id="register-password" required minlength="4" placeholder="Crie uma senha (mínimo 4 caracteres)" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+        </div>
+
+        <div class="pt-1">
+          <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-emerald-600/30 transition-all active-scale">
+            Criar Cadastro e Entrar
+          </button>
+        </div>
+
+        <div class="text-center pt-2 text-[11px] text-slate-500">
+          Já possui conta? 
+          <button type="button" onclick="switchAuthTab('login')" class="text-blue-600 font-bold hover:underline">
+            Fazer Login
           </button>
         </div>
       </form>
@@ -1412,11 +1451,43 @@
       }
     }
 
-    function quickFillLogin(u) {
-      const inputUser = document.getElementById('login-username');
-      const inputPass = document.getElementById('login-password');
-      if (inputUser) inputUser.value = u;
-      if (inputPass) inputPass.value = '123456';
+    function switchAuthTab(mode) {
+      const tabLogin = document.getElementById('tab-auth-login');
+      const tabRegister = document.getElementById('tab-auth-register');
+      const formLogin = document.getElementById('form-auth-login');
+      const formRegister = document.getElementById('form-auth-register');
+      const modalTitle = document.getElementById('auth-modal-title');
+
+      if (mode === 'register') {
+        if (tabLogin) tabLogin.className = 'flex-1 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all text-center';
+        if (tabRegister) tabRegister.className = 'flex-1 py-2 rounded-lg bg-white text-emerald-700 shadow-xs transition-all text-center';
+        if (formLogin) formLogin.classList.add('hidden');
+        if (formRegister) formRegister.classList.remove('hidden');
+        if (modalTitle) modalTitle.innerHTML = '<span>📝</span> Criar Cadastro no Minha Voz';
+      } else {
+        if (tabLogin) tabLogin.className = 'flex-1 py-2 rounded-lg bg-white text-blue-700 shadow-xs transition-all text-center';
+        if (tabRegister) tabRegister.className = 'flex-1 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all text-center';
+        if (formLogin) formLogin.classList.remove('hidden');
+        if (formRegister) formRegister.classList.add('hidden');
+        if (modalTitle) modalTitle.innerHTML = '<span>🔑</span> Entrar na Rede Minha Voz';
+      }
+    }
+
+    function getRegisteredUsers() {
+      try {
+        const raw = localStorage.getItem('minhavoz_registered_users');
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveRegisteredUser(u) {
+      try {
+        const all = getRegisteredUsers();
+        all[u.username.toLowerCase()] = u;
+        localStorage.setItem('minhavoz_registered_users', JSON.stringify(all));
+      } catch (e) {}
     }
 
     function updateUserUI() {
@@ -1481,28 +1552,76 @@
       }
     }
 
-    function handleLoginSubmit(e) {
+    async function handleLoginSubmit(e) {
       e.preventDefault();
       const userVal = document.getElementById('login-username').value.trim().toLowerCase();
       const passVal = document.getElementById('login-password').value.trim();
 
-      if (passVal !== '123456') {
-        alert('Senha incorreta! Digite 123456.');
+      if (!userVal || !passVal) {
+        alert('Por favor, informe seu usuário ou e-mail e sua senha.');
         return;
       }
 
+      // 1. Contas pré-configuradas (jose, maria, admin)
       if (KNOWN_ACCOUNTS[userVal]) {
-        currentUser = KNOWN_ACCOUNTS[userVal];
+        if (passVal === '123456') {
+          currentUser = KNOWN_ACCOUNTS[userVal];
+        } else {
+          alert('Senha incorreta! Por favor, tente novamente.');
+          return;
+        }
       } else {
-        currentUser = {
-          id: null,
-          username: userVal || 'paciente',
-          name: userVal ? `Paciente ${userVal.charAt(0).toUpperCase() + userVal.slice(1)}` : 'Paciente SUS',
-          role: 'paciente',
-          avatar: '🏥',
-          city: 'São Paulo, SP',
-          isAdmin: false
-        };
+        // 2. Busca nos usuários cadastrados localmente
+        const registered = getRegisteredUsers();
+        if (registered[userVal]) {
+          if (registered[userVal].password === passVal) {
+            currentUser = registered[userVal];
+          } else {
+            alert('Senha incorreta! Por favor, tente novamente.');
+            return;
+          }
+        } else {
+          // 3. Consulta no banco Supabase se disponível
+          let foundInSupabase = false;
+          if (window.supabaseClient) {
+            try {
+              const { data } = await window.supabaseClient
+                .from('users')
+                .select('*')
+                .or(`cpf.eq.${userVal},email.eq.${userVal}`)
+                .limit(1);
+
+              if (data && data[0]) {
+                const supaUser = data[0];
+                if (supaUser.senha_hash && supaUser.senha_hash !== passVal) {
+                  alert('Senha incorreta!');
+                  return;
+                }
+                currentUser = {
+                  id: supaUser.id,
+                  username: supaUser.cpf || supaUser.email || userVal,
+                  name: supaUser.nome || 'Paciente SUS',
+                  role: 'paciente',
+                  avatar: '👤',
+                  city: supaUser.cidade || 'São Paulo, SP',
+                  isAdmin: (supaUser.cpf === 'admin' || userVal === 'admin')
+                };
+                foundInSupabase = true;
+              }
+            } catch (err) {
+              console.warn('Consulta Supabase login:', err);
+            }
+          }
+
+          if (!foundInSupabase) {
+            if (confirm(`A conta "${userVal}" não foi encontrada no sistema.\n\nDeseja abrir a tela de cadastro para criar sua conta agora gratuitamente?`)) {
+              switchAuthTab('register');
+              const regUserInput = document.getElementById('register-username');
+              if (regUserInput) regUserInput.value = userVal;
+            }
+            return;
+          }
+        }
       }
 
       localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
@@ -1510,6 +1629,88 @@
       renderFeed();
       closeModal('modal-login');
       alert(`✓ Bem-vindo(a), ${currentUser.name}!`);
+
+      document.getElementById('login-username').value = '';
+      document.getElementById('login-password').value = '';
+    }
+
+    async function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const fullName = document.getElementById('register-fullname').value.trim();
+      const userVal = document.getElementById('register-username').value.trim().toLowerCase();
+      const userCity = document.getElementById('register-city').value.trim() || 'São Paulo, SP';
+      const userPass = document.getElementById('register-password').value.trim();
+
+      if (!fullName || !userVal || !userPass) {
+        alert('Por favor, preencha os campos obrigatórios (Nome, Usuário e Senha).');
+        return;
+      }
+
+      if (userPass.length < 4) {
+        alert('A senha deve conter no mínimo 4 caracteres.');
+        return;
+      }
+
+      const registered = getRegisteredUsers();
+      if (KNOWN_ACCOUNTS[userVal] || registered[userVal]) {
+        alert('Este nome de usuário ou e-mail já está cadastrado. Por favor, faça login.');
+        switchAuthTab('login');
+        const loginUserInp = document.getElementById('login-username');
+        if (loginUserInp) loginUserInp.value = userVal;
+        return;
+      }
+
+      const newId = 'u-' + Date.now();
+      const newUser = {
+        id: newId,
+        username: userVal,
+        name: fullName,
+        role: 'paciente',
+        avatar: '👤',
+        city: userCity,
+        password: userPass,
+        isAdmin: false
+      };
+
+      // 1. Armazena no registro local
+      saveRegisteredUser(newUser);
+
+      // 2. Persiste no banco de dados Supabase
+      if (window.supabaseClient) {
+        window.supabaseClient
+          .from('users')
+          .insert([{
+            nome: fullName,
+            cidade: userCity,
+            email: userVal.includes('@') ? userVal : `${userVal}@minhavoz.org.br`,
+            cpf: userVal,
+            senha_hash: userPass,
+            condicao_saude: 'Paciente Cadastrado'
+          }])
+          .select()
+          .then(res => {
+            if (res.data && res.data[0]) {
+              newUser.id = res.data[0].id;
+              saveRegisteredUser(newUser);
+              localStorage.setItem('minhavoz_user', JSON.stringify(newUser));
+              console.log('✓ Usuário cadastrado no Supabase com ID:', res.data[0].id);
+            }
+          })
+          .catch(err => console.warn('Cadastro Supabase:', err));
+      }
+
+      currentUser = newUser;
+      localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+      updateUserUI();
+      renderFeed();
+      closeModal('modal-login');
+      alert(`✓ Cadastro realizado com sucesso!\nSeja bem-vindo(a) à rede Minha Voz, ${fullName}!`);
+
+      // Limpa os campos do formulário de cadastro
+      document.getElementById('register-fullname').value = '';
+      document.getElementById('register-username').value = '';
+      document.getElementById('register-city').value = '';
+      document.getElementById('register-password').value = '';
     }
 
     function logoutUser() {
@@ -3401,8 +3602,10 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     }
 
     // MODAIS E FILTROS
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-    function openLoginModal() { document.getElementById('modal-login').classList.remove('hidden'); }
+    function openLoginModal(mode = 'login') {
+      switchAuthTab(mode);
+      document.getElementById('modal-login').classList.remove('hidden');
+    }
     function openTimerModal() { 
       detectUserLocation();
       document.getElementById('modal-timer').classList.remove('hidden'); 
