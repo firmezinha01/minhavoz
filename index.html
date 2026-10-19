@@ -323,14 +323,14 @@
               <span class="w-2 h-2 rounded-full bg-rose-500"></span>
               Depoimentos em Vídeo & Voz
             </h4>
-            <span class="text-[11px] text-blue-600 font-bold cursor-pointer hover:underline" onclick="selectMediaComposer('video')">
+            <span class="text-[11px] text-blue-600 font-bold cursor-pointer hover:underline" onclick="openVideoRecordModal()">
               + Gravar Depoimento
             </span>
           </div>
 
           <div id="stories-container" class="flex items-center space-x-3 overflow-x-auto pb-1 custom-scrollbar">
             <!-- Botão Gravar Vídeo -->
-            <div onclick="selectMediaComposer('video')" class="flex flex-col items-center shrink-0 cursor-pointer group">
+            <div onclick="openVideoRecordModal()" class="flex flex-col items-center shrink-0 cursor-pointer group">
               <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-dashed border-rose-400 flex items-center justify-center bg-rose-50 group-hover:scale-105 transition-transform">
                 <span class="text-rose-600 text-lg sm:text-xl font-bold">📹+</span>
               </div>
@@ -338,7 +338,7 @@
             </div>
 
             <!-- Botão Gravar Áudio -->
-            <div onclick="selectMediaComposer('audio')" class="flex flex-col items-center shrink-0 cursor-pointer group">
+            <div onclick="openAudioRecordModal()" class="flex flex-col items-center shrink-0 cursor-pointer group">
               <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-dashed border-blue-400 flex items-center justify-center bg-blue-50 group-hover:scale-105 transition-transform">
                 <span class="text-blue-600 text-lg sm:text-xl font-bold">🎙️+</span>
               </div>
@@ -395,70 +395,16 @@
             </div>
           </div>
 
-          <!-- MODO GRAVAÇÃO REAL DE ÁUDIO VIA WEBRTC -->
-          <div id="composer-audio-box" class="hidden bg-slate-900 text-white rounded-xl p-3 border border-slate-800 space-y-2">
-            <div class="flex justify-between items-center text-xs">
-              <span class="flex items-center gap-1.5 text-rose-400 font-bold">
-                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                <span id="audio-record-status-label">Gravador de Voz Ativo</span>
-              </span>
-              <span class="font-mono text-slate-300" id="audio-timer-display">00:00</span>
+          <!-- BARRA DE MÍDIA ANEXADA AO RELATO (VÍDEO OU ÁUDIO) -->
+          <div id="composer-media-attached-bar" class="hidden p-2.5 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between gap-2 text-xs">
+            <div class="flex items-center gap-2 font-bold text-blue-800">
+              <span id="composer-media-icon" class="text-base">📹</span>
+              <span id="composer-media-label">Vídeo anexado ao relato</span>
             </div>
-
-            <!-- Player do Áudio Gravado -->
-            <div id="audio-playback-container" class="hidden pt-1">
-              <audio id="recorded-audio-player" controls class="w-full h-8"></audio>
-            </div>
-
-            <div class="flex items-center justify-center gap-2 pt-1">
-              <button onclick="handleAudioRecordToggle()" id="btn-audio-record-action" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md active-scale">
-                <span>🔴 Iniciar Gravação de Voz</span>
-              </button>
-              <button onclick="cancelAudioRecording()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-full">
-                Cancelar
-              </button>
-            </div>
-          </div>
-
-          <!-- MODO GRAVAÇÃO REAL DE VÍDEO VIA WEBRTC -->
-          <div id="composer-video-box" class="hidden bg-slate-950 text-white rounded-xl p-3 border border-slate-800 space-y-2">
-            <div class="flex justify-between items-center text-xs">
-              <span class="flex items-center gap-1.5 text-rose-400 font-bold">
-                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-                <span id="video-record-status-label">Câmera Frontal HD</span>
-              </span>
-              <span class="text-[10px] bg-black/60 px-2 py-0.5 rounded font-mono" id="video-timer-display">00:00</span>
-            </div>
-
-            <!-- Viewport da Câmera (Preview ao vivo ou Vídeo gravado) -->
-            <div class="relative bg-slate-900 rounded-lg h-44 sm:h-52 flex items-center justify-center overflow-hidden border border-slate-800">
-              <video id="webcam-live-preview" autoplay playsinline muted class="w-full h-full object-cover"></video>
-              <video id="webcam-playback-preview" controls playsinline class="w-full h-full object-cover hidden"></video>
-              
-              <div id="webcam-permission-error" class="hidden flex flex-col items-center justify-center text-center p-3">
-                <span class="text-2xl mb-1">📷</span>
-                <span class="text-xs text-rose-400 font-bold">Permissão de Câmera Necessária</span>
-                <span class="text-[10px] text-slate-400 mt-1">Habilite o acesso à câmera no navegador para gravar seu depoimento.</span>
-              </div>
-            </div>
-
-            <!-- Filtro de Desfoque Facial para Anonimato -->
-            <div class="flex items-center justify-between p-2 bg-slate-900 rounded-lg text-xs">
-              <div class="flex items-center gap-2">
-                <input type="checkbox" id="video-blur-check" onchange="toggleBlurFilter(this.checked)" class="rounded text-rose-600 focus:ring-rose-500 w-4 h-4">
-                <label for="video-blur-check" class="text-slate-200 font-semibold cursor-pointer">Desfocar meu rosto (Filtro de Anonimato)</label>
-              </div>
-              <span class="text-[10px] text-slate-400">Protege sua imagem</span>
-            </div>
-
-            <div class="flex justify-center gap-2 pt-1">
-              <button onclick="handleVideoRecordToggle()" id="btn-video-record-action" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md active-scale">
-                <span>🔴 Iniciar Gravação de Vídeo</span>
-              </button>
-              <button onclick="cancelVideoRecording()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-full">
-                Cancelar
-              </button>
-            </div>
+            <button type="button" onclick="removeAttachedMedia()" class="text-xs text-rose-600 font-bold hover:underline cursor-pointer flex items-center gap-1">
+              <span>🗑️</span>
+              <span>Remover Mídia</span>
+            </button>
           </div>
 
           <!-- Datalists para preenchimento rápido inteligente -->
@@ -605,32 +551,43 @@
           </div>
 
           <!-- Barra de Ações do Compositor -->
-          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+          <div class="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-slate-100">
             
-            <div class="flex items-center flex-wrap gap-1">
-              <button onclick="selectMediaComposer('texto')" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-bold flex items-center gap-1 transition-colors">
+            <div class="flex items-center flex-wrap gap-1.5">
+              <button type="button" onclick="selectMediaComposer('texto')" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer">
                 <span>✍️</span>
                 <span>Texto</span>
               </button>
 
-              <button onclick="selectMediaComposer('audio')" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-blue-50 hover:text-blue-700 text-xs font-bold flex items-center gap-1 transition-colors">
+              <button type="button" onclick="openAudioRecordModal()" class="px-2.5 py-1.5 rounded-lg text-slate-700 hover:bg-blue-50 hover:text-blue-700 bg-slate-50 border border-slate-200 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer">
                 <span>🎙️</span>
-                <span>Gravar Áudio</span>
+                <span>Gravar Voz</span>
               </button>
 
-              <button onclick="selectMediaComposer('video')" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-rose-50 hover:text-rose-700 text-xs font-bold flex items-center gap-1 transition-colors">
+              <button type="button" onclick="openVideoRecordModal()" class="px-2.5 py-1.5 rounded-lg text-rose-700 hover:bg-rose-100 bg-rose-50 border border-rose-200 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer">
                 <span>📹</span>
                 <span>Gravar Vídeo</span>
               </button>
 
               <div class="flex items-center space-x-1 pl-1">
-                <input type="checkbox" id="composer-anon" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5">
+                <input type="checkbox" id="composer-anon" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 cursor-pointer">
                 <label for="composer-anon" class="text-[11px] text-slate-600 font-semibold cursor-pointer">Anônimo</label>
+              </div>
+
+              <!-- SELETOR PÚBLICO / PRIVADO -->
+              <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg text-xs">
+                <label for="composer-visibility" class="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
+                  <span>👁️</span> Visibilidade:
+                </label>
+                <select id="composer-visibility" class="bg-transparent font-bold text-xs text-slate-800 outline-hidden cursor-pointer">
+                  <option value="public">🌐 Público (Todos)</option>
+                  <option value="private">🔒 Privado (Apenas eu)</option>
+                </select>
               </div>
             </div>
 
             <!-- Botão Publicar Relato -->
-            <button onclick="publishPost()" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md shadow-blue-600/30 active-scale flex items-center justify-center gap-1.5 transition-all">
+            <button type="button" onclick="publishPost()" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md shadow-blue-600/30 active-scale flex items-center justify-center gap-1.5 transition-all cursor-pointer">
               <span>Publicar Relato</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </button>
@@ -985,6 +942,140 @@
         </div>
 
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE GRAVAÇÃO DE VÍDEO -->
+  <div id="modal-video-recorder" onclick="if(event.target === this) closeVideoRecordModal()" class="fixed inset-0 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
+    <div class="bg-slate-950 text-white rounded-2xl sm:rounded-3xl w-[95%] max-w-lg p-5 shadow-2xl border border-slate-800 space-y-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
+      
+      <!-- Cabeçalho -->
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📹</span>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-white">Gravar Depoimento em Vídeo</h3>
+            <p class="text-[11px] text-slate-400">Grave seu relato ao vivo para dar voz à sua espera.</p>
+          </div>
+        </div>
+        <button onclick="closeVideoRecordModal()" class="text-slate-400 hover:text-white text-lg p-1">✕</button>
+      </div>
+
+      <!-- Viewport da Câmera com Temporizador Sobreposto -->
+      <div class="relative bg-black rounded-2xl overflow-hidden border border-slate-800 aspect-video flex items-center justify-center">
+        <video id="modal-webcam-live" autoplay playsinline muted class="w-full h-full object-cover"></video>
+        <video id="modal-webcam-playback" controls playsinline class="w-full h-full object-cover hidden"></video>
+
+        <!-- Temporizador e Indicador REC -->
+        <div class="absolute top-3 left-3 right-3 flex justify-between items-center pointer-events-none z-10">
+          <span id="modal-video-rec-badge" class="hidden flex items-center gap-1.5 px-2.5 py-1 bg-rose-600/90 text-white font-bold rounded-full text-[10px] uppercase tracking-wider backdrop-blur-xs animate-pulse">
+            <span class="w-2 h-2 rounded-full bg-white"></span>
+            <span>Gravando</span>
+          </span>
+          <span id="modal-video-status-label" class="text-[11px] text-slate-300 font-bold bg-black/60 px-2 py-0.5 rounded backdrop-blur-xs">
+            Câmera Pronta
+          </span>
+          <span id="modal-video-timer-display" class="font-mono text-xs sm:text-sm font-bold bg-black/80 text-white px-2.5 py-1 rounded-lg border border-white/20">
+            00:00:00
+          </span>
+        </div>
+
+        <!-- Erro de Permissão -->
+        <div id="modal-webcam-permission-error" class="hidden flex flex-col items-center justify-center text-center p-4">
+          <span class="text-3xl mb-1">📷</span>
+          <span class="text-xs text-rose-400 font-bold">Permissão de Câmera Necessária</span>
+          <span class="text-[10px] text-slate-400 mt-1 max-w-xs">Habilite a câmera no navegador do seu celular ou computador para gravar seu depoimento.</span>
+        </div>
+      </div>
+
+      <!-- Filtro de Anonimato (Desfoque Facial) -->
+      <div class="flex items-center justify-between p-2.5 bg-slate-900 rounded-xl border border-slate-800 text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="modal-video-blur-check" onchange="toggleBlurFilter(this.checked)" class="rounded text-rose-600 focus:ring-rose-500 w-4 h-4 cursor-pointer">
+          <label for="modal-video-blur-check" class="text-slate-200 font-semibold cursor-pointer">Desfocar meu rosto (Filtro de Anonimato)</label>
+        </div>
+        <span class="text-[10px] text-slate-400">Protege sua identidade</span>
+      </div>
+
+      <!-- Controles de Ação -->
+      <div class="space-y-2 pt-1">
+        <div class="flex flex-col sm:flex-row gap-2">
+          <button type="button" id="modal-btn-video-record" onclick="handleVideoRecordToggle()" class="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2">
+            <span>🔴 Iniciar Gravação de Vídeo</span>
+          </button>
+          <button type="button" id="modal-btn-video-attach" onclick="confirmAttachVideo()" class="hidden flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2">
+            <span>✓ Anexar Vídeo ao Relato</span>
+          </button>
+        </div>
+        <div class="flex justify-between items-center text-xs pt-1 border-t border-slate-850">
+          <button type="button" onclick="closeVideoRecordModal()" class="text-slate-400 hover:text-white font-medium">
+            Cancelar
+          </button>
+          <button type="button" id="modal-btn-video-retry" onclick="resetVideoRecording()" class="hidden text-blue-400 hover:text-blue-300 font-bold">
+            🔄 Gravar Novamente
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL DE GRAVAÇÃO DE ÁUDIO -->
+  <div id="modal-audio-recorder" onclick="if(event.target === this) closeAudioRecordModal()" class="fixed inset-0 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
+    <div class="bg-slate-950 text-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-800 space-y-4">
+      
+      <!-- Cabeçalho -->
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🎙️</span>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-white">Gravar Depoimento em Voz</h3>
+            <p class="text-[11px] text-slate-400">Conte seu relato usando o microfone do celular ou computador.</p>
+          </div>
+        </div>
+        <button onclick="closeAudioRecordModal()" class="text-slate-400 hover:text-white text-lg p-1">✕</button>
+      </div>
+
+      <!-- Área de Visualização e Temporizador Grande -->
+      <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 flex flex-col items-center justify-center space-y-3 text-center">
+        <div id="modal-audio-mic-icon" class="w-20 h-20 rounded-full bg-rose-600/20 border-2 border-rose-500/40 text-rose-400 flex items-center justify-center text-3xl shadow-inner transition-transform">
+          🎙️
+        </div>
+
+        <div id="modal-audio-timer-display" class="font-mono text-3xl sm:text-4xl font-black text-white tracking-wider">
+          00:00
+        </div>
+
+        <span id="modal-audio-status-label" class="text-xs text-slate-300 font-semibold">
+          Microfone pronto para gravar.
+        </span>
+
+        <!-- Player para ouvir antes de enviar -->
+        <div id="modal-audio-playback-container" class="w-full hidden pt-2">
+          <audio id="modal-audio-playback" controls class="w-full h-9"></audio>
+        </div>
+      </div>
+
+      <!-- Controles de Ação -->
+      <div class="space-y-2 pt-1">
+        <div class="flex flex-col sm:flex-row gap-2">
+          <button type="button" id="modal-btn-audio-record" onclick="handleAudioRecordToggle()" class="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2">
+            <span>🔴 Iniciar Gravação de Voz</span>
+          </button>
+          <button type="button" id="modal-btn-audio-attach" onclick="confirmAttachAudio()" class="hidden flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2">
+            <span>✓ Anexar Áudio ao Relato</span>
+          </button>
+        </div>
+        <div class="flex justify-between items-center text-xs pt-1 border-t border-slate-850">
+          <button type="button" onclick="closeAudioRecordModal()" class="text-slate-400 hover:text-white font-medium">
+            Cancelar
+          </button>
+          <button type="button" id="modal-btn-audio-retry" onclick="resetAudioRecording()" class="hidden text-blue-400 hover:text-blue-300 font-bold">
+            🔄 Gravar Novamente
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -1593,6 +1684,30 @@
       if (btnRemove) btnRemove.classList.add('hidden');
     }
 
+    function encodeUserProfileData(user) {
+      if (!user) return 'Paciente Cadastrado';
+      const profileMeta = {
+        avatar: user.avatar || null,
+        phone: user.phone || '',
+        cns: user.cns || '',
+        healthNotes: user.healthNotes || ''
+      };
+      return `[PROFILE:${JSON.stringify(profileMeta)}] ${user.healthNotes || 'Paciente Cadastrado'}`;
+    }
+
+    function parseUserProfileData(condicao_saude) {
+      if (!condicao_saude) return null;
+      const match = condicao_saude.match(/\[PROFILE:(\{.*?\})\]/);
+      if (match) {
+        try {
+          return JSON.parse(match[1]);
+        } catch (e) {
+          return null;
+        }
+      }
+      return null;
+    }
+
     async function handleProfileSubmit(e) {
       e.preventDefault();
       if (!currentUser) return;
@@ -1634,18 +1749,26 @@
 
       if (window.supabaseClient) {
         try {
+          const condicaoStr = encodeUserProfileData(currentUser);
+          const profilePayload = {
+            id: currentUser.id,
+            nome: currentUser.name,
+            cidade: currentUser.city,
+            email: currentUser.email || `${currentUser.username}@minhavoz.org.br`,
+            cpf: currentUser.username,
+            senha_hash: currentUser.password || '123456',
+            condicao_saude: condicaoStr
+          };
           window.supabaseClient
             .from('users')
-            .upsert({
-              id: currentUser.id,
-              nome: currentUser.name,
-              cidade: currentUser.city,
-              email: currentUser.email || `${currentUser.username}@minhavoz.org.br`,
-              cpf: currentUser.cns || currentUser.username,
-              senha_hash: currentUser.password || '123456',
-              condicao_saude: currentUser.healthNotes || 'Paciente Cadastrado'
+            .upsert(profilePayload)
+            .then(res => {
+              if (res.error) {
+                console.warn('Erro ao atualizar perfil no Supabase:', res.error);
+              } else {
+                console.log('✓ Perfil e foto sincronizados com sucesso no Supabase');
+              }
             })
-            .then(() => console.log('✓ Perfil atualizado no Supabase'))
             .catch(err => console.warn('Supabase profile sync error:', err));
         } catch(err) {
           console.warn('Erro ao sincronizar com Supabase:', err);
@@ -1977,7 +2100,22 @@
       // 1. Contas pré-configuradas (jose, maria, admin)
       if (KNOWN_ACCOUNTS[userVal]) {
         if (passVal === '123456') {
-          currentUser = KNOWN_ACCOUNTS[userVal];
+          currentUser = { ...KNOWN_ACCOUNTS[userVal] };
+          if (window.supabaseClient) {
+            try {
+              const { data } = await window.supabaseClient
+                .from('users')
+                .select('*')
+                .or(`cpf.eq.${userVal},email.eq.${userVal}`)
+                .limit(1);
+              if (data && data[0]) {
+                const pMeta = parseUserProfileData(data[0].condicao_saude);
+                if (pMeta && pMeta.avatar) currentUser.avatar = pMeta.avatar;
+                if (data[0].nome) currentUser.name = data[0].nome;
+                if (data[0].cidade) currentUser.city = data[0].cidade;
+              }
+            } catch(e){}
+          }
         } else {
           alert('Senha incorreta! Por favor, tente novamente.');
           return;
@@ -2009,13 +2147,18 @@
                   alert('Senha incorreta!');
                   return;
                 }
+                const pMeta = parseUserProfileData(supaUser.condicao_saude);
+                const userAvatar = (pMeta && pMeta.avatar) ? pMeta.avatar : '👤';
                 currentUser = {
                   id: supaUser.id,
                   username: supaUser.cpf || supaUser.email || userVal,
                   name: supaUser.nome || 'Paciente SUS',
                   role: 'paciente',
-                  avatar: '👤',
+                  avatar: userAvatar,
                   city: supaUser.cidade || 'São Paulo, SP',
+                  phone: (pMeta && pMeta.phone) || '',
+                  cns: (pMeta && pMeta.cns) || '',
+                  healthNotes: (pMeta && pMeta.healthNotes) || '',
                   isAdmin: (supaUser.cpf === 'admin' || userVal === 'admin')
                 };
                 foundInSupabase = true;
@@ -2088,7 +2231,7 @@
       // 1. Armazena no registro local
       saveRegisteredUser(newUser);
 
-      // 2. Persiste no banco de dados Supabase
+      // 2. Persiste no banco de dados Supabase com avatar codificado
       if (window.supabaseClient) {
         window.supabaseClient
           .from('users')
@@ -2099,7 +2242,7 @@
             email: userVal.includes('@') ? userVal : `${userVal}@minhavoz.org.br`,
             cpf: userVal,
             senha_hash: userPass,
-            condicao_saude: 'Paciente Cadastrado'
+            condicao_saude: encodeUserProfileData(newUser)
           }])
           .select()
           .then(res => {
@@ -2137,7 +2280,7 @@
     }
 
     // ====================================================================
-    // GRAVAÇÃO REAL DE ÁUDIO VIA WEBRTC MEDIARECORDER API
+    // GRAVAÇÃO REAL DE ÁUDIO VIA MODAL DEDICADO & MEDIARECORDER API
     // ====================================================================
     let audioMediaStream = null;
     let audioRecorder = null;
@@ -2145,10 +2288,34 @@
     let audioTimerInterval = null;
     let audioSeconds = 0;
     let recordedAudioBlobUrl = null;
+    let recordedAudioDataUrl = null;
+
+    function openAudioRecordModal() {
+      const modal = document.getElementById('modal-audio-recorder');
+      if (modal) {
+        modal.classList.remove('hidden');
+        resetAudioRecording();
+      }
+    }
+
+    function closeAudioRecordModal() {
+      if (audioRecorder && audioRecorder.state === 'recording') {
+        try { audioRecorder.stop(); } catch(e){}
+      }
+      if (audioTimerInterval) clearInterval(audioTimerInterval);
+      if (audioMediaStream) {
+        audioMediaStream.getTracks().forEach(t => t.stop());
+        audioMediaStream = null;
+      }
+      const modal = document.getElementById('modal-audio-recorder');
+      if (modal) modal.classList.add('hidden');
+    }
 
     async function handleAudioRecordToggle() {
-      const btn = document.getElementById('btn-audio-record-action');
-      const statusLabel = document.getElementById('audio-record-status-label');
+      const btn = document.getElementById('modal-btn-audio-record');
+      const statusLabel = document.getElementById('modal-audio-status-label');
+      const micIcon = document.getElementById('modal-audio-mic-icon');
+      const timerDisplay = document.getElementById('modal-audio-timer-display');
 
       if (!audioRecorder || audioRecorder.state === 'inactive') {
         try {
@@ -2157,57 +2324,132 @@
           audioRecorder = new MediaRecorder(audioMediaStream);
 
           audioRecorder.ondataavailable = e => {
-            if (e.data.size > 0) audioChunks.push(e.data);
+            if (e.data && e.data.size > 0) audioChunks.push(e.data);
           };
 
           audioRecorder.onstop = () => {
             const blob = new Blob(audioChunks, { type: 'audio/webm' });
             recordedAudioBlobUrl = URL.createObjectURL(blob);
-            const player = document.getElementById('recorded-audio-player');
-            const container = document.getElementById('audio-playback-container');
+            
+            // Converte Blob em Base64 Data URL para persistência no Supabase
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              recordedAudioDataUrl = reader.result;
+            };
+            reader.readAsDataURL(blob);
+
+            const player = document.getElementById('modal-audio-playback');
+            const container = document.getElementById('modal-audio-playback-container');
             if (player && container) {
               player.src = recordedAudioBlobUrl;
               container.classList.remove('hidden');
             }
             if (audioMediaStream) {
               audioMediaStream.getTracks().forEach(track => track.stop());
+              audioMediaStream = null;
             }
-            btn.innerHTML = '<span>🔴 Gravar Novamente</span>';
-            btn.className = 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md active-scale';
-            statusLabel.innerText = '✓ Áudio Gravado! Ouça abaixo ou publique.';
+            if (micIcon) {
+              micIcon.classList.remove('animate-pulse', 'scale-110');
+            }
+            if (btn) btn.classList.add('hidden');
+            const btnAttach = document.getElementById('modal-btn-audio-attach');
+            const btnRetry = document.getElementById('modal-btn-audio-retry');
+            if (btnAttach) btnAttach.classList.remove('hidden');
+            if (btnRetry) btnRetry.classList.remove('hidden');
+            if (statusLabel) statusLabel.innerText = '✓ Áudio gravado com sucesso! Ouça acima e confirme para anexar.';
           };
 
           audioRecorder.start();
           audioSeconds = 0;
+          if (timerDisplay) timerDisplay.innerText = '00:00';
+          if (audioTimerInterval) clearInterval(audioTimerInterval);
           audioTimerInterval = setInterval(() => {
             audioSeconds++;
-            document.getElementById('audio-timer-display').innerText = formatSeconds(audioSeconds).slice(3);
+            const mins = String(Math.floor(audioSeconds / 60)).padStart(2, '0');
+            const secs = String(audioSeconds % 60).padStart(2, '0');
+            if (timerDisplay) timerDisplay.innerText = `${mins}:${secs}`;
           }, 1000);
 
-          btn.innerHTML = '<span>⏹️ Parar Gravação</span>';
-          btn.className = 'px-4 py-2 bg-rose-700 hover:bg-rose-800 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md animate-pulse active-scale';
-          statusLabel.innerText = '● Gravando voz... Fale com clareza.';
+          if (micIcon) {
+            micIcon.classList.add('animate-pulse', 'scale-110');
+          }
+          if (btn) {
+            btn.innerHTML = '<span>⏹️ Parar Gravação</span>';
+            btn.className = 'flex-1 py-3 bg-rose-700 hover:bg-rose-800 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2 animate-pulse';
+          }
+          if (statusLabel) statusLabel.innerText = '● Gravando voz... Fale com clareza próximo ao microfone.';
         } catch (err) {
-          alert('Erro ao acessar o microfone. Verifique as permissões de áudio no seu navegador.');
+          alert('Erro ao acessar o microfone. Verifique as permissões de áudio no seu navegador ou celular.');
         }
       } else if (audioRecorder.state === 'recording') {
         audioRecorder.stop();
-        clearInterval(audioTimerInterval);
+        if (audioTimerInterval) clearInterval(audioTimerInterval);
       }
     }
 
-    function cancelAudioRecording() {
+    function resetAudioRecording() {
       if (audioRecorder && audioRecorder.state === 'recording') {
-        audioRecorder.stop();
+        try { audioRecorder.stop(); } catch(e){}
       }
-      clearInterval(audioTimerInterval);
+      if (audioTimerInterval) clearInterval(audioTimerInterval);
+      if (audioMediaStream) {
+        audioMediaStream.getTracks().forEach(t => t.stop());
+        audioMediaStream = null;
+      }
+      audioSeconds = 0;
       recordedAudioBlobUrl = null;
-      document.getElementById('audio-playback-container').classList.add('hidden');
-      selectMediaComposer('texto');
+      recordedAudioDataUrl = null;
+
+      const timerDisplay = document.getElementById('modal-audio-timer-display');
+      if (timerDisplay) timerDisplay.innerText = '00:00';
+      const statusLabel = document.getElementById('modal-audio-status-label');
+      if (statusLabel) statusLabel.innerText = 'Microfone pronto para gravar.';
+      const micIcon = document.getElementById('modal-audio-mic-icon');
+      if (micIcon) micIcon.classList.remove('animate-pulse', 'scale-110');
+
+      const container = document.getElementById('modal-audio-playback-container');
+      if (container) container.classList.add('hidden');
+      const player = document.getElementById('modal-audio-playback');
+      if (player) player.src = '';
+
+      const btn = document.getElementById('modal-btn-audio-record');
+      if (btn) {
+        btn.classList.remove('hidden');
+        btn.innerHTML = '<span>🔴 Iniciar Gravação de Voz</span>';
+        btn.className = 'flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2';
+      }
+      const btnAttach = document.getElementById('modal-btn-audio-attach');
+      if (btnAttach) btnAttach.classList.add('hidden');
+      const btnRetry = document.getElementById('modal-btn-audio-retry');
+      if (btnRetry) btnRetry.classList.add('hidden');
+    }
+
+    function confirmAttachAudio() {
+      if (!recordedAudioBlobUrl && !recordedAudioDataUrl) {
+        alert('Nenhum áudio foi gravado ainda.');
+        return;
+      }
+      activeMediaMode = 'audio';
+      const attachedBar = document.getElementById('composer-media-attached-bar');
+      const label = document.getElementById('composer-media-label');
+      const icon = document.getElementById('composer-media-icon');
+      if (attachedBar && label && icon) {
+        icon.innerText = '🎙️';
+        const mins = String(Math.floor(audioSeconds / 60)).padStart(2, '0');
+        const secs = String(audioSeconds % 60).padStart(2, '0');
+        label.innerText = `Áudio gravado anexado (${mins}:${secs})`;
+        attachedBar.classList.remove('hidden');
+      }
+      closeAudioRecordModal();
+      const compText = document.getElementById('composer-text');
+      if (compText) {
+        compText.focus();
+        if (!compText.value.trim()) compText.placeholder = 'Conte mais detalhes sobre este áudio (opcional)...';
+      }
     }
 
     // ====================================================================
-    // GRAVAÇÃO REAL DE VÍDEO VIA WEBRTC MEDIARECORDER API
+    // GRAVAÇÃO REAL DE VÍDEO VIA MODAL DEDICADO & MEDIARECORDER API
     // ====================================================================
     let videoMediaStream = null;
     let videoRecorder = null;
@@ -2215,16 +2457,18 @@
     let videoTimerInterval = null;
     let videoSeconds = 0;
     let recordedVideoBlobUrl = null;
+    let recordedVideoDataUrl = null;
 
-    async function initWebcamStream() {
+    async function initModalWebcamStream() {
       try {
         videoMediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user' },
+          video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
           audio: true
         });
-        const liveVideo = document.getElementById('webcam-live-preview');
-        const playbackVideo = document.getElementById('webcam-playback-preview');
-        const errBox = document.getElementById('webcam-permission-error');
+        const liveVideo = document.getElementById('modal-webcam-live');
+        const playbackVideo = document.getElementById('modal-webcam-playback');
+        const errBox = document.getElementById('modal-webcam-permission-error');
+        const statusLabel = document.getElementById('modal-video-status-label');
 
         if (liveVideo) {
           liveVideo.srcObject = videoMediaStream;
@@ -2232,108 +2476,211 @@
         }
         if (playbackVideo) playbackVideo.classList.add('hidden');
         if (errBox) errBox.classList.add('hidden');
+        if (statusLabel) statusLabel.innerText = 'Câmera Pronta';
       } catch (err) {
-        document.getElementById('webcam-live-preview').classList.add('hidden');
-        document.getElementById('webcam-permission-error').classList.remove('hidden');
+        console.warn('Erro ao abrir câmera:', err);
+        const liveVideo = document.getElementById('modal-webcam-live');
+        if (liveVideo) liveVideo.classList.add('hidden');
+        const errBox = document.getElementById('modal-webcam-permission-error');
+        if (errBox) errBox.classList.remove('hidden');
+        const statusLabel = document.getElementById('modal-video-status-label');
+        if (statusLabel) statusLabel.innerText = 'Sem Acesso à Câmera';
       }
     }
 
+    async function openVideoRecordModal() {
+      const modal = document.getElementById('modal-video-recorder');
+      if (modal) {
+        modal.classList.remove('hidden');
+        resetVideoRecording();
+        await initModalWebcamStream();
+      }
+    }
+
+    function closeVideoRecordModal() {
+      if (videoRecorder && videoRecorder.state === 'recording') {
+        try { videoRecorder.stop(); } catch(e){}
+      }
+      if (videoTimerInterval) clearInterval(videoTimerInterval);
+      if (videoMediaStream) {
+        videoMediaStream.getTracks().forEach(t => t.stop());
+        videoMediaStream = null;
+      }
+      const modal = document.getElementById('modal-video-recorder');
+      if (modal) modal.classList.add('hidden');
+    }
+
     async function handleVideoRecordToggle() {
-      const btn = document.getElementById('btn-video-record-action');
-      const statusLabel = document.getElementById('video-record-status-label');
+      const btn = document.getElementById('modal-btn-video-record');
+      const statusLabel = document.getElementById('modal-video-status-label');
+      const recBadge = document.getElementById('modal-video-rec-badge');
+      const timerDisplay = document.getElementById('modal-video-timer-display');
 
       if (!videoRecorder || videoRecorder.state === 'inactive') {
         try {
           if (!videoMediaStream || !videoMediaStream.active) {
-            await initWebcamStream();
+            await initModalWebcamStream();
           }
 
           videoChunks = [];
           videoRecorder = new MediaRecorder(videoMediaStream);
 
           videoRecorder.ondataavailable = e => {
-            if (e.data.size > 0) videoChunks.push(e.data);
+            if (e.data && e.data.size > 0) videoChunks.push(e.data);
           };
 
           videoRecorder.onstop = () => {
             const blob = new Blob(videoChunks, { type: 'video/webm' });
             recordedVideoBlobUrl = URL.createObjectURL(blob);
+
+            // Converte Blob em Base64 Data URL para persistência no Supabase
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              recordedVideoDataUrl = reader.result;
+            };
+            reader.readAsDataURL(blob);
             
-            const liveVideo = document.getElementById('webcam-live-preview');
-            const playbackVideo = document.getElementById('webcam-playback-preview');
+            const liveVideo = document.getElementById('modal-webcam-live');
+            const playbackVideo = document.getElementById('modal-webcam-playback');
 
             if (liveVideo) liveVideo.classList.add('hidden');
             if (playbackVideo) {
               playbackVideo.src = recordedVideoBlobUrl;
               playbackVideo.classList.remove('hidden');
-              playbackVideo.play();
+              playbackVideo.play().catch(()=>{});
             }
 
             if (videoMediaStream) {
               videoMediaStream.getTracks().forEach(track => track.stop());
+              videoMediaStream = null;
             }
 
-            btn.innerHTML = '<span>🔴 Gravar Outro Vídeo</span>';
-            btn.className = 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md active-scale';
-            statusLabel.innerText = '✓ Vídeo Gravado com Sucesso!';
+            if (recBadge) recBadge.classList.add('hidden');
+            if (btn) btn.classList.add('hidden');
+            const btnAttach = document.getElementById('modal-btn-video-attach');
+            const btnRetry = document.getElementById('modal-btn-video-retry');
+            if (btnAttach) btnAttach.classList.remove('hidden');
+            if (btnRetry) btnRetry.classList.remove('hidden');
+            if (statusLabel) statusLabel.innerText = '✓ Vídeo gravado com sucesso! Assista acima e confirme para anexar.';
           };
 
           videoRecorder.start();
           videoSeconds = 0;
+          if (timerDisplay) timerDisplay.innerText = '00:00:00';
+          if (videoTimerInterval) clearInterval(videoTimerInterval);
           videoTimerInterval = setInterval(() => {
             videoSeconds++;
-            document.getElementById('video-timer-display').innerText = formatSeconds(videoSeconds).slice(3);
+            if (timerDisplay) timerDisplay.innerText = formatSeconds(videoSeconds);
           }, 1000);
 
-          btn.innerHTML = '<span>⏹️ Finalizar Vídeo</span>';
-          btn.className = 'px-4 py-2 bg-rose-700 hover:bg-rose-800 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md animate-pulse active-scale';
-          statusLabel.innerText = '● Gravando depoimento em vídeo...';
+          if (recBadge) recBadge.classList.remove('hidden');
+          if (btn) {
+            btn.innerHTML = '<span>⏹️ Finalizar Vídeo</span>';
+            btn.className = 'flex-1 py-3 bg-rose-700 hover:bg-rose-800 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2 animate-pulse';
+          }
+          if (statusLabel) statusLabel.innerText = '● Gravando depoimento em vídeo...';
         } catch (err) {
-          alert('Permissão de câmera ou microfone negada no navegador.');
+          alert('Permissão de câmera ou microfone negada no navegador. Habilite o acesso para gravar seu depoimento.');
         }
       } else if (videoRecorder.state === 'recording') {
         videoRecorder.stop();
-        clearInterval(videoTimerInterval);
+        if (videoTimerInterval) clearInterval(videoTimerInterval);
       }
     }
 
     function toggleBlurFilter(shouldBlur) {
-      const liveVideo = document.getElementById('webcam-live-preview');
-      const playbackVideo = document.getElementById('webcam-playback-preview');
-      const filterVal = shouldBlur ? 'blur(10px)' : 'none';
+      const liveVideo = document.getElementById('modal-webcam-live');
+      const playbackVideo = document.getElementById('modal-webcam-playback');
+      const filterVal = shouldBlur ? 'blur(12px)' : 'none';
       if (liveVideo) liveVideo.style.filter = filterVal;
       if (playbackVideo) playbackVideo.style.filter = filterVal;
     }
 
-    function cancelVideoRecording() {
+    function resetVideoRecording() {
       if (videoRecorder && videoRecorder.state === 'recording') {
-        videoRecorder.stop();
+        try { videoRecorder.stop(); } catch(e){}
       }
-      clearInterval(videoTimerInterval);
-      if (videoMediaStream) {
-        videoMediaStream.getTracks().forEach(t => t.stop());
-      }
+      if (videoTimerInterval) clearInterval(videoTimerInterval);
+      videoSeconds = 0;
       recordedVideoBlobUrl = null;
-      selectMediaComposer('texto');
+      recordedVideoDataUrl = null;
+
+      const timerDisplay = document.getElementById('modal-video-timer-display');
+      if (timerDisplay) timerDisplay.innerText = '00:00:00';
+      const recBadge = document.getElementById('modal-video-rec-badge');
+      if (recBadge) recBadge.classList.add('hidden');
+      const statusLabel = document.getElementById('modal-video-status-label');
+      if (statusLabel) statusLabel.innerText = 'Câmera Pronta';
+
+      const liveVideo = document.getElementById('modal-webcam-live');
+      const playbackVideo = document.getElementById('modal-webcam-playback');
+      if (playbackVideo) {
+        playbackVideo.classList.add('hidden');
+        playbackVideo.src = '';
+      }
+      if (liveVideo) liveVideo.classList.remove('hidden');
+
+      const blurCheck = document.getElementById('modal-video-blur-check');
+      if (blurCheck) {
+        blurCheck.checked = false;
+        toggleBlurFilter(false);
+      }
+
+      const btn = document.getElementById('modal-btn-video-record');
+      if (btn) {
+        btn.classList.remove('hidden');
+        btn.innerHTML = '<span>🔴 Iniciar Gravação de Vídeo</span>';
+        btn.className = 'flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2';
+      }
+      const btnAttach = document.getElementById('modal-btn-video-attach');
+      if (btnAttach) btnAttach.classList.add('hidden');
+      const btnRetry = document.getElementById('modal-btn-video-retry');
+      if (btnRetry) btnRetry.classList.add('hidden');
+    }
+
+    function confirmAttachVideo() {
+      if (!recordedVideoBlobUrl && !recordedVideoDataUrl) {
+        alert('Nenhum vídeo foi gravado ainda.');
+        return;
+      }
+      activeMediaMode = 'video';
+      const attachedBar = document.getElementById('composer-media-attached-bar');
+      const label = document.getElementById('composer-media-label');
+      const icon = document.getElementById('composer-media-icon');
+      if (attachedBar && label && icon) {
+        icon.innerText = '📹';
+        label.innerText = `Vídeo gravado anexado (${formatSeconds(videoSeconds)})`;
+        attachedBar.classList.remove('hidden');
+      }
+      closeVideoRecordModal();
+      const compText = document.getElementById('composer-text');
+      if (compText) {
+        compText.focus();
+        if (!compText.value.trim()) compText.placeholder = 'Conte mais detalhes sobre este vídeo (opcional)...';
+      }
+    }
+
+    function removeAttachedMedia() {
+      recordedVideoBlobUrl = null;
+      recordedVideoDataUrl = null;
+      recordedAudioBlobUrl = null;
+      recordedAudioDataUrl = null;
+      activeMediaMode = 'texto';
+      const attachedBar = document.getElementById('composer-media-attached-bar');
+      if (attachedBar) attachedBar.classList.add('hidden');
+      const compText = document.getElementById('composer-text');
+      if (compText) compText.placeholder = 'Compartilhe sua experiência real: Qual cirurgia ou exame você aguarda? Quanto tempo de espera?';
     }
 
     function selectMediaComposer(mode) {
-      activeMediaMode = mode;
-      const audioBox = document.getElementById('composer-audio-box');
-      const videoBox = document.getElementById('composer-video-box');
-
-      if (mode === 'audio') {
-        audioBox.classList.remove('hidden');
-        videoBox.classList.add('hidden');
-        if (videoMediaStream) videoMediaStream.getTracks().forEach(t => t.stop());
-      } else if (mode === 'video') {
-        videoBox.classList.remove('hidden');
-        audioBox.classList.add('hidden');
-        initWebcamStream();
+      if (mode === 'video') {
+        openVideoRecordModal();
+      } else if (mode === 'audio') {
+        openAudioRecordModal();
       } else {
-        audioBox.classList.add('hidden');
-        videoBox.classList.add('hidden');
-        if (videoMediaStream) videoMediaStream.getTracks().forEach(t => t.stop());
+        removeAttachedMedia();
+        const compText = document.getElementById('composer-text');
+        if (compText) compText.focus();
       }
     }
 
@@ -2659,7 +3006,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         tempo_espera_dias: meta.waitUnit === 'dias' ? meta.waitVal : null,
         tempo_espera_horas: meta.waitUnit === 'horas' ? meta.waitVal : null,
         cidade: meta.city,
-        estado: meta.state
+        estado: meta.state,
+        video_url: newPost.videoDataUrl || null,
+        audio_url: newPost.audioDataUrl || null
       };
       if (currentUser && currentUser.id && isValidUUID(currentUser.id)) {
         fullPayload.user_id = currentUser.id;
@@ -2773,8 +3122,11 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       const hospital = document.getElementById('composer-hospital').value.trim() || detectedLocationName;
       const locationVal = document.getElementById('composer-location').value.trim() || ((currentUser && currentUser.city) || 'São Paulo, SP');
       const isAnon = document.getElementById('composer-anon').checked;
+      const isPublic = document.getElementById('composer-visibility') 
+        ? (document.getElementById('composer-visibility').value === 'public') 
+        : true;
 
-      if (!text && !recordedVideoBlobUrl && !recordedAudioBlobUrl) {
+      if (!text && !recordedVideoBlobUrl && !recordedAudioBlobUrl && !recordedVideoDataUrl && !recordedAudioDataUrl) {
         alert('Por favor, escreva um relato ou grave um áudio/vídeo antes de publicar.');
         return;
       }
@@ -2790,6 +3142,11 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       }
 
       const tempId = 'post-' + Date.now();
+      const currentAuthor = isAnon ? 'Paciente Anônimo' : ((currentUser && currentUser.name) || 'Paciente SUS');
+      const currentAvatar = isAnon ? '🎭' : ((currentUser && currentUser.avatar) || '👨');
+      const currentUserId = (currentUser && currentUser.id) || null;
+      const currentUsername = (currentUser && currentUser.username) || null;
+
       const waitRecord = {
         id: tempId,
         hospital: hospital,
@@ -2800,10 +3157,13 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         waitUnit: waitUnit,
         city: city,
         state: state,
-        author: isAnon ? 'Paciente Anônimo' : ((currentUser && currentUser.name) || 'Paciente SUS'),
-        avatar: isAnon ? '🎭' : ((currentUser && currentUser.avatar) || '👨'),
+        author: currentAuthor,
+        avatar: currentAvatar,
+        userId: currentUserId,
+        username: currentUsername,
+        isPublic: isPublic,
         createdAt: 'Agora mesmo',
-        text: text || (activeMediaMode === 'video' ? 'Depoimento gravado em vídeo pelo paciente.' : 'Depoimento em áudio gravado.')
+        text: text || (activeMediaMode === 'video' ? 'Depoimento gravado em vídeo pelo paciente.' : (activeMediaMode === 'audio' ? 'Depoimento em áudio gravado.' : 'Relato publicado na rede Minha Voz.'))
       };
 
       // 1. Atualização Otimista no Banco do Mapa e no Feed Social
@@ -2814,6 +3174,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         id: tempId,
         author: waitRecord.author,
         avatar: waitRecord.avatar,
+        userId: currentUserId,
+        username: currentUsername,
+        isPublic: isPublic,
         location: `${city}, ${state}`,
         hospital: waitRecord.hospitalShort,
         category: category,
@@ -2823,8 +3186,10 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         waitDays: waitUnit === 'dias' ? waitVal : Math.round(waitVal * 24),
         waitHours: waitUnit === 'horas' ? waitVal : (waitVal * 24),
         mediaType: activeMediaMode,
-        videoBlobUrl: recordedVideoBlobUrl,
-        audioBlobUrl: recordedAudioBlobUrl,
+        videoBlobUrl: recordedVideoBlobUrl || recordedVideoDataUrl,
+        audioBlobUrl: recordedAudioBlobUrl || recordedAudioDataUrl,
+        videoDataUrl: recordedVideoDataUrl,
+        audioDataUrl: recordedAudioDataUrl,
         text: waitRecord.text,
         likes: 1,
         hasLiked: true,
@@ -2842,7 +3207,20 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       // 2. Sincronização Real com o Supabase
       let supabaseSaved = false;
       if (window.supabaseClient) {
-        const metaObj = { hospital, category, specialty, waitVal, waitUnit, city, state };
+        const metaObj = { 
+          hospital, 
+          category, 
+          specialty, 
+          waitVal, 
+          waitUnit, 
+          city, 
+          state, 
+          author: waitRecord.author, 
+          avatar: waitRecord.avatar,
+          userId: currentUserId,
+          username: currentUsername,
+          isPublic: isPublic
+        };
         const savedId = await saveReportToSupabase(newPost, metaObj);
         if (savedId) {
           newPost.id = savedId;
@@ -2852,14 +3230,14 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         }
       }
 
-      // Reset dos campos
+      // Reset dos campos do compositor
       document.getElementById('composer-text').value = '';
-      recordedVideoBlobUrl = null;
-      recordedAudioBlobUrl = null;
-      selectMediaComposer('texto');
+      removeAttachedMedia();
 
-      if (supabaseSaved) {
-        alert(`✓ Relato publicado com sucesso!\nGravado e sincronizado em tempo real no banco de dados Supabase.\nO Mapa de Espera do ${waitRecord.hospitalShort} foi recalculado.`);
+      if (!isPublic) {
+        alert(`🔒 Relato salvo como PRIVADO com sucesso!\n\nEste relato fica visível apenas para você na sua conta (${currentAuthor}).\nVocê pode torná-lo público a qualquer momento clicando em "Tornar Público Agora".`);
+      } else if (supabaseSaved) {
+        alert(`✓ Relato publicado com sucesso!\nGravado e sincronizado em tempo real no banco de dados Supabase para todos os usuários online.\nO Mapa de Espera do ${waitRecord.hospitalShort} foi recalculado.`);
       } else {
         alert(`✓ Relato publicado com sucesso!\nO Mapa de Espera do ${waitRecord.hospitalShort} foi recalculado.`);
       }
@@ -2890,6 +3268,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       const map = {};
 
       realWaitingRecords.forEach(rec => {
+        if (rec.isPublic === false) return; // Apenas relatos públicos compõem as médias oficiais do mapa
         const hKey = normalizeHospitalKey(rec.hospital);
         const rState = (rec.state || 'SP').toUpperCase();
         const rCity = rec.city || 'Brasil';
@@ -3585,9 +3964,20 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       const container = document.getElementById('posts-container');
       if (!container) return;
 
-      let filtered = socialPosts;
-      if (currentFilter === 'video') filtered = socialPosts.filter(p => p.mediaType === 'video');
-      else if (currentFilter === 'audio') filtered = socialPosts.filter(p => p.mediaType === 'audio');
+      let filtered = socialPosts.filter(p => {
+        // Relatos públicos são exibidos para todos
+        if (p.isPublic !== false) return true;
+        // Relatos privados são exibidos somente para o próprio autor logado ou moderador admin
+        if (!currentUser) return false;
+        if (currentUser.isAdmin) return true;
+        if (p.userId && currentUser.id && p.userId === currentUser.id) return true;
+        if (p.username && currentUser.username && p.username.toLowerCase() === currentUser.username.toLowerCase()) return true;
+        if (p.author && currentUser.name && p.author.toLowerCase() === currentUser.name.toLowerCase()) return true;
+        return false;
+      });
+
+      if (currentFilter === 'video') filtered = filtered.filter(p => p.mediaType === 'video');
+      else if (currentFilter === 'audio') filtered = filtered.filter(p => p.mediaType === 'audio');
 
       if (filtered.length === 0) {
         container.innerHTML = `
@@ -3613,13 +4003,30 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     function createPostHTML(post) {
       const isAnonName = post.isAnon ? `Paciente Anônimo` : post.author;
       const avatarDisplay = post.isAnon ? '🎭' : post.avatar;
+      const isPublic = (post.isPublic !== false);
+      const isOwner = currentUser && (
+        currentUser.isAdmin || 
+        (post.userId && currentUser.id && post.userId === currentUser.id) ||
+        (post.username && currentUser.username && post.username.toLowerCase() === currentUser.username.toLowerCase()) ||
+        (post.author && currentUser.name && post.author.toLowerCase() === currentUser.name.toLowerCase())
+      );
+
+      const visibilityBadge = isPublic
+        ? `<span class="inline-flex items-center gap-1 text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-md"><span>🌐</span> Público</span>`
+        : `<span class="inline-flex items-center gap-1 text-[10px] bg-amber-50 text-amber-700 border border-amber-200 font-bold px-2 py-0.5 rounded-md"><span>🔒</span> Privado</span>`;
+
+      const visibilityActionBtn = isOwner ? `
+        <button onclick="togglePostVisibility('${post.id}')" class="text-[11px] font-bold px-2.5 py-1 rounded-lg ${isPublic ? 'text-slate-600 hover:bg-slate-100 border border-slate-200' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-xs'} transition-all flex items-center gap-1 cursor-pointer">
+          <span>${isPublic ? '🔒 Tornar Privado' : '🌐 Tornar Público Agora'}</span>
+        </button>
+      ` : '';
 
       let mediaSnippet = '';
       if (post.mediaType === 'video') {
         const videoSrc = post.videoBlobUrl || '';
         mediaSnippet = `
           <div class="relative bg-slate-900 rounded-xl overflow-hidden my-2 border border-slate-800">
-            ${videoSrc ? `<video src="${videoSrc}" controls playsinline class="w-full h-48 sm:h-56 object-cover"></video>` : `
+            ${videoSrc ? `<video src="${videoSrc}" controls playsinline class="w-full h-48 sm:h-56 object-cover bg-black"></video>` : `
               <div class="h-44 flex flex-col items-center justify-center text-center p-3 text-white">
                 <span class="text-2xl mb-1">📹</span>
                 <span class="text-xs font-bold">Depoimento em Vídeo Gravado</span>
@@ -3659,7 +4066,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         : `${post.waitValue || post.waitDays || 180} dias`;
 
       return `
-        <article class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs space-y-3 transition-all hover:border-slate-300">
+        <article class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs space-y-3 transition-all hover:border-slate-300 ${!isPublic ? 'ring-2 ring-amber-300/60 bg-amber-50/20' : ''}">
           
           <div class="flex items-start justify-between gap-2">
             <div class="flex items-center space-x-2.5 sm:space-x-3">
@@ -3672,6 +4079,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   <span class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-md">
                     📍 ${post.location}
                   </span>
+                  ${visibilityBadge}
                 </div>
                 <div class="text-[11px] text-slate-400 mt-0.5">
                   ${post.hospital} • <span class="text-blue-600 font-semibold">${post.createdAt}</span>
@@ -3716,11 +4124,55 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               </button>
             </div>
 
-            ${adminDeleteBtn}
+            <div class="flex items-center gap-2">
+              ${visibilityActionBtn}
+              ${adminDeleteBtn}
+            </div>
           </div>
 
         </article>
       `;
+    }
+
+    async function togglePostVisibility(postId) {
+      const post = socialPosts.find(p => p.id === postId);
+      if (!post) return;
+      const isCurrentlyPublic = (post.isPublic !== false);
+      const newPublicState = !isCurrentlyPublic;
+      post.isPublic = newPublicState;
+
+      const rec = realWaitingRecords.find(r => r.id === postId);
+      if (rec) rec.isPublic = newPublicState;
+      saveWaitRecords();
+      renderFeed();
+      renderStories();
+      updateMapStatistics();
+
+      if (window.supabaseClient) {
+        try {
+          const { data } = await window.supabaseClient.from('reports').select('*').eq('id', postId).limit(1);
+          if (data && data[0]) {
+            let meta = {};
+            if (data[0].relato && data[0].relato.includes('[META:')) {
+              const match = data[0].relato.match(/\[META:(\{.*?\})\]/);
+              if (match) {
+                try { meta = JSON.parse(match[1]); } catch(e){}
+              }
+            }
+            meta.isPublic = newPublicState;
+            const cleanText = data[0].relato.replace(/\[META:\{.*?\}\]\s*/, '');
+            const updatedRelato = `[META:${JSON.stringify(meta)}] ${cleanText}`;
+            await window.supabaseClient.from('reports').update({ relato: updatedRelato }).eq('id', postId);
+          }
+        } catch(err) {
+          console.warn('Erro ao atualizar visibilidade no Supabase:', err);
+        }
+      }
+
+      alert(newPublicState 
+        ? '✓ Relato tornado PÚBLICO com sucesso!\nAgora todos os usuários online na rede Minha Voz podem visualizá-lo.' 
+        : '✓ Relato alterado para PRIVADO!\nApenas você tem acesso a este relato na sua conta.'
+      );
     }
 
     function renderStories() {
@@ -3784,6 +4236,35 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         try {
           window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+          // 0. Sincroniza foto e dados do usuário logado diretamente do Supabase
+          if (currentUser && currentUser.username) {
+            window.supabaseClient
+              .from('users')
+              .select('*')
+              .or(`cpf.eq.${currentUser.username},email.eq.${currentUser.username}`)
+              .limit(1)
+              .then(({ data }) => {
+                if (data && data[0]) {
+                  const pMeta = parseUserProfileData(data[0].condicao_saude);
+                  let changed = false;
+                  if (pMeta && pMeta.avatar && pMeta.avatar !== currentUser.avatar) {
+                    currentUser.avatar = pMeta.avatar;
+                    changed = true;
+                  }
+                  if (data[0].nome && data[0].nome !== currentUser.name) {
+                    currentUser.name = data[0].nome;
+                    changed = true;
+                  }
+                  if (changed) {
+                    localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+                    updateUserUI();
+                    renderFeed();
+                  }
+                }
+              })
+              .catch(err => console.warn('Supabase current user sync:', err));
+          }
+
           // 1. Busca relatos da tabela reports
           const { data: reportsData, error: reportsErr } = await window.supabaseClient
             .from('reports')
@@ -3813,8 +4294,16 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               const city = (meta && meta.city) || r.cidade || 'São Paulo';
               const state = (meta && meta.state) || r.estado || 'SP';
               const cleanText = r.relato ? r.relato.replace(/\[META:\{.*?\}\]\s*/, '') : '';
+              const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente SUS');
+              const avatar = r.anonimo ? '🎭' : ((meta && meta.avatar) || '👤');
+              const isPublic = meta ? (meta.isPublic !== false) : true;
+              const postUserId = (meta && meta.userId) || r.user_id || null;
+              const postUsername = (meta && meta.username) || null;
+              const videoUrl = r.video_url || null;
+              const audioUrl = r.audio_url || null;
 
-              if (!realWaitingRecords.some(item => item.id === r.id)) {
+              const existingRecord = realWaitingRecords.find(item => item.id === r.id);
+              if (!existingRecord) {
                 realWaitingRecords.unshift({
                   id: r.id,
                   hospital: hosp,
@@ -3825,18 +4314,31 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   waitUnit: unit,
                   city: city,
                   state: state,
-                  author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
-                  avatar: r.anonimo ? '🎭' : '🏥',
+                  author: author,
+                  avatar: avatar,
+                  userId: postUserId,
+                  username: postUsername,
+                  isPublic: isPublic,
                   createdAt: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                   text: cleanText || 'Relato publicado na rede Minha Voz.'
                 });
+              } else {
+                existingRecord.author = author;
+                existingRecord.avatar = avatar;
+                existingRecord.isPublic = isPublic;
+                existingRecord.userId = postUserId;
+                existingRecord.username = postUsername;
               }
 
-              if (!socialPosts.some(p => p.id === r.id)) {
+              const existingPost = socialPosts.find(p => p.id === r.id);
+              if (!existingPost) {
                 socialPosts.unshift({
                   id: r.id,
-                  author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
-                  avatar: r.anonimo ? '🎭' : '🏥',
+                  author: author,
+                  avatar: avatar,
+                  userId: postUserId,
+                  username: postUsername,
+                  isPublic: isPublic,
                   location: `${city}, ${state}`,
                   hospital: hosp,
                   category: cat,
@@ -3846,6 +4348,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   waitDays: unit === 'dias' ? val : Math.round(val * 24),
                   waitHours: unit === 'horas' ? val : (val * 24),
                   mediaType: r.tipo_midia || 'texto',
+                  videoBlobUrl: videoUrl,
+                  audioBlobUrl: audioUrl,
                   text: cleanText,
                   likes: 1,
                   hasLiked: false,
@@ -3854,6 +4358,14 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   createdAt: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                   isAnon: r.anonimo
                 });
+              } else {
+                existingPost.author = author;
+                existingPost.avatar = avatar;
+                existingPost.isPublic = isPublic;
+                existingPost.userId = postUserId;
+                existingPost.username = postUsername;
+                if (videoUrl) existingPost.videoBlobUrl = videoUrl;
+                if (audioUrl) existingPost.audioBlobUrl = audioUrl;
               }
             });
             renderFeed();
@@ -3903,6 +4415,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   state: state,
                   author: 'Paciente no Hospital',
                   avatar: '⏱️',
+                  isPublic: true,
                   createdAt: new Date(w.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                   text: cleanText
                 });
@@ -3911,28 +4424,35 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
             updateMapStatistics();
           }
 
-          // 3. Subscriptions em Tempo Real
+          // 3. Subscriptions em Tempo Real (INSERT e UPDATE)
           window.supabaseClient
             .channel('realtime:all')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reports' }, payload => {
               const r = payload.new;
-              if (!socialPosts.some(p => p.id === r.id)) {
-                let meta = null;
-                if (r.relato && r.relato.includes('[META:')) {
-                  try {
-                    const match = r.relato.match(/\[META:(\{.*?\})\]/);
-                    if (match) meta = JSON.parse(match[1]);
-                  } catch(e) {}
-                }
-                const hosp = (meta && meta.hospital) || r.hospital || 'Hospital SUS';
-                const cat = (meta && meta.category) || r.categoria || 'Emergência';
-                const spec = (meta && meta.specialty) || r.especialidade || 'Procedimento SUS';
-                const val = (meta && meta.waitVal) || r.tempo_espera_dias || r.tempo_espera_horas || 2;
-                const unit = (meta && meta.waitUnit) || (cat === 'Emergência' ? 'horas' : 'dias');
-                const city = (meta && meta.city) || r.cidade || 'São Paulo';
-                const state = (meta && meta.state) || r.estado || 'SP';
-                const cleanText = r.relato ? r.relato.replace(/\[META:\{.*?\}\]\s*/, '') : '';
+              let meta = null;
+              if (r.relato && r.relato.includes('[META:')) {
+                try {
+                  const match = r.relato.match(/\[META:(\{.*?\})\]/);
+                  if (match) meta = JSON.parse(match[1]);
+                } catch(e) {}
+              }
+              const hosp = (meta && meta.hospital) || r.hospital || 'Hospital SUS';
+              const cat = (meta && meta.category) || r.categoria || 'Emergência';
+              const spec = (meta && meta.specialty) || r.especialidade || 'Procedimento SUS';
+              const val = (meta && meta.waitVal) || r.tempo_espera_dias || r.tempo_espera_horas || 2;
+              const unit = (meta && meta.waitUnit) || (cat === 'Emergência' ? 'horas' : 'dias');
+              const city = (meta && meta.city) || r.cidade || 'São Paulo';
+              const state = (meta && meta.state) || r.estado || 'SP';
+              const cleanText = r.relato ? r.relato.replace(/\[META:\{.*?\}\]\s*/, '') : '';
+              const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente SUS');
+              const avatar = r.anonimo ? '🎭' : ((meta && meta.avatar) || '👤');
+              const isPublic = meta ? (meta.isPublic !== false) : true;
+              const postUserId = (meta && meta.userId) || r.user_id || null;
+              const postUsername = (meta && meta.username) || null;
+              const videoUrl = r.video_url || null;
+              const audioUrl = r.audio_url || null;
 
+              if (!realWaitingRecords.some(item => item.id === r.id)) {
                 realWaitingRecords.unshift({
                   id: r.id,
                   hospital: hosp,
@@ -3943,16 +4463,24 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   waitUnit: unit,
                   city: city,
                   state: state,
-                  author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
-                  avatar: r.anonimo ? '🎭' : '🏥',
+                  author: author,
+                  avatar: avatar,
+                  userId: postUserId,
+                  username: postUsername,
+                  isPublic: isPublic,
                   createdAt: 'Agora mesmo',
                   text: cleanText
                 });
+              }
 
+              if (!socialPosts.some(p => p.id === r.id)) {
                 socialPosts.unshift({
                   id: r.id,
-                  author: r.anonimo ? 'Paciente Anônimo' : 'Paciente SUS',
-                  avatar: r.anonimo ? '🎭' : '🏥',
+                  author: author,
+                  avatar: avatar,
+                  userId: postUserId,
+                  username: postUsername,
+                  isPublic: isPublic,
                   location: `${city}, ${state}`,
                   hospital: hosp,
                   category: cat,
@@ -3962,6 +4490,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   waitDays: unit === 'dias' ? val : Math.round(val * 24),
                   waitHours: unit === 'horas' ? val : (val * 24),
                   mediaType: r.tipo_midia || 'texto',
+                  videoBlobUrl: videoUrl,
+                  audioBlobUrl: audioUrl,
                   text: cleanText,
                   likes: 1,
                   hasLiked: false,
@@ -3970,10 +4500,41 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   createdAt: 'Agora mesmo',
                   isAnon: r.anonimo
                 });
-                renderFeed();
-                renderStories();
-                updateMapStatistics();
               }
+              renderFeed();
+              renderStories();
+              updateMapStatistics();
+            })
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reports' }, payload => {
+              const r = payload.new;
+              let meta = null;
+              if (r.relato && r.relato.includes('[META:')) {
+                try {
+                  const match = r.relato.match(/\[META:(\{.*?\})\]/);
+                  if (match) meta = JSON.parse(match[1]);
+                } catch(e) {}
+              }
+              const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente SUS');
+              const avatar = r.anonimo ? '🎭' : ((meta && meta.avatar) || '👤');
+              const isPublic = meta ? (meta.isPublic !== false) : true;
+              const post = socialPosts.find(p => p.id === r.id);
+              if (post) {
+                post.author = author;
+                post.avatar = avatar;
+                post.isPublic = isPublic;
+                if (r.video_url) post.videoBlobUrl = r.video_url;
+                if (r.audio_url) post.audioBlobUrl = r.audio_url;
+                if (r.relato) post.text = r.relato.replace(/\[META:\{.*?\}\]\s*/, '');
+              }
+              const rec = realWaitingRecords.find(item => item.id === r.id);
+              if (rec) {
+                rec.author = author;
+                rec.avatar = avatar;
+                rec.isPublic = isPublic;
+              }
+              renderFeed();
+              renderStories();
+              updateMapStatistics();
             })
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'waiting_times' }, payload => {
               const w = payload.new;
@@ -4006,6 +4567,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   state: state,
                   author: 'Paciente no Hospital',
                   avatar: '⏱️',
+                  isPublic: true,
                   createdAt: 'Agora mesmo',
                   text: cleanText
                 });
