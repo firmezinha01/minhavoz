@@ -418,28 +418,90 @@
             <option value="Hospital São Paulo - UNIFESP">
             <option value="Hospital das Clínicas FMUSP">
             <option value="UPA 24h Campo Limpo">
-            <option value="Hospital Municipal Souza Aguiar">
-            <option value="Hospital Regional da Asa Norte (HRAN)">
-            <option value="Hospital Geral Roberto Santos">
-            <option value="Hospital Geral de Fortaleza (HGF)">
+            <option value="Hospital Municipal Dr. Moysés Deutsch">
+            <option value="Hospital Municipal Souza Aguiar (RJ)">
+            <option value="Hospital Salgado Filho (RJ)">
+            <option value="Hospital Regional da Asa Norte (HRAN - DF)">
+            <option value="Hospital de Base do DF">
+            <option value="Hospital Geral Roberto Santos (BA)">
+            <option value="Hospital Geral de Fortaleza (HGF - CE)">
+            <option value="Hospital das Clínicas da UFMG">
+            <option value="Hospital de Pronto Socorro HPS (RS)">
+            <option value="Hospital do Trabalhador (PR)">
+            <option value="UPA 24h Central">
           </datalist>
 
           <datalist id="specialty-suggestions">
-            <option value="Emergência / Pronto-Socorro">
-            <option value="Ortopedia">
-            <option value="Clínica Geral">
-            <option value="Pediatria">
-            <option value="Cirurgia Geral">
-            <option value="Cirurgia de Joelho">
-            <option value="Cirurgia de Catarata">
-            <option value="Cirurgia de Vesícula">
+            <!-- Emergência e Urgência -->
+            <option value="Emergência / Pronto-Socorro Geral">
+            <option value="Triagem e Classificação de Risco (Manchester)">
+            <option value="Ortopedia / Traumatologia de Urgência">
+            <option value="Pediatria de Emergência">
+            <option value="Clínica Médica Geral">
+            <option value="Cardiologia / Dor Torácica de Urgência">
+            <option value="Ginecologia e Maternidade / Obstetrícia">
+            <option value="Sutura e Pequenos Procedimentos">
+            <option value="Psiquiatria / Saúde Mental (Urgência)">
+            <option value="Queimaduras / Centro de Queimados">
+            <option value="Neurologia / AVC de Emergência">
+
+            <!-- Consultas Especializadas Ambulatoriais -->
+            <option value="Clínica Geral / Médico da Família">
             <option value="Cardiologia">
-            <option value="Neurologia">
+            <option value="Ortopedia e Traumatologia">
             <option value="Oftalmologia">
-            <option value="Ressonância Magnética">
-            <option value="Tomografia Computadorizada">
-            <option value="Ultrassonografia">
-            <option value="Endoscopia Digestiva">
+            <option value="Dermatologia">
+            <option value="Neurologia">
+            <option value="Ginecologia e Obstetrícia">
+            <option value="Urologia">
+            <option value="Endocrinologia e Metabologia">
+            <option value="Psiquiatria">
+            <option value="Otorrinolaringologia">
+            <option value="Odontologia / Bucomaxilofacial">
+            <option value="Pediatria">
+            <option value="Reumatologia">
+            <option value="Oncologia Clínica">
+            <option value="Nefrologia">
+            <option value="Pneumologia">
+            <option value="Gastroenterologia">
+            <option value="Hematologia">
+            <option value="Infectologia">
+            <option value="Geriatria">
+            <option value="Fisioterapia / Reabilitação SUS">
+            <option value="Fonoaudiologia">
+            <option value="Nutrição / Nutrologia">
+
+            <!-- Exames Especializados -->
+            <option value="Ressonância Magnética (RM)">
+            <option value="Tomografia Computadorizada (TC)">
+            <option value="Ultrassonografia / Ecografia (USG)">
+            <option value="Endoscopia Digestiva Alta">
+            <option value="Colonoscopia">
+            <option value="Raio-X Geral / Radiologia">
+            <option value="Mamografia Digital">
+            <option value="Eletrocardiograma (ECG) / Holter">
+            <option value="Ecocardiograma">
+            <option value="Exames de Sangue / Laboratório">
+            <option value="Biópsia e Anatomopatológico">
+            <option value="Espirometria / Prova Pulmonar">
+            <option value="Mapeamento de Retina / Exame Oftálmico">
+
+            <!-- Cirurgias Eletivas e de Urgência -->
+            <option value="Cirurgia Geral (Hérnia, Apêndice, Vesícula)">
+            <option value="Cirurgia de Vesícula (Colecistectomia)">
+            <option value="Cirurgia de Hérnia (Inguinal / Umbilical)">
+            <option value="Cirurgia Ortopédica (Joelho, Fêmur, Quadril)">
+            <option value="Cirurgia de Joelho (Ligamento / Menisco)">
+            <option value="Cirurgia de Catarata">
+            <option value="Cirurgia Ginecológica (Histerectomia, Laqueadura)">
+            <option value="Cirurgia Urológica (Próstata, Cálculo Renal)">
+            <option value="Cirurgia Cardíaca / Cateterismo / Angioplastia">
+            <option value="Cirurgia Pediátrica">
+            <option value="Cirurgia Plástica Reparadora">
+            <option value="Cirurgia de Varizes">
+            <option value="Cirurgia de Amígdalas / Septoplastia">
+            <option value="Neurocirurgia">
+            <option value="Cirurgia Oncológica">
           </datalist>
 
           <!-- Dados Estruturados da Fila e Espera Real -->
@@ -462,7 +524,9 @@
 
               <div>
                 <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Setor ou Especialidade:</label>
-                <input type="text" id="composer-specialty" list="specialty-suggestions" value="Emergência" placeholder="Ex: Emergência, Ortopedia, Joelho..." class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-hidden">
+                <input type="text" id="composer-specialty" list="specialty-suggestions" value="Emergência / Pronto-Socorro Geral" placeholder="Ex: Emergência, Ortopedia, Catarata, Ressonância..." class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-hidden">
+                <!-- Atalhos rápidos de setores e especialidades -->
+                <div id="composer-specialty-chips" class="flex flex-wrap gap-1 mt-1.5"></div>
               </div>
             </div>
 
@@ -563,12 +627,19 @@
             <span class="text-[10px] bg-rose-50 text-rose-700 font-extrabold px-2 py-0.5 rounded-md">Ao Vivo</span>
           </div>
 
-          <!-- Localização Detectada Automaticamente -->
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs">
-            <div class="text-[10px] font-bold text-slate-400 uppercase">Localização Atual:</div>
-            <div id="sidebar-timer-location" class="font-bold text-slate-800 text-xs mt-0.5 flex items-center gap-1">
-              <span>📍</span> <span class="truncate">Detectando via GPS...</span>
+          <!-- Localização e Hospital Detectados -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs space-y-1">
+            <div class="text-[10px] font-bold text-slate-500 uppercase flex items-center justify-between">
+              <span>Local do Atendimento:</span>
+              <button type="button" onclick="openTimerModal()" class="text-[10px] font-bold text-blue-600 hover:underline">✏️ Ajustar</button>
             </div>
+            <div id="sidebar-timer-hospital" class="font-bold text-slate-800 text-xs truncate flex items-center gap-1">
+              <span>🏥</span> <span class="truncate">Detectando hospital...</span>
+            </div>
+            <div id="sidebar-timer-address" class="text-[11px] text-slate-500 truncate flex items-center gap-1">
+              <span>📍</span> <span class="truncate">Detectando endereço...</span>
+            </div>
+            <div id="sidebar-timer-location" class="hidden"></div>
           </div>
 
           <div class="bg-slate-900 text-white rounded-xl p-3 text-center border border-slate-800">
@@ -638,7 +709,7 @@
   <!-- ==================================================================== -->
 
   <!-- MODAL DE AUTENTICAÇÃO REAL (LOGIN & CADASTRO) -->
-  <div id="modal-login" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
+  <div id="modal-login" onclick="if(event.target === this) closeModal('modal-login')" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
     <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4">
       
       <!-- Cabeçalho do Modal -->
@@ -731,25 +802,36 @@
   </div>
 
   <!-- MODAL DO CRONÔMETRO COM GEOLOCALIZAÇÃO AUTOMÁTICA -->
-  <div id="modal-timer" class="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
-    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4">
+  <div id="modal-timer" onclick="if(event.target === this) closeModal('modal-timer')" class="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
+    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-3.5 max-h-[92vh] overflow-y-auto custom-scrollbar">
       
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
           <span>⏱️</span> Cronômetro de Espera no SUS
         </h3>
-        <button onclick="closeModal('modal-timer')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+        <button onclick="closeModal('modal-timer')" class="text-slate-400 hover:text-slate-600 text-lg p-1">✕</button>
       </div>
 
-      <!-- Localização em Tempo Real -->
-      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs">
-        <div class="text-[10px] font-bold text-blue-600 uppercase">Localização Detectada via GPS:</div>
-        <div id="modal-timer-location" class="font-bold text-slate-800 text-xs sm:text-sm mt-0.5 flex items-center gap-1.5">
-          <span>📍</span> <span>Detectando seu local atual...</span>
+      <!-- Localização em Tempo Real e Status do GPS -->
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs space-y-1">
+        <div class="flex items-center justify-between">
+          <div class="text-[10px] font-bold text-blue-700 uppercase flex items-center gap-1">
+            <span>📍</span> Localização GPS em Tempo Real
+          </div>
+          <button type="button" onclick="detectUserLocation(true)" class="text-[10px] font-bold text-blue-600 hover:underline flex items-center gap-1">
+            🔄 Recarregar GPS
+          </button>
+        </div>
+        <div id="modal-timer-location-status" class="text-[11px] text-slate-700 font-medium">
+          Detectando coordenadas e unidade de saúde próxima...
+        </div>
+        <div id="modal-timer-location" class="hidden"></div>
+        <div class="text-[10px] text-slate-500 pt-0.5">
+          💡 O nome da unidade e o endereço abaixo são preenchidos pelo GPS e você pode editá-los manualmente se precisar ajustar.
         </div>
       </div>
 
-      <div class="bg-slate-900 text-white rounded-2xl p-5 text-center border border-slate-800 space-y-2">
+      <div class="bg-slate-900 text-white rounded-2xl p-4 text-center border border-slate-800 space-y-1">
         <div class="text-[10px] uppercase tracking-wider text-rose-400 font-bold flex items-center justify-center gap-1.5" id="modal-timer-badge">
           <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
           <span>Tempo de Espera em Andamento</span>
@@ -760,21 +842,74 @@
         </div>
       </div>
 
-      <div class="space-y-2 text-xs">
+      <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Nome da Unidade de Saúde / Hospital:</label>
-          <input type="text" id="modal-timer-input-hospital" list="hospital-suggestions" placeholder="Carregando nome do local..." class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+          <label class="block font-bold text-slate-700 mb-1 flex items-center justify-between">
+            <span class="flex items-center gap-1"><span>🏥</span> Nome do Hospital ou Clínica:</span>
+            <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">Ajuste manual</span>
+          </label>
+          <input type="text" id="modal-timer-input-hospital" list="hospital-suggestions" placeholder="Ex: Hospital HMU, UPA 24h Campo Limpo..." class="w-full p-2.5 border border-slate-300 rounded-xl bg-white font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-hidden">
         </div>
 
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Setor do Atendimento:</label>
-          <select id="modal-timer-input-sector" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-semibold text-slate-800">
-            <option value="Emergência">🚨 Emergência / Pronto-Socorro Geral</option>
-            <option value="Ortopedia">🦴 Ortopedia / Traumatologia</option>
-            <option value="Clínica Geral">🩺 Clínica Geral</option>
-            <option value="Pediatria">👶 Pediatria</option>
-            <option value="Triagem">🏷️ Triagem e Acolhimento</option>
-            <option value="Exames de Urgência">🔬 Exames de Urgência (Raio-X / Sangue)</option>
+          <label class="block font-bold text-slate-700 mb-1 flex items-center justify-between">
+            <span class="flex items-center gap-1"><span>📍</span> Endereço da Unidade:</span>
+            <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">Ajuste manual</span>
+          </label>
+          <input type="text" id="modal-timer-input-address" placeholder="Ex: Av. Tiradentes, 123 - Centro, São Paulo - SP" class="w-full p-2.5 border border-slate-300 rounded-xl bg-white font-medium text-slate-800 focus:ring-2 focus:ring-blue-500 outline-hidden">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1 flex items-center gap-1">
+            <span>🩺</span> Setor ou Especialidade do Atendimento:
+          </label>
+          <select id="modal-timer-input-sector" class="w-full p-2.5 border border-slate-300 rounded-xl bg-white font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-hidden">
+            <optgroup label="🚨 Urgência e Emergência (Pronto-Socorro)">
+              <option value="Emergência Geral" selected>🚨 Emergência / Pronto-Socorro Geral</option>
+              <option value="Triagem e Manchester">🏷️ Triagem / Classificação Manchester</option>
+              <option value="Ortopedia / Traumatologia">🦴 Ortopedia / Traumatologia</option>
+              <option value="Pediatria de Emergência">👶 Pediatria de Emergência</option>
+              <option value="Clínica Médica Geral">🩺 Clínica Médica Geral</option>
+              <option value="Cardiologia de Urgência">❤️ Cardiologia / Dor Torácica</option>
+              <option value="Ginecologia e Maternidade">🤰 Ginecologia / Maternidade</option>
+              <option value="Sutura e Curativos">🩹 Sutura / Pequenos Procedimentos</option>
+              <option value="Psiquiatria e Saúde Mental">🧘 Psiquiatria / Saúde Mental</option>
+              <option value="Centro de Queimados">🔥 Tratamento de Queimados</option>
+            </optgroup>
+            <optgroup label="🩺 Consultas Ambulatoriais SUS">
+              <option value="Consulta - Clínica Médica">🩺 Clínica Médica Geral</option>
+              <option value="Consulta - Cardiologia">❤️ Cardiologia</option>
+              <option value="Consulta - Ortopedia">🦴 Ortopedia</option>
+              <option value="Consulta - Oftalmologia">👁️ Oftalmologia</option>
+              <option value="Consulta - Dermatologia">🧴 Dermatologia</option>
+              <option value="Consulta - Neurologia">🧠 Neurologia</option>
+              <option value="Consulta - Ginecologia">🤰 Ginecologia e Obstetrícia</option>
+              <option value="Consulta - Urologia">🚽 Urologia</option>
+              <option value="Consulta - Psiquiatria">🧘 Psiquiatria</option>
+              <option value="Consulta - Endocrinologia">🔬 Endocrinologia</option>
+              <option value="Consulta - Otorrinolaringologia">👂 Otorrinolaringologia</option>
+              <option value="Consulta - Odontologia">🦷 Odontologia / Bucomaxilo</option>
+              <option value="Consulta - Pediatria">👶 Pediatria</option>
+              <option value="Consulta - Oncologia">🎗️ Oncologia</option>
+            </optgroup>
+            <optgroup label="🔬 Exames Especializados e Urgentes">
+              <option value="Exame - Tomografia (TC)">🖥️ Tomografia Computadorizada (TC)</option>
+              <option value="Exame - Ressonância (RM)">🧲 Ressonância Magnética (RM)</option>
+              <option value="Exame - Ultrassonografia">🔊 Ultrassonografia (Eco/USG)</option>
+              <option value="Exame - Raio-X Geral">🦴 Raio-X Geral / Radiologia</option>
+              <option value="Exame - Endoscopia Digestiva">🩺 Endoscopia Digestiva</option>
+              <option value="Exame - Colonoscopia">🔬 Colonoscopia</option>
+              <option value="Exame - Mamografia">🎀 Mamografia</option>
+              <option value="Exame - Eletrocardiograma">💓 Eletrocardiograma / Holter</option>
+              <option value="Exame - Sangue / Laboratório">🧪 Exames de Sangue / Urina</option>
+            </optgroup>
+            <optgroup label="🔪 Cirurgias Eletivas e Urgência">
+              <option value="Cirurgia Geral (Hérnia / Vesícula)">🔪 Cirurgia Geral (Hérnia / Vesícula)</option>
+              <option value="Cirurgia Ortopédica (Joelho / Fêmur)">🦴 Cirurgia Ortopédica (Joelho / Fêmur)</option>
+              <option value="Cirurgia de Catarata">👁️ Cirurgia de Catarata</option>
+              <option value="Cirurgia Ginecológica">🤰 Cirurgia Ginecológica</option>
+              <option value="Cirurgia Cardíaca / Cateterismo">❤️ Cirurgia Cardíaca / Cateterismo</option>
+            </optgroup>
           </select>
         </div>
       </div>
@@ -789,7 +924,7 @@
   </div>
 
   <!-- MODAL DE COMPARTILHAMENTO -->
-  <div id="modal-share" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
+  <div id="modal-share" onclick="if(event.target === this) closeModal('modal-share')" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
     <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
       
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -862,7 +997,7 @@
   </div>
 
   <!-- MODAL MAPA DINÂMICO E COMPLETO EM TEMPO REAL -->
-  <div id="modal-map" class="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 hidden">
+  <div id="modal-map" onclick="if(event.target === this) closeModal('modal-map')" class="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 hidden">
     <div class="bg-white rounded-2xl sm:rounded-3xl w-full max-w-4xl shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden">
       
       <!-- Topo do Modal -->
@@ -939,7 +1074,7 @@
             <option value="Exame">🔬 Exame</option>
             <option value="Consulta">🩺 Consulta</option>
           </select>
-          <input type="text" id="map-add-specialty" placeholder="Setor / Especialidade (Ex: Ortopedia, Emergência)" class="p-2 border border-slate-300 rounded-lg bg-white">
+          <input type="text" id="map-add-specialty" list="specialty-suggestions" placeholder="Setor / Especialidade (Ex: Ortopedia, Emergência)" class="p-2 border border-slate-300 rounded-lg bg-white">
           <div class="flex gap-1">
             <input type="number" id="map-add-wait-val" value="2" min="0.1" step="any" placeholder="Tempo" class="w-20 p-2 border border-slate-300 rounded-lg bg-white font-mono font-bold">
             <select id="map-add-wait-unit" class="flex-1 p-2 border border-slate-300 rounded-lg bg-white font-medium">
@@ -1378,13 +1513,86 @@
     let mapSearchQuery = '';
     let mapFilterUf = '';
 
+    // ====================================================================
+    // CONTROLE GLOBAL DE MODAIS E ATALHOS DE SETORES / ESPECIALIDADES
+    // ====================================================================
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    }
+
+    const SPECIALTY_PRESETS = {
+      'Emergência': [
+        'Emergência / Pronto-Socorro Geral',
+        'Triagem Manchester',
+        'Ortopedia / Traumatologia',
+        'Pediatria de Emergência',
+        'Clínica Médica Geral',
+        'Cardiologia / Dor Torácica',
+        'Ginecologia / Maternidade',
+        'Sutura e Procedimentos'
+      ],
+      'Cirurgia': [
+        'Cirurgia Geral',
+        'Cirurgia de Vesícula',
+        'Cirurgia de Hérnia',
+        'Cirurgia Ortopédica (Joelho / Fêmur)',
+        'Cirurgia de Catarata',
+        'Cirurgia Ginecológica',
+        'Cirurgia Urológica',
+        'Cirurgia Cardíaca'
+      ],
+      'Exame': [
+        'Ressonância Magnética (RM)',
+        'Tomografia Computadorizada (TC)',
+        'Ultrassonografia (USG)',
+        'Endoscopia Digestiva',
+        'Colonoscopia',
+        'Raio-X Geral',
+        'Mamografia Digital',
+        'Exames de Sangue'
+      ],
+      'Consulta': [
+        'Clínica Médica Geral',
+        'Cardiologia',
+        'Ortopedia e Traumatologia',
+        'Oftalmologia',
+        'Dermatologia',
+        'Neurologia',
+        'Ginecologia e Obstetrícia',
+        'Pediatria',
+        'Urologia',
+        'Psiquiatria'
+      ]
+    };
+
+    function renderSpecialtyChips(category) {
+      const container = document.getElementById('composer-specialty-chips');
+      if (!container) return;
+      const list = SPECIALTY_PRESETS[category] || SPECIALTY_PRESETS['Emergência'];
+      container.innerHTML = list.map(item => `
+        <button type="button" onclick="setComposerSpecialty('${item.replace(/'/g, "\\'")}')" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 hover:border-blue-500 hover:text-blue-600 text-[10px] text-slate-600 font-medium transition-all shadow-2xs">
+          ${item}
+        </button>
+      `).join('');
+    }
+
+    function setComposerSpecialty(val) {
+      const input = document.getElementById('composer-specialty');
+      if (input) {
+        input.value = val;
+        input.focus();
+      }
+    }
+
     // INICIALIZAÇÃO
     document.addEventListener('DOMContentLoaded', () => {
       loadStoredUser();
       loadStoredWaitRecords();
       syncSocialPostsFromWaitRecords();
       updateUserUI();
-      detectUserLocation();
+      detectUserLocation(false);
+      renderSpecialtyChips('Emergência');
       updateMapStatistics();
       renderFeed();
       renderStories();
@@ -1628,10 +1836,11 @@
       updateUserUI();
       renderFeed();
       closeModal('modal-login');
-      alert(`✓ Bem-vindo(a), ${currentUser.name}!`);
-
+      const loginModalEl = document.getElementById('modal-login');
+      if (loginModalEl) loginModalEl.classList.add('hidden');
       document.getElementById('login-username').value = '';
       document.getElementById('login-password').value = '';
+      alert(`✓ Bem-vindo(a), ${currentUser.name}!`);
     }
 
     async function handleRegisterSubmit(e) {
@@ -1704,13 +1913,13 @@
       updateUserUI();
       renderFeed();
       closeModal('modal-login');
-      alert(`✓ Cadastro realizado com sucesso!\nSeja bem-vindo(a) à rede Minha Voz, ${fullName}!`);
-
-      // Limpa os campos do formulário de cadastro
+      const regModalEl = document.getElementById('modal-login');
+      if (regModalEl) regModalEl.classList.add('hidden');
       document.getElementById('register-fullname').value = '';
       document.getElementById('register-username').value = '';
       document.getElementById('register-city').value = '';
       document.getElementById('register-password').value = '';
+      alert(`✓ Cadastro realizado com sucesso!\nSeja bem-vindo(a) à rede Minha Voz, ${fullName}!`);
     }
 
     function logoutUser() {
@@ -1925,16 +2134,16 @@
     // ====================================================================
     // CRONÔMETRO DE ESPERA COM GEOLOCALIZAÇÃO AUTOMÁTICA EM TEMPO REAL
     // ====================================================================
-    let detectedLocationName = 'Hospital Municipal / UPA';
+    let detectedHospitalName = 'Hospital Municipal Dr. Moysés Deutsch';
+    let detectedAddress = 'Rua Dr. Ovídio Pires de Campos, 225 - Cerqueira César, São Paulo - SP';
+    let detectedLocationName = `${detectedHospitalName} (${detectedAddress})`;
     let timerRunning = false;
     let timerSeconds = 0;
     let timerInterval = null;
 
-    function detectUserLocation() {
-      const sidebarLoc = document.getElementById('sidebar-timer-location');
-      const modalLoc = document.getElementById('modal-timer-location');
-      const inputHospital = document.getElementById('modal-timer-input-hospital');
-      const composerHospital = document.getElementById('composer-hospital');
+    function detectUserLocation(force = false) {
+      const modalStatus = document.getElementById('modal-timer-location-status');
+      if (modalStatus) modalStatus.innerHTML = '<span class="animate-pulse">📍 Buscando GPS em tempo real...</span>';
 
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -1945,39 +2154,78 @@
               const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
               const data = await res.json();
               if (data && data.address) {
-                const road = data.address.road || data.address.hospital || data.address.suburb || '';
-                const city = data.address.city || data.address.town || data.address.municipality || 'São Paulo';
-                detectedLocationName = road ? `${road}, ${city}` : `Unidade SUS em ${city}`;
-              } else {
-                detectedLocationName = `Unidade Próxima (${lat.toFixed(3)}, ${lon.toFixed(3)})`;
+                const a = data.address;
+                const hosp = a.hospital || a.clinic || a.doctors || a.emergency || a.amenity || (data.name ? data.name : null);
+                const road = [a.road, a.house_number].filter(Boolean).join(', ');
+                const neighbourhood = a.suburb || a.neighbourhood || '';
+                const city = a.city || a.town || a.municipality || a.village || 'São Paulo';
+                const state = a.state_code || a.state || 'SP';
+
+                if (hosp) {
+                  detectedHospitalName = hosp;
+                } else if (road) {
+                  detectedHospitalName = `Unidade SUS (${road})`;
+                } else {
+                  detectedHospitalName = `Unidade SUS em ${city}`;
+                }
+
+                const addrParts = [];
+                if (road) addrParts.push(road);
+                if (neighbourhood) addrParts.push(neighbourhood);
+                if (city) addrParts.push(`${city} - ${state}`);
+                detectedAddress = addrParts.length > 0 ? addrParts.join(', ') : `${city} - ${state}`;
+                detectedLocationName = `${detectedHospitalName} (${detectedAddress})`;
+
+                if (modalStatus) {
+                  modalStatus.innerHTML = `✓ <strong>GPS Localizado:</strong> ${detectedHospitalName}`;
+                }
               }
             } catch (e) {
-              detectedLocationName = 'Hospital Municipal Dr. Moysés Deutsch (SP)';
+              console.warn('Geocodificação OpenStreetMap:', e);
+              if (modalStatus) modalStatus.innerText = 'GPS conectado. Você pode ajustar o nome e o endereço abaixo:';
             }
-            applyDetectedLocation();
+            applyDetectedLocation(force);
           },
           err => {
-            detectedLocationName = 'Hospital Municipal Dr. Moysés Deutsch (SP)';
-            applyDetectedLocation();
+            console.warn('GPS indisponível:', err);
+            if (modalStatus) modalStatus.innerText = 'GPS padrão carregado. Você pode editar o hospital e o endereço abaixo:';
+            applyDetectedLocation(force);
           },
-          { timeout: 7000 }
+          { timeout: 8000 }
         );
       } else {
-        detectedLocationName = 'Hospital Municipal Dr. Moysés Deutsch (SP)';
-        applyDetectedLocation();
+        if (modalStatus) modalStatus.innerText = 'Geolocalização não suportada. Preencha os dados abaixo manualmente:';
+        applyDetectedLocation(force);
       }
     }
 
-    function applyDetectedLocation() {
+    function applyDetectedLocation(force = false) {
+      const sidebarHosp = document.getElementById('sidebar-timer-hospital');
+      const sidebarAddr = document.getElementById('sidebar-timer-address');
       const sidebarLoc = document.getElementById('sidebar-timer-location');
       const modalLoc = document.getElementById('modal-timer-location');
       const inputHospital = document.getElementById('modal-timer-input-hospital');
+      const inputAddress = document.getElementById('modal-timer-input-address');
       const composerHospital = document.getElementById('composer-hospital');
+      const composerLocation = document.getElementById('composer-location');
 
-      if (sidebarLoc) sidebarLoc.innerHTML = `<span>📍</span> <span class="truncate">${detectedLocationName}</span>`;
-      if (modalLoc) modalLoc.innerHTML = `<span>📍</span> <span>${detectedLocationName}</span>`;
-      if (inputHospital && !inputHospital.value) inputHospital.value = detectedLocationName;
-      if (composerHospital && !composerHospital.value) composerHospital.value = detectedLocationName;
+      if (sidebarHosp) sidebarHosp.innerHTML = `<span>🏥</span> <span class="truncate">${detectedHospitalName}</span>`;
+      if (sidebarAddr) sidebarAddr.innerHTML = `<span>📍</span> <span class="truncate">${detectedAddress}</span>`;
+      if (sidebarLoc) sidebarLoc.innerText = `${detectedHospitalName} - ${detectedAddress}`;
+      if (modalLoc) modalLoc.innerText = `${detectedHospitalName} - ${detectedAddress}`;
+
+      if (inputHospital && (!inputHospital.value || force)) {
+        inputHospital.value = detectedHospitalName;
+      }
+      if (inputAddress && (!inputAddress.value || force)) {
+        inputAddress.value = detectedAddress;
+      }
+      if (composerHospital && (!composerHospital.value || force)) {
+        composerHospital.value = detectedHospitalName;
+      }
+      if (composerLocation && (!composerLocation.value || composerLocation.value === 'São Paulo, SP' || force)) {
+        composerLocation.value = detectedAddress;
+      }
     }
 
     function formatSeconds(secs) {
@@ -1993,39 +2241,57 @@
       const sidebarSub = document.getElementById('sidebar-timer-sub');
       const modalBadge = document.getElementById('modal-timer-badge');
       const inputHospital = document.getElementById('modal-timer-input-hospital');
+      const inputAddress = document.getElementById('modal-timer-input-address');
       const inputSector = document.getElementById('modal-timer-input-sector');
+
+      const currentHosp = (inputHospital && inputHospital.value.trim()) || detectedHospitalName;
+      const currentAddr = (inputAddress && inputAddress.value.trim()) || detectedAddress;
 
       if (!timerRunning) {
         timerRunning = true;
-        detectUserLocation();
         timerInterval = setInterval(() => {
           timerSeconds++;
           const fmt = formatSeconds(timerSeconds);
-          document.getElementById('sidebar-timer-display').innerText = fmt;
-          document.getElementById('modal-timer-clock').innerText = fmt;
+          const sbDisp = document.getElementById('sidebar-timer-display');
+          const modDisp = document.getElementById('modal-timer-clock');
+          if (sbDisp) sbDisp.innerText = fmt;
+          if (modDisp) modDisp.innerText = fmt;
         }, 1000);
 
-        btnSidebar.innerHTML = '<span>🛑 Parar e Registrar Atendimento</span>';
-        btnModal.innerHTML = '<span>🛑 Parar e Registrar Atendimento</span>';
-        sidebarSub.innerText = `Aguardando em: ${detectedLocationName}`;
-        modalBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span> <span>Contando em: ${detectedLocationName}</span>`;
+        if (btnSidebar) btnSidebar.innerHTML = '<span>🛑 Parar e Registrar Atendimento</span>';
+        if (btnModal) btnModal.innerHTML = '<span>🛑 Parar e Registrar Atendimento</span>';
+        if (sidebarSub) sidebarSub.innerText = `Aguardando em: ${currentHosp}`;
+        if (modalBadge) modalBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span> <span>Contando em: ${currentHosp}</span>`;
       } else {
         clearInterval(timerInterval);
         timerRunning = false;
         const finalTime = formatSeconds(timerSeconds);
 
-        btnSidebar.innerHTML = '<span>Iniciar Espera no Hospital</span>';
-        btnModal.innerHTML = '<span>Iniciar Cronômetro</span>';
-        sidebarSub.innerText = 'Status: Pronto para Iniciar';
+        if (btnSidebar) btnSidebar.innerHTML = '<span>Iniciar Espera no Hospital</span>';
+        if (btnModal) btnModal.innerHTML = '<span>Iniciar Cronômetro</span>';
+        if (sidebarSub) sidebarSub.innerText = 'Status: Pronto para Iniciar';
 
-        const hospName = (inputHospital && inputHospital.value.trim()) || detectedLocationName;
+        const hospName = currentHosp || 'Hospital SUS';
+        const addrName = currentAddr || '';
         const sectorName = (inputSector && inputSector.value) || 'Emergência';
         const elapsedHours = parseFloat((Math.max(timerSeconds, 60) / 3600).toFixed(2));
 
-        const city = (currentUser && currentUser.city) ? currentUser.city.split(',')[0].trim() : 'São Paulo';
-        const state = (currentUser && currentUser.city && currentUser.city.includes(',')) ? currentUser.city.split(',')[1].trim() : 'SP';
+        let city = 'São Paulo';
+        let state = 'SP';
+        if (addrName && addrName.includes('-')) {
+          const parts = addrName.split('-');
+          const lastPart = parts[parts.length - 1].trim();
+          if (lastPart.length === 2) {
+            state = lastPart.toUpperCase();
+            const cityParts = parts[parts.length - 2].split(',');
+            const cityCandidate = cityParts[cityParts.length - 1].trim();
+            if (cityCandidate) city = cityCandidate;
+          }
+        } else if (currentUser && currentUser.city) {
+          city = currentUser.city.split(',')[0].trim();
+          state = currentUser.city.includes(',') ? currentUser.city.split(',')[1].trim() : 'SP';
+        }
 
-        // 1. Registra no banco de dados local do Mapa
         const waitRecord = {
           id: 'timer-' + Date.now(),
           hospital: hospName,
@@ -2039,13 +2305,12 @@
           author: (currentUser && currentUser.name) || 'Paciente SUS',
           avatar: (currentUser && currentUser.avatar) || '👨',
           createdAt: 'Agora mesmo',
-          text: `Atendimento no setor ${sectorName} do ${hospName} cronometrado em ${finalTime}.`
+          text: `Atendimento no setor ${sectorName} do ${hospName}${addrName ? ' (' + addrName + ')' : ''} cronometrado em ${finalTime}.`
         };
 
         realWaitingRecords.unshift(waitRecord);
         saveWaitRecords();
 
-        // 2. Atualiza Feed Social
         socialPosts.unshift({
           id: waitRecord.id,
           author: waitRecord.author,
@@ -2085,7 +2350,7 @@
           saveWaitingTimeRecordToSupabase({
             inicio: new Date(Date.now() - timerSeconds * 1000).toISOString(),
             fim: new Date().toISOString(),
-            text: `Atendimento no setor ${sectorName} do ${hospName} cronometrado em ${finalTime}.`
+            text: `Atendimento no setor ${sectorName} do ${hospName}${addrName ? ' (' + addrName + ')' : ''} cronometrado em ${finalTime}.`
           }, waitMeta).then(savedId => {
             if (savedId) {
               waitRecord.id = savedId;
@@ -2094,11 +2359,16 @@
           });
         }
 
-        alert(`⏱️ Espera concluída com sucesso!\n\nTempo Total: ${finalTime}\nSetor: ${sectorName}\nLocal: ${hospName}\n\nO Mapa da Espera foi recalculado em tempo real.`);
         timerSeconds = 0;
-        document.getElementById('sidebar-timer-display').innerText = '00:00:00';
-        document.getElementById('modal-timer-clock').innerText = '00:00:00';
+        const sbDisp = document.getElementById('sidebar-timer-display');
+        const modDisp = document.getElementById('modal-timer-clock');
+        if (sbDisp) sbDisp.innerText = '00:00:00';
+        if (modDisp) modDisp.innerText = '00:00:00';
         closeModal('modal-timer');
+        const timerModal = document.getElementById('modal-timer');
+        if (timerModal) timerModal.classList.add('hidden');
+
+        alert(`⏱️ Espera concluída e registrada com sucesso!\n\nTempo Total: ${finalTime}\nSetor: ${sectorName}\nLocal: ${hospName}\nEndereço: ${addrName}\n\nO Mapa da Espera foi recalculado em tempo real com o seu registro.`);
       }
     }
 
@@ -2963,8 +3233,13 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
     function handleMapAddCategoryChange(val) {
       const unitSelect = document.getElementById('map-add-wait-unit');
+      const specInput = document.getElementById('map-add-specialty');
       if (unitSelect) {
         unitSelect.value = val === 'Emergência' ? 'horas' : 'dias';
+      }
+      const presets = SPECIALTY_PRESETS[val];
+      if (presets && presets.length > 0 && specInput && (!specInput.value || specInput.value === 'Geral')) {
+        specInput.value = presets[0];
       }
     }
 
@@ -2974,11 +3249,10 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       if (unitSelect) {
         unitSelect.value = val === 'Emergência' ? 'horas' : 'dias';
       }
-      if (specialtyInput && !specialtyInput.value) {
-        if (val === 'Emergência') specialtyInput.value = 'Emergência';
-        else if (val === 'Cirurgia') specialtyInput.value = 'Cirurgia Geral';
-        else if (val === 'Exame') specialtyInput.value = 'Ressonância Magnética';
-        else if (val === 'Consulta') specialtyInput.value = 'Cardiologia';
+      renderSpecialtyChips(val);
+      const presets = SPECIALTY_PRESETS[val];
+      if (presets && presets.length > 0 && specialtyInput) {
+        specialtyInput.value = presets[0];
       }
     }
 
@@ -3602,12 +3876,17 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     }
 
     // MODAIS E FILTROS
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    }
+
     function openLoginModal(mode = 'login') {
       switchAuthTab(mode);
       document.getElementById('modal-login').classList.remove('hidden');
     }
     function openTimerModal() { 
-      detectUserLocation();
+      detectUserLocation(false);
       document.getElementById('modal-timer').classList.remove('hidden'); 
     }
     function openMapModal() { 
