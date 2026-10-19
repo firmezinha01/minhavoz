@@ -116,7 +116,7 @@
           
           <!-- Estado: Logado -->
           <div id="header-user-logged-in" class="flex items-center space-x-2 hidden">
-            <div onclick="openLoginModal()" class="flex items-center space-x-2 cursor-pointer p-1 rounded-xl hover:bg-slate-50 transition-colors">
+            <div onclick="openProfileModal()" class="flex items-center space-x-2 cursor-pointer p-1 rounded-xl hover:bg-slate-50 transition-colors" title="Acessar e Editar Meus Dados & Foto">
               <div id="header-user-avatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shadow-xs border-2 border-white ring-1 ring-blue-500 overflow-hidden">
                 👤
               </div>
@@ -127,6 +127,12 @@
                 </div>
               </div>
             </div>
+
+            <!-- Botão Meus Dados & Foto -->
+            <button onclick="openProfileModal()" title="Acessar Meus Dados e Foto" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-bold transition-all flex items-center gap-1 active-scale border border-blue-200 shadow-2xs">
+              <span>👤</span>
+              <span class="hidden sm:inline">Meus Dados</span>
+            </button>
 
             <!-- Botão Sair Visível no Header -->
             <button onclick="logoutUser()" id="btn-header-logout" title="Sair da Conta" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors flex items-center gap-1 text-xs font-bold active-scale">
@@ -203,7 +209,7 @@
         
         <!-- Card do Usuário Logado -->
         <div id="sidebar-user-card" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs text-left hidden">
-          <div class="flex items-center space-x-3 mb-3">
+          <div class="flex items-center space-x-3 mb-3 cursor-pointer" onclick="openProfileModal()" title="Clique para acessar e editar seus dados e foto">
             <div id="sidebar-user-avatar" class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold flex items-center justify-center text-xl shadow-md overflow-hidden">
               👤
             </div>
@@ -216,13 +222,19 @@
             </div>
           </div>
 
-          <div class="flex gap-2 pt-2 border-t border-slate-100">
-            <button onclick="openLoginModal()" class="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-all text-center active-scale">
-              🔑 Trocar Conta
+          <div class="pt-2 border-t border-slate-100 space-y-2">
+            <button onclick="openProfileModal()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 active-scale shadow-xs">
+              <span>👤</span>
+              <span>Acessar Meus Dados & Foto</span>
             </button>
-            <button onclick="logoutUser()" class="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-lg transition-all flex items-center gap-1 active-scale">
-              <span>Sair</span>
-            </button>
+            <div class="flex gap-2">
+              <button onclick="openLoginModal('login')" class="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-all text-center active-scale">
+                🔑 Trocar Conta
+              </button>
+              <button onclick="logoutUser()" class="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-lg transition-all flex items-center gap-1 active-scale">
+                <span>Sair</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -358,15 +370,15 @@
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
             <div class="bg-white/10 rounded-xl p-2 backdrop-blur-xs border border-white/10">
               <div class="text-[10px] text-blue-200 font-bold truncate">Hospital HMU (Emergência)</div>
-              <div class="text-sm sm:text-base font-black text-rose-300 font-mono" id="banner-hmu-emergencia">2h 00m</div>
+              <div class="text-sm sm:text-base font-black text-rose-300 font-mono" id="banner-hmu-emergencia">--</div>
             </div>
             <div class="bg-white/10 rounded-xl p-2 backdrop-blur-xs border border-white/10">
               <div class="text-[10px] text-blue-200 font-bold truncate">Hospital HMU (Ortopedia)</div>
-              <div class="text-sm sm:text-base font-black text-amber-300 font-mono" id="banner-hmu-ortopedia">3h 00m</div>
+              <div class="text-sm sm:text-base font-black text-amber-300 font-mono" id="banner-hmu-ortopedia">--</div>
             </div>
             <div class="col-span-2 sm:col-span-1 bg-white/10 rounded-xl p-2 backdrop-blur-xs border border-white/10 flex flex-col justify-center">
               <div class="text-[10px] text-blue-200 font-bold truncate">Fila de Cirurgias (Média)</div>
-              <div class="text-sm sm:text-base font-black text-white font-mono" id="banner-cirurgias-media">185 dias</div>
+              <div class="text-sm sm:text-base font-black text-white font-mono" id="banner-cirurgias-media">--</div>
             </div>
           </div>
         </div>
@@ -736,7 +748,7 @@
       <span class="text-[10px] font-bold mt-0.5">Mapa</span>
     </button>
 
-    <button onclick="openLoginModal()" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-blue-600">
+    <button onclick="handleUserAccountNavClick()" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-blue-600">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
       <span class="text-[10px] font-bold mt-0.5">Conta</span>
     </button>
@@ -861,6 +873,118 @@
         </button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- MODAL DE PERFIL / MEUS DADOS DO PACIENTE -->
+  <div id="modal-profile" onclick="if(event.target === this) closeModal('modal-profile')" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
+    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-lg p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[92vh] overflow-y-auto custom-scrollbar">
+      
+      <!-- Cabeçalho do Modal -->
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span>👤</span> Meus Dados & Perfil
+          </h3>
+          <p class="text-[11px] text-slate-500">Acesse, altere suas informações e gerencie sua foto de perfil.</p>
+        </div>
+        <button onclick="closeModal('modal-profile')" class="text-slate-400 hover:text-slate-600 text-lg p-1">✕</button>
+      </div>
+
+      <!-- FORMULÁRIO DO PERFIL -->
+      <form id="form-user-profile" onsubmit="handleProfileSubmit(event)" class="space-y-3.5 text-xs">
+
+        <!-- Foto de Perfil & Prévia -->
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5">
+          <label class="block font-bold text-slate-700 mb-2">Foto de Perfil:</label>
+          <div class="flex items-center gap-3.5">
+            <div id="profile-photo-preview" class="w-16 h-16 rounded-full bg-blue-100 border-2 border-dashed border-blue-400 flex items-center justify-center text-3xl overflow-hidden shrink-0 text-slate-500 shadow-xs">
+              👤
+            </div>
+            <div class="flex-1 space-y-1.5">
+              <input type="file" id="profile-photo-file" accept="image/*" class="hidden" onchange="handleProfilePhotoChange(event)">
+              <div class="flex items-center gap-2 flex-wrap">
+                <button type="button" onclick="document.getElementById('profile-photo-file').click()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow-xs active-scale transition-colors flex items-center gap-1.5">
+                  <span>📷</span> <span>Trocar / Inserir Foto</span>
+                </button>
+                <button type="button" id="btn-remove-profile-photo" onclick="removeProfilePhoto()" class="hidden text-xs text-rose-600 font-bold hover:underline">
+                  Remover Foto
+                </button>
+              </div>
+              <p class="text-[10px] text-slate-400">Tire uma foto com a câmera do celular ou escolha da sua galeria.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nome Completo & Login -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Nome Completo:</label>
+            <input type="text" id="profile-fullname" required placeholder="Seu nome completo" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Login / Identificador:</label>
+            <input type="text" id="profile-username" readonly class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-100 text-slate-500 font-bold outline-hidden cursor-not-allowed" title="O login é fixo para identificar sua conta">
+          </div>
+        </div>
+
+        <!-- E-mail & Telefone -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">E-mail de Contato:</label>
+            <input type="email" id="profile-email" placeholder="seu.email@exemplo.com" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">WhatsApp / Telefone:</label>
+            <input type="tel" id="profile-phone" placeholder="(11) 98765-4321" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+          </div>
+        </div>
+
+        <!-- Cidade/Estado & Cartão SUS / CNS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Cidade / Estado:</label>
+            <input type="text" id="profile-city" placeholder="Ex: São Paulo, SP" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Cartão SUS / CNS (Opcional):</label>
+            <input type="text" id="profile-cns" placeholder="Número do Cartão SUS" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+          </div>
+        </div>
+
+        <!-- Observações de Saúde / Prontuário -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Condições de Saúde / Observações (Opcional):</label>
+          <input type="text" id="profile-health-notes" placeholder="Ex: Hipertenso, Diabético, Fila de cirurgia de hérnia..." class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+        </div>
+
+        <!-- Alterar Senha -->
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Alterar Senha (Opcional):</label>
+          <input type="password" id="profile-new-password" placeholder="Deixe em branco para manter a senha atual" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="pt-2 flex flex-col sm:flex-row gap-2">
+          <button type="submit" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-emerald-600/30 transition-all active-scale flex items-center justify-center gap-1.5">
+            <span>💾</span> <span>Salvar Alterações</span>
+          </button>
+          <button type="button" onclick="closeModal('modal-profile')" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-all active-scale">
+            Cancelar
+          </button>
+        </div>
+
+        <!-- Opções Avançadas: Zerar Dados Locais de Teste & Sair -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+          <button type="button" onclick="resetAllSystemData()" class="text-amber-700 hover:text-amber-900 font-bold flex items-center gap-1 hover:underline">
+            <span>🗑️</span> Zerar Relatos de Teste
+          </button>
+          <button type="button" onclick="logoutUser(); closeModal('modal-profile');" class="text-rose-600 hover:text-rose-800 font-bold flex items-center gap-1 hover:underline">
+            <span>🚪</span> Sair da Conta
+          </button>
+        </div>
+
+      </form>
     </div>
   </div>
 
@@ -1262,308 +1386,9 @@
     let currentUser = null;
 
     // ====================================================================
-    // BASE DE DADOS REAL: ESPERA POR HOSPITAL, SETOR E FILAS (HMU, ETC.)
+    // BASE DE DADOS REAL: REGISTROS REAIS INSERIDOS PELOS USUÁRIOS
     // ====================================================================
-    const INITIAL_WAIT_RECORDS = [
-      // 1. HOSPITAL HMU (Exemplo solicitado pelo usuário: Emergência 2 horas, Ortopedia 3 horas, etc.)
-      {
-        id: 'rec-hmu-1',
-        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
-        hospitalShort: 'Hospital HMU',
-        category: 'Emergência',
-        specialty: 'Emergência',
-        waitValue: 2.0,
-        waitUnit: 'horas',
-        city: 'São Paulo',
-        state: 'SP',
-        author: 'José Silva',
-        avatar: '👨',
-        createdAt: 'Hoje',
-        text: 'Aguardando atendimento na emergência do Hospital HMU. Tempo medido no cronômetro: 2 horas até a consulta médica.'
-      },
-      {
-        id: 'rec-hmu-2',
-        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
-        hospitalShort: 'Hospital HMU',
-        category: 'Emergência',
-        specialty: 'Ortopedia',
-        waitValue: 3.0,
-        waitUnit: 'horas',
-        city: 'São Paulo',
-        state: 'SP',
-        author: 'Maria Clara',
-        avatar: '👩',
-        createdAt: 'Hoje',
-        text: 'Setor de ortopedia no Hospital HMU com espera de 3 horas para raio-x e colocação de tala.'
-      },
-      {
-        id: 'rec-hmu-3',
-        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
-        hospitalShort: 'Hospital HMU',
-        category: 'Emergência',
-        specialty: 'Clínica Geral',
-        waitValue: 1.75, // 1h 45m
-        waitUnit: 'horas',
-        city: 'São Paulo',
-        state: 'SP',
-        author: 'Paciente Anônimo',
-        avatar: '🎭',
-        createdAt: 'Hoje',
-        text: 'Consulta de clínica geral no HMU demorou 1 hora e 45 minutos.'
-      },
-      {
-        id: 'rec-hmu-4',
-        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
-        hospitalShort: 'Hospital HMU',
-        category: 'Emergência',
-        specialty: 'Pediatria',
-        waitValue: 1.25, // 1h 15m
-        waitUnit: 'horas',
-        city: 'São Paulo',
-        state: 'SP',
-        author: 'Mariana Rocha',
-        avatar: '👩',
-        createdAt: 'Hoje',
-        text: 'Pediatria do HMU com espera de 1 hora e 15 minutos para atendimento infantil.'
-      },
-      {
-        id: 'rec-hmu-5',
-        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
-        hospitalShort: 'Hospital HMU',
-        category: 'Cirurgia',
-        specialty: 'Cirurgia Geral',
-        waitValue: 180,
-        waitUnit: 'dias',
-        city: 'São Paulo',
-        state: 'SP',
-        author: 'Carlos Eduardo',
-        avatar: '👨',
-        createdAt: 'Há 1 dia',
-        text: 'Aguardando na fila regulada pelo SISREG para cirurgia geral no Hospital HMU há 180 dias.'
-      },
-      {
-        id: 'rec-hmu-6',
-        hospital: 'Hospital HMU - Hospital Municipal de Urgências',
-        hospitalShort: 'Hospital HMU',
-        category: 'Exame',
-        specialty: 'Ressonância Magnética',
-        waitValue: 75,
-        waitUnit: 'dias',
-        city: 'São Paulo',
-        state: 'SP',
-        author: 'Francisca Lima',
-        avatar: '👵',
-        createdAt: 'Há 2 dias',
-        text: 'Esperando agendamento de exame de ressonância magnética pelo HMU há 75 dias.'
-      },
-
-      // 2. HOSPITAL GERAL DO GRAJAÚ (SP)
-      {
-        id: 'rec-grajau-1',
-        hospital: 'Hospital Geral do Grajaú',
-        hospitalShort: 'Hosp. Geral Grajaú',
-        category: 'Emergência',
-        specialty: 'Emergência',
-        waitValue: 3.5,
-        waitUnit: 'horas',
-        city: 'São Paulo',
-        state: 'SP',
-        author: 'Roberto Alencar',
-        avatar: '👨',
-        createdAt: 'Hoje',
-        text: 'Pronto-socorro do Grajaú com lotação alta, mais de 3 horas e meia de espera na triagem.'
-      },
-      {
-        id: 'rec-grajau-2',
-        hospital: 'Hospital Geral do Grajaú',
-        hospitalShort: 'Hosp. Geral Grajaú',
-        category: 'Cirurgia',
-        specialty: 'Cirurgia de Joelho',
-        waitValue: 210,
-        waitUnit: 'dias',
-        city: 'São Paulo',
-        state: 'SP',
-        author: 'Tereza Souza',
-        avatar: '👵',
-        createdAt: 'Há 3 dias',
-        text: 'Fila do SUS para prótese de joelho no Grajaú ultrapassa 210 dias sem chamada.'
-      },
-      {
-        id: 'rec-grajau-3',
-        hospital: 'Hospital Geral do Grajaú',
-        hospitalShort: 'Hosp. Geral Grajaú',
-        category: 'Exame',
-        specialty: 'Tomografia Computadorizada',
-        waitValue: 60,
-        waitUnit: 'dias',
-        city: 'São Paulo',
-        state: 'SP',
-        author: 'Márcia Ferreira',
-        avatar: '👩',
-        createdAt: 'Há 4 dias',
-        text: 'Tomografia computadorizada aguardando liberação de vaga há 2 meses.'
-      },
-
-      // 3. HOSPITAL SÃO PAULO - UNIFESP (SP)
-      {
-        id: 'rec-hsp-1',
-        hospital: 'Hospital São Paulo - UNIFESP',
-        hospitalShort: 'Hospital São Paulo',
-        category: 'Consulta',
-        specialty: 'Cardiologia',
-        waitValue: 90,
-        waitUnit: 'dias',
-        city: 'São Paulo',
-        state: 'SP',
-        author: 'João Batista',
-        avatar: '👨',
-        createdAt: 'Hoje',
-        text: 'Consulta com cardiologista regulada pela UBS aguardando há 90 dias.'
-      },
-      {
-        id: 'rec-hsp-2',
-        hospital: 'Hospital São Paulo - UNIFESP',
-        hospitalShort: 'Hospital São Paulo',
-        category: 'Cirurgia',
-        specialty: 'Cirurgia de Catarata',
-        waitValue: 120,
-        waitUnit: 'dias',
-        city: 'São Paulo',
-        state: 'SP',
-        author: 'Sebastião N.',
-        avatar: '👴',
-        createdAt: 'Há 5 dias',
-        text: 'Fila para cirurgia de catarata bilateral aguardando agendamento cirúrgico.'
-      },
-
-      // 4. HOSPITAL MUNICIPAL SOUZA AGUIAR (RJ)
-      {
-        id: 'rec-rj-1',
-        hospital: 'Hospital Municipal Souza Aguiar',
-        hospitalShort: 'Hosp. Souza Aguiar',
-        category: 'Emergência',
-        specialty: 'Emergência',
-        waitValue: 3.0,
-        waitUnit: 'horas',
-        city: 'Rio de Janeiro',
-        state: 'RJ',
-        author: 'Marcos Paulo',
-        avatar: '👨',
-        createdAt: 'Hoje',
-        text: 'Emergência do Souza Aguiar no centro do Rio com 3 horas para primeiro atendimento.'
-      },
-      {
-        id: 'rec-rj-2',
-        hospital: 'Hospital Municipal Souza Aguiar',
-        hospitalShort: 'Hosp. Souza Aguiar',
-        category: 'Cirurgia',
-        specialty: 'Ortopedia',
-        waitValue: 240,
-        waitUnit: 'dias',
-        city: 'Rio de Janeiro',
-        state: 'RJ',
-        author: 'Luciana M.',
-        avatar: '👩',
-        createdAt: 'Esta semana',
-        text: 'Fila de cirurgia reparadora ortopédica no Souza Aguiar completando 8 meses.'
-      },
-
-      // 5. HOSPITAL GERAL ROBERTO SANTOS (BA)
-      {
-        id: 'rec-ba-1',
-        hospital: 'Hospital Geral Roberto Santos',
-        hospitalShort: 'Hosp. Roberto Santos',
-        category: 'Emergência',
-        specialty: 'Emergência',
-        waitValue: 4.0,
-        waitUnit: 'horas',
-        city: 'Salvador',
-        state: 'BA',
-        author: 'Jorge Amado S.',
-        avatar: '👨',
-        createdAt: 'Ontem',
-        text: 'Superlotação na emergência do Roberto Santos em Salvador, 4 horas esperando.'
-      },
-      {
-        id: 'rec-ba-2',
-        hospital: 'Hospital Geral Roberto Santos',
-        hospitalShort: 'Hosp. Roberto Santos',
-        category: 'Cirurgia',
-        specialty: 'Cirurgia de Vesícula',
-        waitValue: 195,
-        waitUnit: 'dias',
-        city: 'Salvador',
-        state: 'BA',
-        author: 'Aline Barbosa',
-        avatar: '👩',
-        createdAt: 'Esta semana',
-        text: 'Aguardando colecistectomia por vídeo há mais de 6 meses.'
-      },
-
-      // 6. HOSPITAL JOÃO XXIII / HC UFMG (MG)
-      {
-        id: 'rec-mg-1',
-        hospital: 'Hospital João XXIII',
-        hospitalShort: 'Hosp. João XXIII',
-        category: 'Emergência',
-        specialty: 'Emergência',
-        waitValue: 2.5,
-        waitUnit: 'horas',
-        city: 'Belo Horizonte',
-        state: 'MG',
-        author: 'Thiago Neves',
-        avatar: '👨',
-        createdAt: 'Hoje',
-        text: 'Pronto-socorro do João XXIII em BH, tempo de espera registrado em 2h 30m.'
-      },
-      {
-        id: 'rec-mg-2',
-        hospital: 'Hospital das Clínicas UFMG',
-        hospitalShort: 'HC UFMG',
-        category: 'Consulta',
-        specialty: 'Neurologia',
-        waitValue: 115,
-        waitUnit: 'dias',
-        city: 'Belo Horizonte',
-        state: 'MG',
-        author: 'Helena Costa',
-        avatar: '👩',
-        createdAt: 'Há 2 dias',
-        text: 'Consulta de neurologia especializada no HC de Belo Horizonte.'
-      },
-
-      // 7. HOSPITAL GERAL DE FORTALEZA (CE)
-      {
-        id: 'rec-ce-1',
-        hospital: 'Hospital Geral de Fortaleza (HGF)',
-        hospitalShort: 'HGF Fortaleza',
-        category: 'Emergência',
-        specialty: 'Emergência',
-        waitValue: 3.2,
-        waitUnit: 'horas',
-        city: 'Fortaleza',
-        state: 'CE',
-        author: 'Davi Santiago',
-        avatar: '👨',
-        createdAt: 'Ontem',
-        text: 'Emergência do HGF em Fortaleza com mais de 3 horas de fila.'
-      },
-      {
-        id: 'rec-ce-2',
-        hospital: 'Hospital Geral de Fortaleza (HGF)',
-        hospitalShort: 'HGF Fortaleza',
-        category: 'Exame',
-        specialty: 'Endoscopia Digestiva',
-        waitValue: 80,
-        waitUnit: 'dias',
-        city: 'Fortaleza',
-        state: 'CE',
-        author: 'Beatriz Lins',
-        avatar: '👩',
-        createdAt: 'Há 5 dias',
-        text: 'Fila regulada para exame de endoscopia digestiva alta.'
-      }
-    ];
+    const INITIAL_WAIT_RECORDS = [];
 
     let realWaitingRecords = [];
     let socialPosts = [];
@@ -1645,6 +1470,192 @@
       if (preview) preview.innerHTML = '👤';
       const btnRemove = document.getElementById('btn-remove-register-photo');
       if (btnRemove) btnRemove.classList.add('hidden');
+    }
+
+    // ====================================================================
+    // GERENCIAMENTO DE PERFIL & DADOS DO PACIENTE LOGADO
+    // ====================================================================
+    let profileTempAvatar = null;
+
+    function handleUserAccountNavClick() {
+      if (currentUser && currentUser.username !== 'visitante') {
+        openProfileModal();
+      } else {
+        openLoginModal('login');
+      }
+    }
+
+    function openProfileModal() {
+      if (!currentUser) {
+        openLoginModal('login');
+        return;
+      }
+
+      const pFullName = document.getElementById('profile-fullname');
+      const pUsername = document.getElementById('profile-username');
+      const pEmail = document.getElementById('profile-email');
+      const pPhone = document.getElementById('profile-phone');
+      const pCity = document.getElementById('profile-city');
+      const pCns = document.getElementById('profile-cns');
+      const pHealthNotes = document.getElementById('profile-health-notes');
+      const pPass = document.getElementById('profile-new-password');
+      const preview = document.getElementById('profile-photo-preview');
+      const btnRemovePhoto = document.getElementById('btn-remove-profile-photo');
+
+      if (pFullName) pFullName.value = currentUser.name || '';
+      if (pUsername) pUsername.value = currentUser.username || '';
+      if (pEmail) pEmail.value = currentUser.email || '';
+      if (pPhone) pPhone.value = currentUser.phone || '';
+      if (pCity) pCity.value = currentUser.city || '';
+      if (pCns) pCns.value = currentUser.cns || currentUser.cpf || '';
+      if (pHealthNotes) pHealthNotes.value = currentUser.healthNotes || currentUser.condicao_saude || '';
+      if (pPass) pPass.value = '';
+
+      profileTempAvatar = currentUser.avatar || '👤';
+      if (preview) {
+        preview.innerHTML = renderAvatarHTML(profileTempAvatar);
+      }
+      if (btnRemovePhoto) {
+        if (profileTempAvatar && (profileTempAvatar.startsWith('data:image') || profileTempAvatar.startsWith('http'))) {
+          btnRemovePhoto.classList.remove('hidden');
+        } else {
+          btnRemovePhoto.classList.add('hidden');
+        }
+      }
+
+      const modal = document.getElementById('modal-profile');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function handleProfilePhotoChange(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 160;
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          profileTempAvatar = canvas.toDataURL('image/jpeg', 0.85);
+
+          const preview = document.getElementById('profile-photo-preview');
+          if (preview) {
+            preview.innerHTML = `<img src="${profileTempAvatar}" class="w-full h-full object-cover rounded-full">`;
+          }
+          const btnRemove = document.getElementById('btn-remove-profile-photo');
+          if (btnRemove) btnRemove.classList.remove('hidden');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeProfilePhoto() {
+      profileTempAvatar = '👤';
+      const fileInput = document.getElementById('profile-photo-file');
+      if (fileInput) fileInput.value = '';
+      const preview = document.getElementById('profile-photo-preview');
+      if (preview) preview.innerHTML = '👤';
+      const btnRemove = document.getElementById('btn-remove-profile-photo');
+      if (btnRemove) btnRemove.classList.add('hidden');
+    }
+
+    async function handleProfileSubmit(e) {
+      e.preventDefault();
+      if (!currentUser) return;
+
+      const fullName = document.getElementById('profile-fullname').value.trim();
+      const city = document.getElementById('profile-city').value.trim();
+      const email = document.getElementById('profile-email').value.trim();
+      const phone = document.getElementById('profile-phone').value.trim();
+      const cns = document.getElementById('profile-cns').value.trim();
+      const healthNotes = document.getElementById('profile-health-notes').value.trim();
+      const newPass = document.getElementById('profile-new-password').value.trim();
+
+      if (!fullName) {
+        alert('Por favor, informe seu nome completo.');
+        return;
+      }
+
+      const prevName = currentUser.name;
+      currentUser.name = fullName;
+      if (city) currentUser.city = city;
+      currentUser.email = email;
+      currentUser.phone = phone;
+      currentUser.cns = cns;
+      currentUser.healthNotes = healthNotes;
+      if (profileTempAvatar) currentUser.avatar = profileTempAvatar;
+      if (newPass) {
+        if (newPass.length < 4) {
+          alert('A nova senha deve conter pelo menos 4 caracteres.');
+          return;
+        }
+        currentUser.password = newPass;
+      }
+
+      localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+      saveRegisteredUser(currentUser);
+      if (KNOWN_ACCOUNTS[currentUser.username]) {
+        KNOWN_ACCOUNTS[currentUser.username] = { ...currentUser };
+      }
+
+      if (window.supabaseClient) {
+        try {
+          window.supabaseClient
+            .from('users')
+            .upsert({
+              id: currentUser.id,
+              nome: currentUser.name,
+              cidade: currentUser.city,
+              email: currentUser.email || `${currentUser.username}@minhavoz.org.br`,
+              cpf: currentUser.cns || currentUser.username,
+              senha_hash: currentUser.password || '123456',
+              condicao_saude: currentUser.healthNotes || 'Paciente Cadastrado'
+            })
+            .then(() => console.log('✓ Perfil atualizado no Supabase'))
+            .catch(err => console.warn('Supabase profile sync error:', err));
+        } catch(err) {
+          console.warn('Erro ao sincronizar com Supabase:', err);
+        }
+      }
+
+      // Atualiza nome e foto nas publicações locais do usuário
+      socialPosts.forEach(p => {
+        if (p.author === prevName || p.author === currentUser.name || p.author === currentUser.username) {
+          p.author = currentUser.name;
+          if (!p.isAnon) p.avatar = currentUser.avatar;
+        }
+      });
+      realWaitingRecords.forEach(r => {
+        if (r.author === prevName || r.author === currentUser.name || r.author === currentUser.username) {
+          r.author = currentUser.name;
+          r.avatar = currentUser.avatar;
+        }
+      });
+      saveWaitRecords();
+
+      updateUserUI();
+      renderFeed();
+      closeModal('modal-profile');
+      alert('✓ Dados e foto do perfil salvos com sucesso!');
     }
 
     const SPECIALTY_PRESETS = {
@@ -1744,17 +1755,47 @@
     });
 
     function loadStoredWaitRecords() {
+      const SCHEMA_VERSION = 'v5_clean_zero_fictional_data';
+      const storedVersion = localStorage.getItem('minhavoz_schema_version');
+      if (storedVersion !== SCHEMA_VERSION) {
+        localStorage.removeItem('minhavoz_wait_records');
+        localStorage.setItem('minhavoz_schema_version', SCHEMA_VERSION);
+        realWaitingRecords = [];
+        return;
+      }
+
       try {
         const stored = localStorage.getItem('minhavoz_wait_records');
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            realWaitingRecords = parsed;
+          if (Array.isArray(parsed)) {
+            realWaitingRecords = parsed.filter(r => 
+              !r.id.startsWith('rec-hmu-') && 
+              !r.id.startsWith('rec-grajau-') && 
+              !r.id.startsWith('rec-hsp-') && 
+              !r.id.startsWith('rec-rj-') && 
+              !r.id.startsWith('rec-ba-') && 
+              !r.id.startsWith('rec-mg-') && 
+              !r.id.startsWith('rec-ce-')
+            );
             return;
           }
         }
       } catch (e) {}
-      realWaitingRecords = [...INITIAL_WAIT_RECORDS];
+      realWaitingRecords = [];
+    }
+
+    function resetAllSystemData() {
+      if (confirm('Atenção: Deseja zerar todos os relatos e dados locais de teste?\n\nIsso deixará o sistema limpo para novos testes com dados reais.')) {
+        realWaitingRecords = [];
+        socialPosts = [];
+        localStorage.removeItem('minhavoz_wait_records');
+        saveWaitRecords();
+        renderFeed();
+        renderStories();
+        updateMapStatistics();
+        alert('✓ Todos os relatos de teste foram zerados com sucesso!');
+      }
     }
 
     function saveWaitRecords() {
@@ -1764,29 +1805,29 @@
     }
 
     function syncSocialPostsFromWaitRecords() {
-      if (socialPosts.length === 0) {
-        socialPosts = realWaitingRecords.map(r => ({
-          id: r.id,
-          author: r.author || 'Paciente SUS',
-          avatar: r.avatar || '👨',
-          location: `${r.city}, ${r.state}`,
-          hospital: r.hospitalShort || r.hospital,
-          category: r.category,
-          specialty: r.specialty,
-          waitValue: r.waitValue,
-          waitUnit: r.waitUnit,
-          waitDays: r.waitUnit === 'dias' ? r.waitValue : Math.round(r.waitValue * 24),
-          waitHours: r.waitUnit === 'horas' ? r.waitValue : (r.waitValue * 24),
-          mediaType: 'texto',
-          text: r.text,
-          likes: 2,
-          hasLiked: false,
-          pressures: 1,
-          commentsCount: 0,
-          createdAt: r.createdAt || 'Hoje',
-          isAnon: r.author === 'Paciente Anônimo'
-        }));
-      }
+      socialPosts = realWaitingRecords.map(r => ({
+        id: r.id,
+        author: r.author || 'Paciente SUS',
+        avatar: r.avatar || '👤',
+        location: `${r.city || ''}, ${r.state || ''}`.trim().replace(/^,|,$/g, ''),
+        hospital: r.hospitalShort || r.hospital,
+        category: r.category,
+        specialty: r.specialty,
+        waitValue: r.waitValue,
+        waitUnit: r.waitUnit,
+        waitDays: r.waitUnit === 'dias' ? r.waitValue : Math.round(r.waitValue * 24),
+        waitHours: r.waitUnit === 'horas' ? r.waitValue : (r.waitValue * 24),
+        mediaType: r.mediaType || 'texto',
+        videoBlobUrl: r.videoBlobUrl || null,
+        audioBlobUrl: r.audioBlobUrl || null,
+        text: r.text,
+        likes: r.likes || 1,
+        hasLiked: false,
+        pressures: r.pressures || 1,
+        commentsCount: 0,
+        createdAt: r.createdAt || 'Hoje',
+        isAnon: r.isAnon || (r.author === 'Paciente Anônimo')
+      }));
     }
 
     // GERENCIAMENTO DE USUÁRIO & LOGIN/LOGOUT
@@ -3079,8 +3120,11 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       if (hmu) {
         const secEmerg = hmu.sectorsList.find(s => s.name.toLowerCase().includes('emergência'));
         const secOrto = hmu.sectorsList.find(s => s.name.toLowerCase().includes('ortopedia'));
-        if (bEmerg && secEmerg) bEmerg.innerText = secEmerg.formattedTime;
-        if (bOrto && secOrto) bOrto.innerText = secOrto.formattedTime;
+        if (bEmerg) bEmerg.innerText = secEmerg ? secEmerg.formattedTime : '--';
+        if (bOrto) bOrto.innerText = secOrto ? secOrto.formattedTime : '--';
+      } else {
+        if (bEmerg) bEmerg.innerText = '--';
+        if (bOrto) bOrto.innerText = '--';
       }
 
       // Média geral de cirurgias
@@ -3090,7 +3134,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
           const avgCirurgia = Math.round(cirurgiasRecords.reduce((acc, r) => acc + Number(r.waitValue), 0) / cirurgiasRecords.length);
           bCirurgias.innerText = `${avgCirurgia} dias`;
         } else {
-          bCirurgias.innerText = '185 dias';
+          bCirurgias.innerText = '--';
         }
       }
 
