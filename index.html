@@ -1402,8 +1402,23 @@
     let mapFilterUf = '';
 
     // ====================================================================
-    // CONTROLE GLOBAL DE MODAIS, AVATARES E SETORES / ESPECIALIDADES
+    // UTILITÁRIOS DE UUID E CONTROLE GLOBAL DE MODAIS E AVATARES
     // ====================================================================
+    function generateUUID() {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    function isValidUUID(id) {
+      return typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    }
+
     function closeModal(id) {
       const el = document.getElementById(id);
       if (el) el.classList.add('hidden');
@@ -1836,6 +1851,10 @@
         const stored = localStorage.getItem('minhavoz_user');
         if (stored) {
           currentUser = JSON.parse(stored);
+          if (currentUser && currentUser.id && !isValidUUID(currentUser.id)) {
+            currentUser.id = generateUUID();
+            localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+          }
         } else {
           currentUser = null;
         }
@@ -2054,7 +2073,7 @@
         return;
       }
 
-      const newId = 'u-' + Date.now();
+      const newId = generateUUID();
       const newUser = {
         id: newId,
         username: userVal,
@@ -2074,6 +2093,7 @@
         window.supabaseClient
           .from('users')
           .insert([{
+            id: newId,
             nome: fullName,
             cidade: userCity,
             email: userVal.includes('@') ? userVal : `${userVal}@minhavoz.org.br`,
@@ -2592,6 +2612,11 @@ ALTER TABLE public.waiting_times DROP CONSTRAINT IF EXISTS waiting_times_user_id
 ALTER TABLE public.reports ALTER COLUMN user_id DROP NOT NULL;
 ALTER TABLE public.waiting_times ALTER COLUMN user_id DROP NOT NULL;
 
+ALTER TABLE public.waiting_times ALTER COLUMN inicio DROP NOT NULL;
+ALTER TABLE public.waiting_times ALTER COLUMN fim DROP NOT NULL;
+ALTER TABLE public.waiting_times ALTER COLUMN inicio SET DEFAULT now();
+ALTER TABLE public.waiting_times ALTER COLUMN fim SET DEFAULT now();
+
 INSERT INTO public.users (id, nome, idade, cidade, email, cpf, senha_hash, condicao_saude)
 VALUES 
     ('a0000000-0000-0000-0000-000000000001', 'Administrador Minha Voz', 35, 'Brasília, DF', 'admin@minhavoz.org.br', 'admin', '123456', 'Gestão e Moderação SUS'),
@@ -2611,9 +2636,12 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     }
 
     function showDbSyncAlert(error) {
-      console.warn('Alerta de permissão Supabase:', error);
-      const banner = document.getElementById('supabase-sync-banner');
-      if (banner) banner.classList.remove('hidden');
+      console.warn('Alerta de banco Supabase:', error);
+      // Nunca exibe banner técnico para usuários comuns / pacientes no celular
+      if (currentUser && currentUser.isAdmin) {
+        const banner = document.getElementById('supabase-sync-banner');
+        if (banner) banner.classList.remove('hidden');
+      }
     }
 
     async function saveReportToSupabase(newPost, meta) {
@@ -2633,13 +2661,15 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         cidade: meta.city,
         estado: meta.state
       };
-      if (currentUser && currentUser.id) fullPayload.user_id = currentUser.id;
+      if (currentUser && currentUser.id && isValidUUID(currentUser.id)) {
+        fullPayload.user_id = currentUser.id;
+      }
 
       try {
         let res = await window.supabaseClient.from('reports').insert([fullPayload]).select();
 
-        // Se houver erro de chave estrangeira em user_id, tentar sem user_id
-        if (res.error && res.error.message && (res.error.message.includes('foreign key') || res.error.message.includes('user_id'))) {
+        // Se houver qualquer erro com user_id ou UUID ou chave estrangeira, tenta sem user_id
+        if (res.error && (fullPayload.user_id || res.error.code === '22P02' || res.error.code === '23503' || (res.error.message && (res.error.message.includes('uuid') || res.error.message.includes('foreign key') || res.error.message.includes('user_id'))))) {
           delete fullPayload.user_id;
           res = await window.supabaseClient.from('reports').insert([fullPayload]).select();
         }
@@ -2658,7 +2688,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
         if (res.error) {
           console.error('Erro retornado pelo Supabase (reports):', res.error);
-          showDbSyncAlert(res.error);
+          if (res.error.code === '42501' || (res.error.message && res.error.message.includes('row-level security'))) {
+            showDbSyncAlert(res.error);
+          }
           return null;
         }
 
@@ -2687,13 +2719,15 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         cidade: meta.city,
         estado: meta.state
       };
-      if (currentUser && currentUser.id) fullPayload.user_id = currentUser.id;
+      if (currentUser && currentUser.id && isValidUUID(currentUser.id)) {
+        fullPayload.user_id = currentUser.id;
+      }
 
       try {
         let res = await window.supabaseClient.from('waiting_times').insert([fullPayload]).select();
 
-        // Se houver erro de chave estrangeira em user_id, tentar sem user_id
-        if (res.error && res.error.message && (res.error.message.includes('foreign key') || res.error.message.includes('user_id'))) {
+        // Se houver qualquer erro com user_id ou UUID ou chave estrangeira, tenta sem user_id
+        if (res.error && (fullPayload.user_id || res.error.code === '22P02' || res.error.code === '23503' || (res.error.message && (res.error.message.includes('uuid') || res.error.message.includes('foreign key') || res.error.message.includes('user_id'))))) {
           delete fullPayload.user_id;
           res = await window.supabaseClient.from('waiting_times').insert([fullPayload]).select();
         }
@@ -2711,7 +2745,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
         if (res.error) {
           console.error('Erro retornado pelo Supabase (waiting_times):', res.error);
-          showDbSyncAlert(res.error);
+          if (res.error.code === '42501' || (res.error.message && res.error.message.includes('row-level security'))) {
+            showDbSyncAlert(res.error);
+          }
           return null;
         }
 
