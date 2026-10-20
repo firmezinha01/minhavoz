@@ -106,19 +106,17 @@
       
       <!-- Logo Principal com Tag DODA em Negrito -->
       <div class="flex items-center space-x-3 cursor-pointer shrink-0" onclick="window.scrollTo({top:0, behavior:'smooth'}); setFeedFilter('todos');">
-        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-[#103D36] to-[#16A085] flex items-center justify-center text-white font-black shadow-md shadow-[#16A085]/20">
-          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"></path>
-          </svg>
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-[#103D36] to-[#16A085] flex items-center justify-center text-white font-black shadow-md shadow-[#16A085]/20 text-xl sm:text-2xl">
+          <span>🏥</span>
         </div>
-        <div>
-          <div class="flex items-center gap-1.5">
-            <span class="text-xl sm:text-2xl font-black tracking-tight text-[#103D36]">Minha Voz</span>
-            <span class="text-[10px] sm:text-[11px] uppercase font-black bg-[#E9F5F1] text-[#103D36] px-2 py-0.5 rounded-md border border-[#16A085]/30 tracking-wider shadow-2xs">
-              <strong>DODA</strong>
-            </span>
+        <div class="flex flex-col">
+          <div class="flex items-baseline gap-2">
+            <span class="text-2xl sm:text-3xl font-black tracking-tight text-[#103D36]">DODA</span>
+            <span class="text-xs sm:text-sm font-bold text-[#16A085] tracking-normal">Minha Voz</span>
           </div>
-          <span class="text-[11px] text-[#66746F] hidden md:inline-block font-medium">Rede Social da Saúde e Transparência das Filas do SUS</span>
+          <span class="text-[10px] sm:text-[11px] text-[#66746F] hidden md:inline-block font-medium -mt-0.5">
+            Rede Social da Saúde e Transparência das Filas do SUS
+          </span>
         </div>
       </div>
 
@@ -1072,7 +1070,7 @@
     <!-- RODAPÉ FINAL INSTITUCIONAL -->
     <footer class="mt-10 py-6 border-t border-[#DDE6E2] text-center text-xs text-[#66746F] space-y-2">
       <div class="flex items-center justify-center gap-2 font-bold text-[#103D36]">
-        <span>Minha Voz • DODA</span>
+        <span>DODA • Minha Voz</span>
         <span>•</span>
         <span>Tecnologia a Serviço do Cidadão Brasileiro</span>
       </div>
@@ -1961,7 +1959,7 @@
   <script>
 
     // ====================================================================
-    // HELPER FUNCTIONS PARA REDESIGN PREMIUM & NAVEGAÇÃO
+    // NAVEGAÇÃO E CONTROLES DE INTERFACE
     // ====================================================================
     function scrollToComposer() {
       const comp = document.getElementById('composer-card') || document.getElementById('composer-text');
@@ -2071,1437 +2069,7 @@
       closeModal('modal-denuncia');
     }
 
-
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            susBlue: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              800: '#1e40af',
-              900: '#1e3a8a',
-            },
-            susRed: {
-              50: '#fff1f2',
-              100: '#ffe4e6',
-              500: '#f43f5e',
-              600: '#e11d48',
-              700: '#be123c',
-            }
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Supabase JS Client via CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    html, body {
-      overflow-x: hidden;
-      width: 100%;
-      -webkit-overflow-scrolling: touch;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 9999px;
-    }
-    .story-ring {
-      background: linear-gradient(45deg, #f43f5e, #3b82f6);
-    }
-    .active-scale:active {
-      transform: scale(0.97);
-    }
-    @media (max-width: 640px) {
-      input, select, textarea {
-        font-size: 16px !important;
-      }
-    }
-  </style>
-</head>
-<body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col antialiased overflow-x-hidden">
-
-  <!-- ==================================================================== -->
-  <!-- 1. HEADER / NAVBAR SUPERIOR RESPONSIVO                              -->
-  <!-- ==================================================================== -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
-      
-      <!-- Logo -->
-      <div class="flex items-center space-x-2.5 cursor-pointer shrink-0" onclick="setFeedFilter('todos')">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white font-black shadow-md shadow-blue-500/20">
-          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"></path>
-          </svg>
-        </div>
-        <div>
-          <div class="flex items-center gap-1.5">
-            <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900">Minha Voz</span>
-            <span class="text-[9px] sm:text-[10px] uppercase font-black bg-rose-100 text-rose-700 px-2 py-0.5 rounded-md border border-rose-200 tracking-wider shadow-2xs">
-              <strong>DODA</strong>
-            </span>
-          </div>
-          <span class="text-[10px] sm:text-[11px] text-slate-400 hidden md:inline-block">Transparência em tempo real para a saúde no Brasil</span>
-        </div>
-      </div>
-
-      <!-- Barra de Busca (Desktop) -->
-      <div class="hidden md:flex flex-1 max-w-md mx-4">
-        <div class="relative w-full">
-          <input type="text" id="search-input" onkeyup="handleSearch(this.value)" placeholder="Buscar hospital, procedimento, cidade..." class="w-full bg-slate-100 border border-slate-200 rounded-full py-2 pl-9 pr-4 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-        </div>
-      </div>
-
-      <!-- Ações do Cabeçalho e Usuário -->
-      <div class="flex items-center space-x-2 sm:space-x-3">
-        
-        <!-- Botão Cronômetro Mobile Rápido -->
-        <button onclick="openTimerModal()" class="lg:hidden flex items-center gap-1 px-2.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-full shadow-xs active-scale">
-          <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-          <span>⏱️ Espera</span>
-        </button>
-
-        <!-- Seção Usuário / Login no Header -->
-        <div id="header-user-section" class="flex items-center space-x-2 pl-1 border-l border-slate-200">
-          
-          <!-- Estado: Logado -->
-          <div id="header-user-logged-in" class="flex items-center space-x-2 hidden">
-            <div onclick="openProfileModal()" class="flex items-center space-x-2 cursor-pointer p-1 rounded-xl hover:bg-slate-50 transition-colors" title="Acessar e Editar Meus Dados & Foto">
-              <div id="header-user-avatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shadow-xs border-2 border-white ring-1 ring-blue-500 overflow-hidden">
-                👤
-              </div>
-              <div class="hidden xl:block text-left">
-                <div id="header-user-name" class="text-xs font-bold text-slate-800 leading-tight">Usuário</div>
-                <div id="header-user-badge" class="text-[10px] text-blue-600 font-extrabold flex items-center gap-0.5">
-                  <span>Paciente SUS</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Botão Meus Dados & Foto -->
-            <button onclick="openProfileModal()" title="Acessar Meus Dados e Foto" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-bold transition-all flex items-center gap-1 active-scale border border-blue-200 shadow-2xs">
-              <span>👤</span>
-              <span class="hidden sm:inline">Meus Dados</span>
-            </button>
-
-            <!-- Botão Sair Visível no Header -->
-            <button onclick="logoutUser()" id="btn-header-logout" title="Sair da Conta" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors flex items-center gap-1 text-xs font-bold active-scale">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-              <span class="hidden sm:inline">Sair</span>
-            </button>
-          </div>
-
-          <!-- Estado: Deslogado (Botões Entrar e Cadastrar) -->
-          <div id="header-user-logged-out" class="flex items-center space-x-1.5">
-            <button onclick="openLoginModal('login')" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all active-scale">
-              <span>🔑</span>
-              <span>Entrar</span>
-            </button>
-            <button onclick="openLoginModal('register')" class="hidden sm:flex px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs items-center gap-1 transition-all active-scale">
-              <span>Cadastrar</span>
-            </button>
-          </div>
-
-        </div>
-
-      </div>
-    </div>
-  </header>
-
-  <!-- ==================================================================== -->
-  <!-- 2. LAYOUT PRINCIPAL RESPONSIVO (DESKTOP / MOBILE)                   -->
-  <!-- ==================================================================== -->
-  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 w-full flex-1">
-    
-    <!-- BANNER DE DESTAQUE: PROJETO EM FASE DE TESTES & CONTATO PARA COLABORAÇÃO -->
-    <div id="banner-development-notice" class="mb-5 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-4 sm:p-5 shadow-lg border border-blue-600/40 relative overflow-hidden">
-      <div class="absolute -right-8 -bottom-8 w-44 h-44 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
-        <div class="flex items-start gap-3.5">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-300 flex items-center justify-center text-xl sm:text-2xl shrink-0 shadow-inner">
-            🚧
-          </div>
-          <div class="space-y-1.5">
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="text-[10px] sm:text-xs font-black uppercase tracking-wider bg-amber-400/25 text-amber-300 px-2.5 py-0.5 rounded-full border border-amber-400/40 shadow-xs">
-                Estamos em Desenvolvimento (Versão de Testes)
-              </span>
-              <span class="text-[11px] text-blue-200 hidden sm:inline">•</span>
-              <span class="text-[11px] text-emerald-300 font-bold hidden sm:inline flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Projeto Comunitário Aberto
-              </span>
-            </div>
-            <h3 class="text-sm sm:text-base font-extrabold text-white tracking-tight">
-              Sua participação é essencial para dar voz a quem depende da saúde pública!
-            </h3>
-            <p class="text-xs sm:text-[13px] text-slate-300 leading-relaxed max-w-3xl">
-              Esta plataforma foi criada para trazer transparência real às filas de espera do SUS. Estamos em fase de testes e melhorias contínuas. Tem dúvidas, ideias, sugestões ou quer apoiar e somar forças com essa causa? Fale diretamente com o idealizador do projeto:
-            </p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2 w-full md:w-auto shrink-0 pt-1 md:pt-0">
-          <a href="https://wa.me/551158239972?text=Ol%C3%A1%20Flavio,%20estou%20na%20plataforma%20Minha%20Voz%20e%20gostaria%20de%20contribuir%20com%20sugest%C3%B5es%20/%20tirar%20d%C3%BAvidas!" target="_blank" rel="noopener noreferrer" class="w-full md:w-auto px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs sm:text-sm rounded-xl shadow-md shadow-emerald-600/30 transition-all flex items-center justify-center gap-2 active-scale whitespace-nowrap">
-            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.311.045-.698.05-1.118-.084-.257-.082-.587-.197-1.013-.383-1.802-.787-2.977-2.617-3.067-2.738-.09-.12-.735-.979-.735-1.867 0-.889.467-1.327.633-1.507.166-.18.362-.225.483-.225.12 0 .241.001.346.006.111.005.259-.042.404.307.151.362.513 1.25.558 1.341.045.091.075.197.015.318-.06.12-.09.196-.181.302-.09.106-.19.237-.271.319-.09.091-.184.19-.079.371.106.181.47 1.013 1.085 1.56.793.705 1.462.923 1.668 1.025.206.102.327.086.447-.052.12-.138.513-.598.65-.804.137-.206.273-.172.46-.103.187.069 1.189.56 1.394.663.205.103.342.155.393.241.052.086.052.5-.092.905z"/></svg>
-            <span>WhatsApp: (11) 5823-9972 • Flavio Henrique</span>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
-
-      <!-- ================================================================ -->
-      <!-- COLUNA ESQUERDA (DESKTOP): PERFIL & NAVEGAÇÃO                   -->
-      <!-- ================================================================ -->
-      <aside class="hidden lg:block lg:col-span-3 space-y-4 sticky top-20">
-        
-        <!-- Card do Usuário Logado -->
-        <div id="sidebar-user-card" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs text-left hidden">
-          <div class="flex items-center space-x-3 mb-3 cursor-pointer" onclick="openProfileModal()" title="Clique para acessar e editar seus dados e foto">
-            <div id="sidebar-user-avatar" class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold flex items-center justify-center text-xl shadow-md overflow-hidden">
-              👤
-            </div>
-            <div class="overflow-hidden">
-              <h3 id="sidebar-user-name" class="text-sm font-bold text-slate-900 leading-tight truncate">Cidadão SUS</h3>
-              <p id="sidebar-user-info" class="text-[11px] text-slate-500">Login: <strong>--</strong></p>
-              <span id="sidebar-user-role" class="inline-block mt-0.5 text-[10px] font-extrabold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full border border-blue-200">
-                Prontuário SUS Ativo
-              </span>
-            </div>
-          </div>
-
-          <div class="pt-2 border-t border-slate-100 space-y-2">
-            <button onclick="openProfileModal()" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 active-scale shadow-xs">
-              <span>👤</span>
-              <span>Acessar Meus Dados & Foto</span>
-            </button>
-            <div class="flex gap-2">
-              <button onclick="openLoginModal('login')" class="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-all text-center active-scale">
-                🔑 Trocar Conta
-              </button>
-              <button onclick="logoutUser()" class="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-lg transition-all flex items-center gap-1 active-scale">
-                <span>Sair</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card Quando Deslogado (NÃO MOSTRA PACIENTE VISITANTE!) -->
-        <div id="sidebar-logged-out-card" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs text-center space-y-2.5">
-          <div class="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl mx-auto font-bold shadow-xs border border-blue-100">
-            🔑
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-slate-800">Conecte sua Conta</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-              Faça login ou cadastre-se para registrar relatos, medir sua espera e acompanhar suas filas no SUS.
-            </p>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pt-1">
-            <button onclick="openLoginModal('login')" class="py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all active-scale flex items-center justify-center gap-1">
-              <span>🔑 Entrar</span>
-            </button>
-            <button onclick="openLoginModal('register')" class="py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all active-scale flex items-center justify-center gap-1">
-              <span>📝 Cadastrar</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Menu Lateral -->
-        <nav class="bg-white rounded-2xl p-2 border border-slate-200 shadow-xs space-y-1 text-xs font-semibold">
-          <button onclick="setFeedFilter('todos')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-blue-50 text-blue-700 font-bold transition-all">
-            <span class="flex items-center gap-2.5">
-              <span class="text-base">📰</span>
-              <span>Feed Social em Tempo Real</span>
-            </span>
-            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-          </button>
-
-          <button onclick="openTimerModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition-all">
-            <span class="flex items-center gap-2.5">
-              <span class="text-base">⏱️</span>
-              <span>Cronômetro no Hospital</span>
-            </span>
-            <span class="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-full font-bold">Ao Vivo</span>
-          </button>
-
-          <button onclick="openMapModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition-all">
-            <span class="flex items-center gap-2.5">
-              <span class="text-base">🗺️</span>
-              <span>Mapa da Espera por Região</span>
-            </span>
-          </button>
-
-          <button onclick="openDefensoriaModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition-all">
-            <span class="flex items-center gap-2.5">
-              <span class="text-base">⚖️</span>
-              <span>Defensoria Pública & ONGs</span>
-            </span>
-            <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full font-bold">Grátis</span>
-          </button>
-
-          <button onclick="openDenunciaModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition-all">
-            <span class="flex items-center gap-2.5">
-              <span class="text-base">🚨</span>
-              <span>Canal de Denúncia ao MP</span>
-            </span>
-          </button>
-        </nav>
-
-        <div class="bg-gradient-to-br from-blue-900 to-indigo-950 text-white rounded-2xl p-4 shadow-xs text-xs space-y-2">
-          <div class="font-bold text-blue-200 flex items-center gap-1.5">
-            <span>🛡️</span> Dados Conectados ao SUS
-          </div>
-          <p class="text-[11px] text-blue-100 leading-relaxed">
-            Plataforma pública e independente. Todos os relatos geram relatórios para a Defensoria Pública e Ministério Público.
-          </p>
-        </div>
-
-      </aside>
-
-      <!-- ================================================================ -->
-      <!-- COLUNA CENTRAL (FEED SOCIAL RESPONSIVO)                          -->
-      <!-- ================================================================ -->
-      <main class="col-span-1 lg:col-span-6 space-y-4 pb-24 lg:pb-6">
-
-        <!-- 1. BARRA DE STORIES DINÂMICOS -->
-        <div class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200 shadow-xs">
-          <div class="flex items-center justify-between mb-2.5 px-1">
-            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-              Depoimentos em Vídeo & Voz
-            </h4>
-            <span class="text-[11px] text-blue-600 font-bold cursor-pointer hover:underline" onclick="openVideoRecordModal()">
-              + Gravar Depoimento
-            </span>
-          </div>
-
-          <div id="stories-container" class="flex items-center space-x-3 overflow-x-auto pb-1 custom-scrollbar">
-            <!-- Botão Gravar Vídeo -->
-            <div onclick="openVideoRecordModal()" class="flex flex-col items-center shrink-0 cursor-pointer group">
-              <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-dashed border-rose-400 flex items-center justify-center bg-rose-50 group-hover:scale-105 transition-transform">
-                <span class="text-rose-600 text-lg sm:text-xl font-bold">📹+</span>
-              </div>
-              <span class="text-[10px] font-bold text-slate-700 mt-1">Gravar Vídeo</span>
-            </div>
-
-            <!-- Botão Gravar Áudio -->
-            <div onclick="openAudioRecordModal()" class="flex flex-col items-center shrink-0 cursor-pointer group">
-              <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-dashed border-blue-400 flex items-center justify-center bg-blue-50 group-hover:scale-105 transition-transform">
-                <span class="text-blue-600 text-lg sm:text-xl font-bold">🎙️+</span>
-              </div>
-              <span class="text-[10px] font-bold text-slate-700 mt-1">Gravar Voz</span>
-            </div>
-
-            <!-- Lista Dinâmica de Stories Reais -->
-            <div id="stories-list" class="flex items-center space-x-3">
-              <span class="text-xs text-slate-400 italic pl-1">
-                Grave um vídeo ou áudio para aparecer nos destaques!
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. BANNER DE DESTAQUE: MAPA EM TEMPO REAL HMU & HOSPITAIS -->
-        <div onclick="openMapModal()" class="cursor-pointer bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-3.5 sm:p-4 border border-blue-800 shadow-sm hover:border-blue-400 transition-all group">
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span class="text-xs font-black uppercase tracking-wider text-emerald-400">Mapa de Espera em Tempo Real</span>
-            </div>
-            <span class="text-[11px] text-blue-200 group-hover:text-white font-bold flex items-center gap-1">
-              <span>Abrir Mapa Completo</span>
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            </span>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-            <div class="bg-white/10 rounded-xl p-2 backdrop-blur-xs border border-white/10">
-              <div class="text-[10px] text-blue-200 font-bold truncate">Hospital HMU (Emergência)</div>
-              <div class="text-sm sm:text-base font-black text-rose-300 font-mono" id="banner-hmu-emergencia">--</div>
-            </div>
-            <div class="bg-white/10 rounded-xl p-2 backdrop-blur-xs border border-white/10">
-              <div class="text-[10px] text-blue-200 font-bold truncate">Hospital HMU (Ortopedia)</div>
-              <div class="text-sm sm:text-base font-black text-amber-300 font-mono" id="banner-hmu-ortopedia">--</div>
-            </div>
-            <div class="col-span-2 sm:col-span-1 bg-white/10 rounded-xl p-2 backdrop-blur-xs border border-white/10 flex flex-col justify-center">
-              <div class="text-[10px] text-blue-200 font-bold truncate">Fila de Cirurgias (Média)</div>
-              <div class="text-sm sm:text-base font-black text-white font-mono" id="banner-cirurgias-media">--</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. COMPOSITOR DE RELATOS MULTIMÍDIA REAL (TEXTO, ÁUDIO E VÍDEO) -->
-        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200 shadow-xs space-y-3">
-          
-          <div class="flex items-start space-x-2.5 sm:space-x-3">
-            <div id="composer-user-avatar" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center shrink-0 text-sm shadow-xs overflow-hidden">
-              👨
-            </div>
-            <div class="flex-1">
-              <textarea id="composer-text" rows="3" placeholder="Compartilhe sua experiência real: Qual cirurgia ou exame você aguarda? Quanto tempo de espera?" class="w-full p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all leading-relaxed"></textarea>
-            </div>
-          </div>
-
-          <!-- BARRA DE MÍDIA ANEXADA AO RELATO (VÍDEO OU ÁUDIO) -->
-          <div id="composer-media-attached-bar" class="hidden p-2.5 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between gap-2 text-xs">
-            <div class="flex items-center gap-2 font-bold text-blue-800">
-              <span id="composer-media-icon" class="text-base">📹</span>
-              <span id="composer-media-label">Vídeo anexado ao relato</span>
-            </div>
-            <button type="button" onclick="removeAttachedMedia()" class="text-xs text-rose-600 font-bold hover:underline cursor-pointer flex items-center gap-1">
-              <span>🗑️</span>
-              <span>Remover Mídia</span>
-            </button>
-          </div>
-
-          <!-- Datalists para preenchimento rápido inteligente -->
-          <datalist id="hospital-suggestions">
-            <option value="Hospital HMU - Hospital Municipal de Urgências">
-            <option value="Hospital Geral do Grajaú">
-            <option value="Hospital São Paulo - UNIFESP">
-            <option value="Hospital das Clínicas FMUSP">
-            <option value="UPA 24h Campo Limpo">
-            <option value="Hospital Municipal Dr. Moysés Deutsch">
-            <option value="Hospital Municipal Souza Aguiar (RJ)">
-            <option value="Hospital Salgado Filho (RJ)">
-            <option value="Hospital Regional da Asa Norte (HRAN - DF)">
-            <option value="Hospital de Base do DF">
-            <option value="Hospital Geral Roberto Santos (BA)">
-            <option value="Hospital Geral de Fortaleza (HGF - CE)">
-            <option value="Hospital das Clínicas da UFMG">
-            <option value="Hospital de Pronto Socorro HPS (RS)">
-            <option value="Hospital do Trabalhador (PR)">
-            <option value="UPA 24h Central">
-          </datalist>
-
-          <datalist id="specialty-suggestions">
-            <!-- Emergência e Urgência -->
-            <option value="Emergência / Pronto-Socorro Geral">
-            <option value="Triagem e Classificação de Risco (Manchester)">
-            <option value="Ortopedia / Traumatologia de Urgência">
-            <option value="Pediatria de Emergência">
-            <option value="Clínica Médica Geral">
-            <option value="Cardiologia / Dor Torácica de Urgência">
-            <option value="Ginecologia e Maternidade / Obstetrícia">
-            <option value="Sutura e Pequenos Procedimentos">
-            <option value="Psiquiatria / Saúde Mental (Urgência)">
-            <option value="Queimaduras / Centro de Queimados">
-            <option value="Neurologia / AVC de Emergência">
-
-            <!-- Consultas Especializadas Ambulatoriais -->
-            <option value="Clínica Geral / Médico da Família">
-            <option value="Cardiologia">
-            <option value="Ortopedia e Traumatologia">
-            <option value="Oftalmologia">
-            <option value="Dermatologia">
-            <option value="Neurologia">
-            <option value="Ginecologia e Obstetrícia">
-            <option value="Urologia">
-            <option value="Endocrinologia e Metabologia">
-            <option value="Psiquiatria">
-            <option value="Otorrinolaringologia">
-            <option value="Odontologia / Bucomaxilofacial">
-            <option value="Pediatria">
-            <option value="Reumatologia">
-            <option value="Oncologia Clínica">
-            <option value="Nefrologia">
-            <option value="Pneumologia">
-            <option value="Gastroenterologia">
-            <option value="Hematologia">
-            <option value="Infectologia">
-            <option value="Geriatria">
-            <option value="Fisioterapia / Reabilitação SUS">
-            <option value="Fonoaudiologia">
-            <option value="Nutrição / Nutrologia">
-
-            <!-- Exames Especializados -->
-            <option value="Ressonância Magnética (RM)">
-            <option value="Tomografia Computadorizada (TC)">
-            <option value="Ultrassonografia / Ecografia (USG)">
-            <option value="Endoscopia Digestiva Alta">
-            <option value="Colonoscopia">
-            <option value="Raio-X Geral / Radiologia">
-            <option value="Mamografia Digital">
-            <option value="Eletrocardiograma (ECG) / Holter">
-            <option value="Ecocardiograma">
-            <option value="Exames de Sangue / Laboratório">
-            <option value="Biópsia e Anatomopatológico">
-            <option value="Espirometria / Prova Pulmonar">
-            <option value="Mapeamento de Retina / Exame Oftálmico">
-
-            <!-- Cirurgias Eletivas e de Urgência -->
-            <option value="Cirurgia Geral (Hérnia, Apêndice, Vesícula)">
-            <option value="Cirurgia de Vesícula (Colecistectomia)">
-            <option value="Cirurgia de Hérnia (Inguinal / Umbilical)">
-            <option value="Cirurgia Ortopédica (Joelho, Fêmur, Quadril)">
-            <option value="Cirurgia de Joelho (Ligamento / Menisco)">
-            <option value="Cirurgia de Catarata">
-            <option value="Cirurgia Ginecológica (Histerectomia, Laqueadura)">
-            <option value="Cirurgia Urológica (Próstata, Cálculo Renal)">
-            <option value="Cirurgia Cardíaca / Cateterismo / Angioplastia">
-            <option value="Cirurgia Pediátrica">
-            <option value="Cirurgia Plástica Reparadora">
-            <option value="Cirurgia de Varizes">
-            <option value="Cirurgia de Amígdalas / Septoplastia">
-            <option value="Neurocirurgia">
-            <option value="Cirurgia Oncológica">
-          </datalist>
-
-          <!-- Dados Estruturados da Fila e Espera Real -->
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 sm:p-3 space-y-2 text-xs">
-            <div class="text-[11px] font-bold text-slate-700 flex items-center justify-between">
-              <span class="flex items-center gap-1"><span>📊</span> Dados Reais da Espera / Procedimento</span>
-              <span class="text-[10px] text-blue-600 font-semibold">Alimenta o Mapa em Tempo Real</span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div>
-                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Tipo de Procedimento / Fila:</label>
-                <select id="composer-category" onchange="handleComposerCategoryChange(this.value)" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-blue-500 outline-hidden">
-                  <option value="Emergência">🚨 Emergência / Pronto-Socorro</option>
-                  <option value="Cirurgia">🔪 Cirurgia</option>
-                  <option value="Exame">🔬 Exame</option>
-                  <option value="Consulta">🩺 Consulta</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Setor ou Especialidade:</label>
-                <select id="composer-specialty" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-hidden cursor-pointer">
-                  <!-- Opções carregadas dinamicamente via JavaScript -->
-                </select>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <div class="sm:col-span-1">
-                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Tempo de Espera:</label>
-                <div class="flex gap-1">
-                  <input type="number" id="composer-wait-val" value="2" min="0.1" step="any" placeholder="Ex: 2" class="w-20 p-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800">
-                  <select id="composer-wait-unit" class="flex-1 p-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold">
-                    <option value="horas">Horas</option>
-                    <option value="dias">Dias</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="sm:col-span-1">
-                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Hospital / UPA:</label>
-                <input type="text" id="composer-hospital" list="hospital-suggestions" placeholder="Ex: Hospital HMU" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-hidden">
-              </div>
-
-              <div class="sm:col-span-1">
-                <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Cidade - UF:</label>
-                <input type="text" id="composer-location" value="São Paulo, SP" placeholder="Ex: São Paulo, SP" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-hidden">
-              </div>
-            </div>
-          </div>
-
-          <!-- Barra de Ações do Compositor -->
-          <div class="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-slate-100">
-            
-            <div class="flex items-center flex-wrap gap-1.5">
-              <button type="button" onclick="selectMediaComposer('texto')" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer">
-                <span>✍️</span>
-                <span>Texto</span>
-              </button>
-
-              <button type="button" onclick="openAudioRecordModal()" class="px-2.5 py-1.5 rounded-lg text-slate-700 hover:bg-blue-50 hover:text-blue-700 bg-slate-50 border border-slate-200 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer">
-                <span>🎙️</span>
-                <span>Gravar Voz</span>
-              </button>
-
-              <button type="button" onclick="openVideoRecordModal()" class="px-2.5 py-1.5 rounded-lg text-rose-700 hover:bg-rose-100 bg-rose-50 border border-rose-200 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer">
-                <span>📹</span>
-                <span>Gravar Vídeo</span>
-              </button>
-
-              <div class="flex items-center space-x-1 pl-1">
-                <input type="checkbox" id="composer-anon" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 cursor-pointer">
-                <label for="composer-anon" class="text-[11px] text-slate-600 font-semibold cursor-pointer">Anônimo</label>
-              </div>
-
-              <!-- SELETOR PÚBLICO / PRIVADO -->
-              <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg text-xs">
-                <label for="composer-visibility" class="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
-                  <span>👁️</span> Visibilidade:
-                </label>
-                <select id="composer-visibility" class="bg-transparent font-bold text-xs text-slate-800 outline-hidden cursor-pointer">
-                  <option value="public">🌐 Público (Todos)</option>
-                  <option value="private">🔒 Privado (Apenas eu)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Botão Publicar Relato -->
-            <button type="button" onclick="publishPost()" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md shadow-blue-600/30 active-scale flex items-center justify-center gap-1.5 transition-all cursor-pointer">
-              <span>Publicar Relato</span>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-            </button>
-
-          </div>
-        </div>
-
-        <!-- 3. ABAS DE FILTRO DO FEED -->
-        <div class="flex items-center justify-between border-b border-slate-200 pb-2 text-xs font-semibold overflow-x-auto custom-scrollbar">
-          <div class="flex items-center space-x-1 bg-slate-200/60 p-1 rounded-xl shrink-0">
-            <button onclick="setFeedFilter('todos')" id="filter-todos" class="px-3 py-1.5 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition-all">
-              🔥 Todos
-            </button>
-            <button onclick="setFeedFilter('video')" id="filter-video" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">
-              📹 Vídeos
-            </button>
-            <button onclick="setFeedFilter('audio')" id="filter-audio" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition-all">
-              🎙️ Áudios
-            </button>
-          </div>
-
-          <span class="text-[11px] text-slate-400 font-semibold pl-2 shrink-0" id="feed-counter">
-            Relatos em tempo real
-          </span>
-        </div>
-
-        <!-- 4. LISTA DE PUBLICAÇÕES REAIS -->
-        <div id="posts-container" class="space-y-4"></div>
-
-      </main>
-
-      <!-- ================================================================ -->
-      <!-- COLUNA DIREITA (DESKTOP): CRONÔMETRO COM GEOLOCALIZAÇÃO         -->
-      <!-- ================================================================ -->
-      <aside class="hidden lg:block lg:col-span-3 space-y-4 sticky top-20">
-
-        <!-- WIDGET CRONÔMETRO DE ESPERA -->
-        <div class="bg-white rounded-2xl p-4 border-2 border-rose-100 shadow-sm space-y-3">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
-              <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Cronômetro na UPA</h4>
-            </div>
-            <span class="text-[10px] bg-rose-50 text-rose-700 font-extrabold px-2 py-0.5 rounded-md">Ao Vivo</span>
-          </div>
-
-          <!-- Localização e Hospital Detectados -->
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs space-y-1">
-            <div class="text-[10px] font-bold text-slate-500 uppercase flex items-center justify-between">
-              <span>Local do Atendimento:</span>
-              <button type="button" onclick="openTimerModal()" class="text-[10px] font-bold text-blue-600 hover:underline">✏️ Ajustar</button>
-            </div>
-            <div id="sidebar-timer-hospital" class="font-bold text-slate-800 text-xs truncate flex items-center gap-1">
-              <span>🏥</span> <span class="truncate">Detectando hospital...</span>
-            </div>
-            <div id="sidebar-timer-address" class="text-[11px] text-slate-500 truncate flex items-center gap-1">
-              <span>📍</span> <span class="truncate">Detectando endereço...</span>
-            </div>
-            <div id="sidebar-timer-location" class="hidden"></div>
-          </div>
-
-          <div class="bg-slate-900 text-white rounded-xl p-3 text-center border border-slate-800">
-            <div class="text-[10px] text-slate-400 uppercase font-semibold">Tempo de Espera</div>
-            <div class="text-3xl font-black font-mono tracking-wider text-rose-400 my-1" id="sidebar-timer-display">
-              00:00:00
-            </div>
-            <div class="text-[10px] text-slate-400" id="sidebar-timer-sub">Status: Pronto para Iniciar</div>
-          </div>
-
-          <button onclick="handleTimerToggle()" id="btn-sidebar-timer" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md shadow-rose-600/30 flex items-center justify-center gap-2 active-scale transition-all">
-            <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-            <span>Iniciar Espera no Hospital</span>
-          </button>
-        </div>
-
-        <!-- WIDGET DEFENSORIA PÚBLICA -->
-        <div class="bg-gradient-to-br from-blue-900 to-indigo-900 text-white rounded-2xl p-4 shadow-xs space-y-2 text-xs">
-          <div class="font-bold text-blue-200 flex items-center gap-1.5">
-            <span>⚖️</span> Defensoria Pública da União
-          </div>
-          <p class="text-[11px] text-blue-100 leading-relaxed">
-            A espera abusiva no SUS permite ação com pedido de liminar para realização imediata do procedimento.
-          </p>
-          <button onclick="openDefensoriaModal()" class="w-full py-2 bg-white text-blue-900 hover:bg-blue-50 font-bold rounded-xl text-xs shadow-xs transition-all active-scale">
-            Acessar Orientação Gratuita
-          </button>
-        </div>
-
-      </aside>
-
-    </div>
-  </div>
-
-  <!-- ==================================================================== -->
-  <!-- 3. BARRA DE NAVEGAÇÃO INFERIOR FIXA (MOBILE ONLY)                   -->
-  <!-- ==================================================================== -->
-  <div class="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-slate-200 flex items-center justify-around px-2 z-40 shadow-lg">
-    <button onclick="setFeedFilter('todos'); window.scrollTo({top: 0, behavior: 'smooth'});" class="flex flex-col items-center justify-center w-16 h-full text-blue-600">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-      <span class="text-[10px] font-bold mt-0.5">Feed</span>
-    </button>
-
-    <button onclick="openTimerModal()" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-rose-600">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      <span class="text-[10px] font-bold mt-0.5">Espera</span>
-    </button>
-
-    <!-- Botão Central Novo Relato -->
-    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'}); document.getElementById('composer-text').focus();" class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-xl shadow-lg shadow-blue-500/40 -mt-5 active-scale">
-      ✍️
-    </button>
-
-    <button onclick="openMapModal()" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-blue-600">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-      <span class="text-[10px] font-bold mt-0.5">Mapa</span>
-    </button>
-
-    <button onclick="handleUserAccountNavClick()" class="flex flex-col items-center justify-center w-16 h-full text-slate-500 hover:text-blue-600">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-      <span class="text-[10px] font-bold mt-0.5">Conta</span>
-    </button>
-  </div>
-
-  <!-- ==================================================================== -->
-  <!-- 4. MODAIS RESPONSIVOS (LOGIN, CRONÔMETRO, COMPARTILHAMENTO)          -->
-  <!-- ==================================================================== -->
-
-  <!-- MODAL DE AUTENTICAÇÃO REAL (LOGIN & CADASTRO) -->
-  <div id="modal-login" onclick="if(event.target === this) closeModal('modal-login')" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
-    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4">
-      
-      <!-- Cabeçalho do Modal -->
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 id="auth-modal-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <span>🔑</span> Entrar na Rede Minha Voz
-        </h3>
-        <button onclick="closeModal('modal-login')" class="text-slate-400 hover:text-slate-600 text-lg p-1">✕</button>
-      </div>
-
-      <!-- Abas: Entrar / Cadastrar -->
-      <div class="flex p-1 bg-slate-100 rounded-xl text-xs font-bold">
-        <button type="button" id="tab-auth-login" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-white text-blue-700 shadow-xs transition-all text-center">
-          Entrar
-        </button>
-        <button type="button" id="tab-auth-register" onclick="switchAuthTab('register')" class="flex-1 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all text-center">
-          Criar Cadastro
-        </button>
-      </div>
-
-      <!-- FORMULÁRIO 1: LOGIN -->
-      <form id="form-auth-login" onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Usuário, E-mail ou CPF:</label>
-          <input type="text" id="login-username" required placeholder="Digite seu usuário, e-mail ou CPF" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Senha:</label>
-          <input type="password" id="login-password" required placeholder="Digite sua senha" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-        </div>
-
-        <div class="pt-1">
-          <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-blue-600/30 transition-all active-scale">
-            Entrar
-          </button>
-        </div>
-
-        <div class="text-center pt-2 text-[11px] text-slate-500">
-          Ainda não tem conta? 
-          <button type="button" onclick="switchAuthTab('register')" class="text-blue-600 font-bold hover:underline">
-            Cadastre-se gratuitamente
-          </button>
-        </div>
-      </form>
-
-      <!-- FORMULÁRIO 2: CADASTRO -->
-      <form id="form-auth-register" onsubmit="handleRegisterSubmit(event)" class="space-y-3 text-xs hidden">
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Nome Completo:</label>
-          <input type="text" id="register-fullname" required placeholder="Ex: Maria dos Santos" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-        </div>
-
-        <!-- Campo para Inserir Foto de Perfil -->
-        <div>
-          <label class="block font-bold text-slate-700 mb-1 flex items-center justify-between">
-            <span>Foto de Perfil:</span>
-            <span class="text-[10px] text-slate-400 font-normal">Opcional</span>
-          </label>
-          <div class="flex items-center gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
-            <div id="register-photo-preview" class="w-13 h-13 rounded-full bg-blue-100 border-2 border-dashed border-blue-400 flex items-center justify-center text-2xl overflow-hidden shrink-0 text-slate-500 shadow-2xs">
-              👤
-            </div>
-            <div class="flex-1 space-y-1">
-              <input type="file" id="register-photo-file" accept="image/*" class="hidden" onchange="handleRegisterPhotoChange(event)">
-              <div class="flex items-center gap-2 flex-wrap">
-                <button type="button" onclick="document.getElementById('register-photo-file').click()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow-xs active-scale transition-colors flex items-center gap-1.5">
-                  <span>📷</span> <span>Carregar Foto</span>
-                </button>
-                <button type="button" id="btn-remove-register-photo" onclick="removeRegisterPhoto()" class="hidden text-xs text-rose-600 font-bold hover:underline">
-                  Remover
-                </button>
-              </div>
-              <p class="text-[10px] text-slate-400">Escolha uma foto da galeria ou câmera do seu celular.</p>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Usuário ou E-mail:</label>
-          <input type="text" id="register-username" required placeholder="Ex: mariasantos ou maria@email.com" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Cidade / Estado:</label>
-          <input type="text" id="register-city" placeholder="Ex: São Paulo, SP ou Guarulhos, SP" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Crie uma Senha:</label>
-          <input type="password" id="register-password" required minlength="4" placeholder="Crie uma senha (mínimo 4 caracteres)" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-        </div>
-
-        <div class="pt-1">
-          <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-emerald-600/30 transition-all active-scale">
-            Criar Cadastro e Entrar
-          </button>
-        </div>
-
-        <div class="text-center pt-2 text-[11px] text-slate-500">
-          Já possui conta? 
-          <button type="button" onclick="switchAuthTab('login')" class="text-blue-600 font-bold hover:underline">
-            Fazer Login
-          </button>
-        </div>
-      </form>
-
-      <div id="modal-login-logout-btn" class="text-center pt-2 border-t border-slate-100 hidden">
-        <button onclick="logoutUser(); closeModal('modal-login');" class="text-xs font-bold text-rose-600 hover:underline">
-          Sair da Conta Atual
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- MODAL DE PERFIL / MEUS DADOS DO PACIENTE -->
-  <div id="modal-profile" onclick="if(event.target === this) closeModal('modal-profile')" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
-    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-lg p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[92vh] overflow-y-auto custom-scrollbar">
-      
-      <!-- Cabeçalho do Modal -->
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <div>
-          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-            <span>👤</span> Meus Dados & Perfil
-          </h3>
-          <p class="text-[11px] text-slate-500">Acesse, altere suas informações e gerencie sua foto de perfil.</p>
-        </div>
-        <button onclick="closeModal('modal-profile')" class="text-slate-400 hover:text-slate-600 text-lg p-1">✕</button>
-      </div>
-
-      <!-- FORMULÁRIO DO PERFIL -->
-      <form id="form-user-profile" onsubmit="handleProfileSubmit(event)" class="space-y-3.5 text-xs">
-
-        <!-- Foto de Perfil & Prévia -->
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5">
-          <label class="block font-bold text-slate-700 mb-2">Foto de Perfil:</label>
-          <div class="flex items-center gap-3.5">
-            <div id="profile-photo-preview" class="w-16 h-16 rounded-full bg-blue-100 border-2 border-dashed border-blue-400 flex items-center justify-center text-3xl overflow-hidden shrink-0 text-slate-500 shadow-xs">
-              👤
-            </div>
-            <div class="flex-1 space-y-1.5">
-              <input type="file" id="profile-photo-file" accept="image/*" class="hidden" onchange="handleProfilePhotoChange(event)">
-              <div class="flex items-center gap-2 flex-wrap">
-                <button type="button" onclick="document.getElementById('profile-photo-file').click()" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs shadow-xs active-scale transition-colors flex items-center gap-1.5">
-                  <span>📷</span> <span>Trocar / Inserir Foto</span>
-                </button>
-                <button type="button" id="btn-remove-profile-photo" onclick="removeProfilePhoto()" class="hidden text-xs text-rose-600 font-bold hover:underline">
-                  Remover Foto
-                </button>
-              </div>
-              <p class="text-[10px] text-slate-400">Tire uma foto com a câmera do celular ou escolha da sua galeria.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Nome Completo & Login -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Nome Completo:</label>
-            <input type="text" id="profile-fullname" required placeholder="Seu nome completo" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Login / Identificador:</label>
-            <input type="text" id="profile-username" readonly class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-100 text-slate-500 font-bold outline-hidden cursor-not-allowed" title="O login é fixo para identificar sua conta">
-          </div>
-        </div>
-
-        <!-- E-mail & Telefone -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">E-mail de Contato:</label>
-            <input type="email" id="profile-email" placeholder="seu.email@exemplo.com" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">WhatsApp / Telefone:</label>
-            <input type="tel" id="profile-phone" placeholder="(11) 98765-4321" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-          </div>
-        </div>
-
-        <!-- Cidade/Estado & Cartão SUS / CNS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Cidade / Estado:</label>
-            <input type="text" id="profile-city" placeholder="Ex: São Paulo, SP" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Cartão SUS / CNS (Opcional):</label>
-            <input type="text" id="profile-cns" placeholder="Número do Cartão SUS" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-          </div>
-        </div>
-
-        <!-- Observações de Saúde / Prontuário -->
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Condições de Saúde / Observações (Opcional):</label>
-          <input type="text" id="profile-health-notes" placeholder="Ex: Hipertenso, Diabético, Fila de cirurgia de hérnia..." class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-        </div>
-
-        <!-- Alterar Senha -->
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Alterar Senha (Opcional):</label>
-          <input type="password" id="profile-new-password" placeholder="Deixe em branco para manter a senha atual" class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden transition-all">
-        </div>
-
-        <!-- Botões de Ação -->
-        <div class="pt-2 flex flex-col sm:flex-row gap-2">
-          <button type="submit" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-emerald-600/30 transition-all active-scale flex items-center justify-center gap-1.5">
-            <span>💾</span> <span>Salvar Alterações</span>
-          </button>
-          <button type="button" onclick="closeModal('modal-profile')" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-all active-scale">
-            Cancelar
-          </button>
-        </div>
-
-        <!-- Opções Avançadas: Zerar Dados Locais de Teste & Sair -->
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
-          <button type="button" onclick="resetAllSystemData()" class="text-amber-700 hover:text-amber-900 font-bold flex items-center gap-1 hover:underline">
-            <span>🗑️</span> Zerar Relatos de Teste
-          </button>
-          <button type="button" onclick="logoutUser(); closeModal('modal-profile');" class="text-rose-600 hover:text-rose-800 font-bold flex items-center gap-1 hover:underline">
-            <span>🚪</span> Sair da Conta
-          </button>
-        </div>
-
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL DE GRAVAÇÃO DE VÍDEO -->
-  <div id="modal-video-recorder" onclick="if(event.target === this) closeVideoRecordModal()" class="fixed inset-0 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
-    <div class="bg-slate-950 text-white rounded-2xl sm:rounded-3xl w-[95%] max-w-lg p-5 shadow-2xl border border-slate-800 space-y-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
-      
-      <!-- Cabeçalho -->
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">📹</span>
-          <div>
-            <h3 class="text-sm sm:text-base font-bold text-white">Gravar Depoimento em Vídeo</h3>
-            <p class="text-[11px] text-slate-400">Grave seu relato ao vivo para dar voz à sua espera.</p>
-          </div>
-        </div>
-        <button onclick="closeVideoRecordModal()" class="text-slate-400 hover:text-white text-lg p-1">✕</button>
-      </div>
-
-      <!-- Viewport da Câmera com Temporizador Sobreposto -->
-      <div class="relative bg-black rounded-2xl overflow-hidden border border-slate-800 aspect-video flex items-center justify-center">
-        <video id="modal-webcam-live" autoplay playsinline muted class="w-full h-full object-cover"></video>
-        <video id="modal-webcam-playback" controls playsinline class="w-full h-full object-cover hidden"></video>
-
-        <!-- Temporizador e Indicador REC -->
-        <div class="absolute top-3 left-3 right-3 flex justify-between items-center pointer-events-none z-10">
-          <span id="modal-video-rec-badge" class="hidden flex items-center gap-1.5 px-2.5 py-1 bg-rose-600/90 text-white font-bold rounded-full text-[10px] uppercase tracking-wider backdrop-blur-xs animate-pulse">
-            <span class="w-2 h-2 rounded-full bg-white"></span>
-            <span>Gravando</span>
-          </span>
-          <span id="modal-video-status-label" class="text-[11px] text-slate-300 font-bold bg-black/60 px-2 py-0.5 rounded backdrop-blur-xs">
-            Câmera Pronta
-          </span>
-          <span id="modal-video-timer-display" class="font-mono text-xs sm:text-sm font-bold bg-black/80 text-white px-2.5 py-1 rounded-lg border border-white/20">
-            00:00:00
-          </span>
-        </div>
-
-        <!-- Erro de Permissão -->
-        <div id="modal-webcam-permission-error" class="hidden flex flex-col items-center justify-center text-center p-4">
-          <span class="text-3xl mb-1">📷</span>
-          <span class="text-xs text-rose-400 font-bold">Permissão de Câmera Necessária</span>
-          <span class="text-[10px] text-slate-400 mt-1 max-w-xs">Habilite a câmera no navegador do seu celular ou computador para gravar seu depoimento.</span>
-        </div>
-      </div>
-
-      <!-- Filtro de Anonimato (Desfoque Facial) -->
-      <div class="flex items-center justify-between p-2.5 bg-slate-900 rounded-xl border border-slate-800 text-xs">
-        <div class="flex items-center gap-2">
-          <input type="checkbox" id="modal-video-blur-check" onchange="toggleBlurFilter(this.checked)" class="rounded text-rose-600 focus:ring-rose-500 w-4 h-4 cursor-pointer">
-          <label for="modal-video-blur-check" class="text-slate-200 font-semibold cursor-pointer">Desfocar meu rosto (Filtro de Anonimato)</label>
-        </div>
-        <span class="text-[10px] text-slate-400">Protege sua identidade</span>
-      </div>
-
-      <!-- Controles de Ação -->
-      <div class="space-y-2 pt-1">
-        <div class="flex flex-col sm:flex-row gap-2">
-          <button type="button" id="modal-btn-video-record" onclick="handleVideoRecordToggle()" class="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2">
-            <span>🔴 Iniciar Gravação de Vídeo</span>
-          </button>
-          <button type="button" id="modal-btn-video-attach" onclick="confirmAttachVideo()" class="hidden flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2">
-            <span>✓ Anexar Vídeo ao Relato</span>
-          </button>
-        </div>
-        <div class="flex justify-between items-center text-xs pt-1 border-t border-slate-850">
-          <button type="button" onclick="closeVideoRecordModal()" class="text-slate-400 hover:text-white font-medium">
-            Cancelar
-          </button>
-          <button type="button" id="modal-btn-video-retry" onclick="resetVideoRecording()" class="hidden text-blue-400 hover:text-blue-300 font-bold">
-            🔄 Gravar Novamente
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- MODAL DE GRAVAÇÃO DE ÁUDIO -->
-  <div id="modal-audio-recorder" onclick="if(event.target === this) closeAudioRecordModal()" class="fixed inset-0 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
-    <div class="bg-slate-950 text-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-800 space-y-4">
-      
-      <!-- Cabeçalho -->
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">🎙️</span>
-          <div>
-            <h3 class="text-sm sm:text-base font-bold text-white">Gravar Depoimento em Voz</h3>
-            <p class="text-[11px] text-slate-400">Conte seu relato usando o microfone do celular ou computador.</p>
-          </div>
-        </div>
-        <button onclick="closeAudioRecordModal()" class="text-slate-400 hover:text-white text-lg p-1">✕</button>
-      </div>
-
-      <!-- Área de Visualização e Temporizador Grande -->
-      <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 flex flex-col items-center justify-center space-y-3 text-center">
-        <div id="modal-audio-mic-icon" class="w-20 h-20 rounded-full bg-rose-600/20 border-2 border-rose-500/40 text-rose-400 flex items-center justify-center text-3xl shadow-inner transition-transform">
-          🎙️
-        </div>
-
-        <div id="modal-audio-timer-display" class="font-mono text-3xl sm:text-4xl font-black text-white tracking-wider">
-          00:00
-        </div>
-
-        <span id="modal-audio-status-label" class="text-xs text-slate-300 font-semibold">
-          Microfone pronto para gravar.
-        </span>
-
-        <!-- Player para ouvir antes de enviar -->
-        <div id="modal-audio-playback-container" class="w-full hidden pt-2">
-          <audio id="modal-audio-playback" controls class="w-full h-9"></audio>
-        </div>
-      </div>
-
-      <!-- Controles de Ação -->
-      <div class="space-y-2 pt-1">
-        <div class="flex flex-col sm:flex-row gap-2">
-          <button type="button" id="modal-btn-audio-record" onclick="handleAudioRecordToggle()" class="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2">
-            <span>🔴 Iniciar Gravação de Voz</span>
-          </button>
-          <button type="button" id="modal-btn-audio-attach" onclick="confirmAttachAudio()" class="hidden flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2">
-            <span>✓ Anexar Áudio ao Relato</span>
-          </button>
-        </div>
-        <div class="flex justify-between items-center text-xs pt-1 border-t border-slate-850">
-          <button type="button" onclick="closeAudioRecordModal()" class="text-slate-400 hover:text-white font-medium">
-            Cancelar
-          </button>
-          <button type="button" id="modal-btn-audio-retry" onclick="resetAudioRecording()" class="hidden text-blue-400 hover:text-blue-300 font-bold">
-            🔄 Gravar Novamente
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- MODAL DO CRONÔMETRO COM GEOLOCALIZAÇÃO AUTOMÁTICA -->
-  <div id="modal-timer" onclick="if(event.target === this) closeModal('modal-timer')" class="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
-    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-3.5 max-h-[92vh] overflow-y-auto custom-scrollbar">
-      
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <span>⏱️</span> Cronômetro de Espera no SUS
-        </h3>
-        <button onclick="closeModal('modal-timer')" class="text-slate-400 hover:text-slate-600 text-lg p-1">✕</button>
-      </div>
-
-      <!-- Localização em Tempo Real e Status do GPS -->
-      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs space-y-1">
-        <div class="flex items-center justify-between">
-          <div class="text-[10px] font-bold text-blue-700 uppercase flex items-center gap-1">
-            <span>📍</span> Localização GPS em Tempo Real
-          </div>
-          <button type="button" onclick="detectUserLocation(true)" class="text-[10px] font-bold text-blue-600 hover:underline flex items-center gap-1">
-            🔄 Recarregar GPS
-          </button>
-        </div>
-        <div id="modal-timer-location-status" class="text-[11px] text-slate-700 font-medium">
-          Detectando coordenadas e unidade de saúde próxima...
-        </div>
-        <div id="modal-timer-location" class="hidden"></div>
-        <div class="text-[10px] text-slate-500 pt-0.5">
-          💡 O nome da unidade e o endereço abaixo são preenchidos pelo GPS e você pode editá-los manualmente se precisar ajustar.
-        </div>
-      </div>
-
-      <div class="bg-slate-900 text-white rounded-2xl p-4 text-center border border-slate-800 space-y-1">
-        <div class="text-[10px] uppercase tracking-wider text-rose-400 font-bold flex items-center justify-center gap-1.5" id="modal-timer-badge">
-          <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-          <span>Tempo de Espera em Andamento</span>
-        </div>
-
-        <div class="text-4xl sm:text-5xl font-black font-mono tracking-widest text-white py-1" id="modal-timer-clock">
-          00:00:00
-        </div>
-      </div>
-
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block font-bold text-slate-700 mb-1 flex items-center justify-between">
-            <span class="flex items-center gap-1"><span>🏥</span> Nome do Hospital ou Clínica:</span>
-            <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">Ajuste manual</span>
-          </label>
-          <input type="text" id="modal-timer-input-hospital" list="hospital-suggestions" placeholder="Ex: Hospital HMU, UPA 24h Campo Limpo..." class="w-full p-2.5 border border-slate-300 rounded-xl bg-white font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-hidden">
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1 flex items-center justify-between">
-            <span class="flex items-center gap-1"><span>📍</span> Endereço da Unidade:</span>
-            <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">Ajuste manual</span>
-          </label>
-          <input type="text" id="modal-timer-input-address" placeholder="Ex: Av. Tiradentes, 123 - Centro, São Paulo - SP" class="w-full p-2.5 border border-slate-300 rounded-xl bg-white font-medium text-slate-800 focus:ring-2 focus:ring-blue-500 outline-hidden">
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1 flex items-center gap-1">
-            <span>🩺</span> Setor ou Especialidade do Atendimento:
-          </label>
-          <select id="modal-timer-input-sector" class="w-full p-2.5 border border-slate-300 rounded-xl bg-white font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-hidden">
-            <optgroup label="🚨 Urgência e Emergência (Pronto-Socorro)">
-              <option value="Emergência Geral" selected>🚨 Emergência / Pronto-Socorro Geral</option>
-              <option value="Triagem e Manchester">🏷️ Triagem / Classificação Manchester</option>
-              <option value="Ortopedia / Traumatologia">🦴 Ortopedia / Traumatologia</option>
-              <option value="Pediatria de Emergência">👶 Pediatria de Emergência</option>
-              <option value="Clínica Médica Geral">🩺 Clínica Médica Geral</option>
-              <option value="Cardiologia de Urgência">❤️ Cardiologia / Dor Torácica</option>
-              <option value="Ginecologia e Maternidade">🤰 Ginecologia / Maternidade</option>
-              <option value="Sutura e Curativos">🩹 Sutura / Pequenos Procedimentos</option>
-              <option value="Psiquiatria e Saúde Mental">🧘 Psiquiatria / Saúde Mental</option>
-              <option value="Centro de Queimados">🔥 Tratamento de Queimados</option>
-            </optgroup>
-            <optgroup label="🩺 Consultas Ambulatoriais SUS">
-              <option value="Consulta - Clínica Médica">🩺 Clínica Médica Geral</option>
-              <option value="Consulta - Cardiologia">❤️ Cardiologia</option>
-              <option value="Consulta - Ortopedia">🦴 Ortopedia</option>
-              <option value="Consulta - Oftalmologia">👁️ Oftalmologia</option>
-              <option value="Consulta - Dermatologia">🧴 Dermatologia</option>
-              <option value="Consulta - Neurologia">🧠 Neurologia</option>
-              <option value="Consulta - Ginecologia">🤰 Ginecologia e Obstetrícia</option>
-              <option value="Consulta - Urologia">🚽 Urologia</option>
-              <option value="Consulta - Psiquiatria">🧘 Psiquiatria</option>
-              <option value="Consulta - Endocrinologia">🔬 Endocrinologia</option>
-              <option value="Consulta - Otorrinolaringologia">👂 Otorrinolaringologia</option>
-              <option value="Consulta - Odontologia">🦷 Odontologia / Bucomaxilo</option>
-              <option value="Consulta - Pediatria">👶 Pediatria</option>
-              <option value="Consulta - Oncologia">🎗️ Oncologia</option>
-            </optgroup>
-            <optgroup label="🔬 Exames Especializados e Urgentes">
-              <option value="Exame - Tomografia (TC)">🖥️ Tomografia Computadorizada (TC)</option>
-              <option value="Exame - Ressonância (RM)">🧲 Ressonância Magnética (RM)</option>
-              <option value="Exame - Ultrassonografia">🔊 Ultrassonografia (Eco/USG)</option>
-              <option value="Exame - Raio-X Geral">🦴 Raio-X Geral / Radiologia</option>
-              <option value="Exame - Endoscopia Digestiva">🩺 Endoscopia Digestiva</option>
-              <option value="Exame - Colonoscopia">🔬 Colonoscopia</option>
-              <option value="Exame - Mamografia">🎀 Mamografia</option>
-              <option value="Exame - Eletrocardiograma">💓 Eletrocardiograma / Holter</option>
-              <option value="Exame - Sangue / Laboratório">🧪 Exames de Sangue / Urina</option>
-            </optgroup>
-            <optgroup label="🔪 Cirurgias Eletivas e Urgência">
-              <option value="Cirurgia Geral (Hérnia / Vesícula)">🔪 Cirurgia Geral (Hérnia / Vesícula)</option>
-              <option value="Cirurgia Ortopédica (Joelho / Fêmur)">🦴 Cirurgia Ortopédica (Joelho / Fêmur)</option>
-              <option value="Cirurgia de Catarata">👁️ Cirurgia de Catarata</option>
-              <option value="Cirurgia Ginecológica">🤰 Cirurgia Ginecológica</option>
-              <option value="Cirurgia Cardíaca / Cateterismo">❤️ Cirurgia Cardíaca / Cateterismo</option>
-            </optgroup>
-          </select>
-        </div>
-      </div>
-
-      <div class="pt-2">
-        <button onclick="handleTimerToggle()" id="btn-modal-timer-action" class="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-rose-600/30 transition-all flex items-center justify-center gap-2 active-scale">
-          <span>Iniciar Cronômetro</span>
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- MODAL DE COMPARTILHAMENTO -->
-  <div id="modal-share" onclick="if(event.target === this) closeModal('modal-share')" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
-    <div class="bg-white rounded-2xl sm:rounded-3xl w-[95%] max-w-md p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
-      
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <span>📢</span> Compartilhar Relato
-        </h3>
-        <button onclick="closeModal('modal-share')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
-      </div>
-
-      <div class="bg-slate-100 p-1 rounded-xl flex text-xs font-semibold">
-        <button id="share-mode-all" onclick="setShareMode('all')" class="flex-1 py-1.5 rounded-lg bg-white text-blue-700 shadow-xs text-center transition-all font-bold">
-          Compartilhar Tudo
-        </button>
-        <button id="share-mode-part" onclick="setShareMode('part')" class="flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 text-center transition-all font-medium">
-          Selecionar Trecho
-        </button>
-      </div>
-
-      <div id="share-card-container" class="bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-950 text-white rounded-2xl p-4 sm:p-5 shadow-lg relative overflow-hidden">
-        <div class="flex justify-between items-center text-[10px] text-blue-200 border-b border-white/10 pb-1.5 mb-2.5">
-          <span class="font-bold flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-rose-400"></span>
-            REDE MINHA VOZ • SUS
-          </span>
-          <span>#SaudeNaoPodeEsperar</span>
-        </div>
-
-        <p class="text-xs sm:text-sm italic leading-relaxed text-blue-50 mb-3" id="share-modal-text">
-          "Relato real da espera pelo SUS."
-        </p>
-
-        <div class="flex justify-between items-center text-[10px] pt-2 border-t border-white/10">
-          <span class="text-blue-200" id="share-modal-author">Relato Verificado</span>
-          <span class="bg-rose-500 text-white font-extrabold px-2 py-0.5 rounded text-[9px]" id="share-modal-badge">Fila SUS</span>
-        </div>
-      </div>
-
-      <div>
-        <div class="text-xs font-bold text-slate-700 mb-2">Compartilhar via:</div>
-        
-        <div class="grid grid-cols-4 gap-1.5 sm:gap-2">
-          <button onclick="triggerShare('WhatsApp')" class="p-2 sm:p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl flex flex-col items-center justify-center transition-all">
-            <span class="text-xl sm:text-2xl">💬</span>
-            <span class="text-[9px] font-bold text-emerald-800 mt-1">WhatsApp</span>
-          </button>
-
-          <button onclick="triggerShare('Instagram')" class="p-2 sm:p-2.5 bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white hover:opacity-95 rounded-xl flex flex-col items-center justify-center transition-all shadow-xs">
-            <span class="text-xl sm:text-2xl">📸</span>
-            <span class="text-[9px] font-bold mt-1">Instagram</span>
-          </button>
-
-          <button onclick="triggerShare('Twitter')" class="p-2 sm:p-2.5 bg-slate-900 hover:bg-black text-white rounded-xl flex flex-col items-center justify-center transition-all">
-            <span class="text-lg sm:text-xl font-black">𝕏</span>
-            <span class="text-[9px] font-bold mt-1">Twitter</span>
-          </button>
-
-          <button onclick="triggerShare('Facebook')" class="p-2 sm:p-2.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl flex flex-col items-center justify-center transition-all">
-            <span class="text-xl sm:text-2xl">📘</span>
-            <span class="text-[9px] font-bold text-blue-800 mt-1">Facebook</span>
-          </button>
-        </div>
-
-        <button onclick="copyPostLink()" id="btn-copy-modal" class="w-full mt-3 py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all active-scale">
-          <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-          <span id="copy-modal-text">Copiar Link do Relato</span>
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- MODAL MAPA DINÂMICO E COMPLETO EM TEMPO REAL -->
-  <div id="modal-map" onclick="if(event.target === this) closeModal('modal-map')" class="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 hidden">
-    <div class="bg-white rounded-2xl sm:rounded-3xl w-full max-w-4xl shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden">
-      
-      <!-- Topo do Modal -->
-      <div class="p-4 sm:p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
-        <div>
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-xl sm:text-2xl">🗺️</span>
-            <h3 class="text-base sm:text-lg font-black text-slate-900 tracking-tight">Mapa da Espera & Filas do SUS</h3>
-            <span class="inline-flex items-center gap-1 text-[10px] font-extrabold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-200">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
-              Tempo Real
-            </span>
-          </div>
-          <p class="text-xs text-slate-500 mt-0.5">Calculado estritamente com base nos relatos e cronômetros dos pacientes reais</p>
-        </div>
-        <button onclick="closeModal('modal-map')" class="p-2 text-slate-400 hover:text-slate-700 text-xl font-bold rounded-xl hover:bg-slate-200/50 transition-colors">✕</button>
-      </div>
-
-      <!-- Barra de Resumo Rápido -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 sm:p-4 bg-slate-100/70 border-b border-slate-200 text-xs shrink-0">
-        <div class="bg-white p-2.5 rounded-xl border border-slate-200">
-          <div class="text-[10px] text-slate-500 font-bold uppercase">Hospitais com Relato</div>
-          <div id="map-stat-hospitals" class="text-base sm:text-lg font-black text-blue-700 mt-0.5">0</div>
-        </div>
-        <div class="bg-white p-2.5 rounded-xl border border-slate-200">
-          <div class="text-[10px] text-slate-500 font-bold uppercase">Média Emergência</div>
-          <div id="map-stat-emergency" class="text-base sm:text-lg font-black text-rose-600 mt-0.5 font-mono">--</div>
-        </div>
-        <div class="bg-white p-2.5 rounded-xl border border-slate-200">
-          <div class="text-[10px] text-slate-500 font-bold uppercase">Média Cirurgias / Exames</div>
-          <div id="map-stat-elective" class="text-base sm:text-lg font-black text-amber-600 mt-0.5 font-mono">--</div>
-        </div>
-        <div class="bg-white p-2.5 rounded-xl border border-slate-200">
-          <div class="text-[10px] text-slate-500 font-bold uppercase">Total de Pacientes</div>
-          <div id="map-stat-patients" class="text-base sm:text-lg font-black text-indigo-700 mt-0.5">0</div>
-        </div>
-      </div>
-
-      <!-- Abas de Navegação do Mapa -->
-      <div class="flex items-center justify-between px-3 sm:px-4 pt-3 pb-2 border-b border-slate-200 bg-white gap-2 flex-wrap shrink-0">
-        <div class="flex items-center space-x-1 sm:space-x-1.5 overflow-x-auto custom-scrollbar pb-1 text-xs font-bold">
-          <button id="map-tab-btn-hospitals" onclick="switchMapTab('hospitals')" class="px-3 sm:px-3.5 py-2 rounded-xl bg-blue-600 text-white shadow-xs transition-all flex items-center gap-1.5 whitespace-nowrap">
-            <span>🏥</span>
-            <span>Hospitais & Setores</span>
-          </button>
-          <button id="map-tab-btn-queues" onclick="switchMapTab('queues')" class="px-3 sm:px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap">
-            <span>📋</span>
-            <span>Filas: Cirurgias, Exames & Consultas</span>
-          </button>
-          <button id="map-tab-btn-regions" onclick="switchMapTab('regions')" class="px-3 sm:px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap">
-            <span>🗺️</span>
-            <span>Por Região & Estado</span>
-          </button>
-        </div>
-
-        <button onclick="toggleMapQuickAddForm()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1 whitespace-nowrap active-scale">
-          <span>+ Registrar Minha Espera</span>
-        </button>
-      </div>
-
-      <!-- Formulário Rápido de Adição Direta no Mapa (Toggle) -->
-      <div id="map-quick-add-panel" class="hidden p-3 sm:p-4 bg-blue-50/90 border-b border-blue-200 text-xs shrink-0 transition-all">
-        <div class="flex items-center justify-between mb-2">
-          <h4 class="font-bold text-blue-900 flex items-center gap-1.5">
-            <span>📝</span> Registrar Espera Real no Mapa
-          </h4>
-          <button onclick="toggleMapQuickAddForm()" class="text-slate-400 hover:text-slate-700 text-xs font-bold">✕ Fechar</button>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
-          <input type="text" id="map-add-hospital" list="hospital-suggestions" placeholder="Hospital (Ex: Hospital HMU)" class="p-2 border border-slate-300 rounded-lg bg-white">
-          <select id="map-add-category" onchange="handleMapAddCategoryChange(this.value)" class="p-2 border border-slate-300 rounded-lg bg-white font-medium">
-            <option value="Emergência">🚨 Emergência / Pronto-Socorro</option>
-            <option value="Cirurgia">🔪 Cirurgia</option>
-            <option value="Exame">🔬 Exame</option>
-            <option value="Consulta">🩺 Consulta</option>
-          </select>
-          <input type="text" id="map-add-specialty" list="specialty-suggestions" placeholder="Setor / Especialidade (Ex: Ortopedia, Emergência)" class="p-2 border border-slate-300 rounded-lg bg-white">
-          <div class="flex gap-1">
-            <input type="number" id="map-add-wait-val" value="2" min="0.1" step="any" placeholder="Tempo" class="w-20 p-2 border border-slate-300 rounded-lg bg-white font-mono font-bold">
-            <select id="map-add-wait-unit" class="flex-1 p-2 border border-slate-300 rounded-lg bg-white font-medium">
-              <option value="horas">Horas</option>
-              <option value="dias">Dias</option>
-            </select>
-          </div>
-        </div>
-        <div class="flex items-center justify-between mt-2 pt-2 border-t border-blue-200 flex-wrap gap-2">
-          <input type="text" id="map-add-city" placeholder="Cidade / Estado (Ex: São Paulo, SP)" class="w-full sm:w-1/2 p-2 border border-slate-300 rounded-lg bg-white text-xs">
-          <button onclick="submitMapQuickAdd()" class="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-sm active-scale">
-            Salvar e Atualizar Mapa
-          </button>
-        </div>
-      </div>
-
-      <!-- Barra de Filtros e Busca no Mapa -->
-      <div class="p-3 bg-white border-b border-slate-100 flex items-center justify-between gap-2 shrink-0 flex-wrap sm:flex-nowrap">
-        <div class="relative flex-1 min-w-[200px]">
-          <input type="text" id="map-filter-search" onkeyup="handleMapFilterChange()" placeholder="Buscar hospital (HMU, Grajaú...), setor ou procedimento..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-8 pr-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500 outline-hidden">
-          <span class="absolute left-2.5 top-2.5 text-slate-400 text-xs">🔍</span>
-        </div>
-        <select id="map-filter-uf" onchange="handleMapFilterChange()" class="py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-hidden">
-          <option value="">Todas as UFs</option>
-          <option value="SP">SP - São Paulo</option>
-          <option value="RJ">RJ - Rio de Janeiro</option>
-          <option value="MG">MG - Minas Gerais</option>
-          <option value="BA">BA - Bahia</option>
-          <option value="CE">CE - Ceará</option>
-          <option value="DF">DF - Distrito Federal</option>
-          <option value="PR">PR - Paraná</option>
-          <option value="RS">RS - Rio Grande do Sul</option>
-        </select>
-      </div>
-
-      <!-- Área com Scroll para o Conteúdo das 3 Abas -->
-      <div class="flex-1 overflow-y-auto p-3 sm:p-5 custom-scrollbar bg-slate-50/50">
-        
-        <!-- Conteúdo ABA 1: HOSPITAIS E SETORES -->
-        <div id="map-tab-content-hospitals" class="space-y-4"></div>
-
-        <!-- Conteúdo ABA 2: FILAS: CIRURGIAS, EXAMES E CONSULTAS -->
-        <div id="map-tab-content-queues" class="hidden space-y-4">
-          <!-- Filtro por Categoria de Procedimento -->
-          <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 text-xs font-semibold custom-scrollbar">
-            <button onclick="setQueueCategoryFilter('Todas')" id="queue-filter-todas" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-bold shadow-xs whitespace-nowrap">Todas</button>
-            <button onclick="setQueueCategoryFilter('Cirurgia')" id="queue-filter-cirurgia" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 whitespace-nowrap">🔪 Cirurgias</button>
-            <button onclick="setQueueCategoryFilter('Exame')" id="queue-filter-exame" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 whitespace-nowrap">🔬 Exames</button>
-            <button onclick="setQueueCategoryFilter('Consulta')" id="queue-filter-consulta" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 whitespace-nowrap">🩺 Consultas</button>
-            <button onclick="setQueueCategoryFilter('Emergência')" id="queue-filter-emergencia" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 whitespace-nowrap">🚨 Emergência</button>
-          </div>
-          <div id="map-queues-list" class="space-y-3"></div>
-        </div>
-
-        <!-- Conteúdo ABA 3: POR REGIÃO & ESTADO -->
-        <div id="map-tab-content-regions" class="hidden space-y-4">
-          <div id="map-regions-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-        </div>
-
-      </div>
-
-    </div>
-  </div>
-
-  <!-- BANNER DE SINCRONIZAÇÃO E CORREÇÃO DO SUPABASE (Exibido caso haja bloqueio RLS no banco) -->
-  <div id="supabase-sync-banner" class="hidden fixed bottom-4 right-4 max-w-sm sm:max-w-md bg-amber-600 text-white p-4 rounded-2xl shadow-2xl z-50 flex items-start gap-3 border border-amber-500">
-    <span class="text-2xl shrink-0">⚠️</span>
-    <div class="text-xs space-y-1.5">
-      <p class="font-bold text-sm">Supabase precisa de liberação SQL</p>
-      <p class="opacity-95 leading-relaxed">O banco de dados Supabase bloqueou a gravação por regras de RLS (segurança). Basta executar o script de liberação no painel do Supabase para ativar a gravação em tempo real.</p>
-      <div class="pt-1 flex items-center gap-2">
-        <button onclick="copySupabaseScript()" class="px-3 py-1.5 bg-white text-amber-900 font-extrabold rounded-lg hover:bg-amber-100 transition-colors shadow-xs active-scale">
-          📋 Copiar Script SQL
-        </button>
-        <button onclick="document.getElementById('supabase-sync-banner').classList.add('hidden')" class="px-2.5 py-1 text-amber-200 hover:text-white font-semibold">
-          Dispensar
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================================================================== -->
-  <!-- 5. JAVASCRIPT EM TEMPO REAL: WEBRTC, GEOLOCALIZAÇÃO E SUPABASE       -->
-  <!-- ==================================================================== -->
-  <script>
-    // 1. SUPABASE CREDENCIAIS
+// 1. SUPABASE CREDENCIAIS
     const SUPABASE_URL = 'https://rtpuzrjjcrwlivwtlcya.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0cHV6cmpqY3J3bGl2d3RsY3lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjI3NTYsImV4cCI6MjEwNzU5ODc1Nn0._letC6F8us6Idehchk-zbO_xfItWZ3brCjHQwIxxbLM';
 
@@ -3573,10 +2141,7 @@
       return typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
     }
 
-    function closeModal(id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('hidden');
-    }
+    
 
     // Renderiza avatar tanto para URLs/Base64 quanto para Emojis
     function renderAvatarHTML(avatar, className = "w-full h-full object-cover rounded-full") {
@@ -4150,6 +2715,7 @@
       }
     }
 
+    
     async function handleLoginSubmit(e) {
       e.preventDefault();
       const userVal = document.getElementById('login-username').value.trim().toLowerCase();
@@ -4160,99 +2726,99 @@
         return;
       }
 
-      // 1. Contas pré-configuradas (jose, maria, admin)
-      if (KNOWN_ACCOUNTS[userVal]) {
-        if (passVal === '123456') {
-          currentUser = { ...KNOWN_ACCOUNTS[userVal] };
-          if (window.supabaseClient) {
-            try {
-              const { data } = await window.supabaseClient
-                .from('users')
-                .select('*')
-                .or(`cpf.eq.${userVal},email.eq.${userVal}`)
-                .limit(1);
-              if (data && data[0]) {
-                const pMeta = parseUserProfileData(data[0].condicao_saude);
-                if (pMeta && pMeta.avatar) currentUser.avatar = pMeta.avatar;
-                if (data[0].nome) currentUser.name = data[0].nome;
-                if (data[0].cidade) currentUser.city = data[0].cidade;
-              }
-            } catch(e){}
-          }
-        } else {
-          alert('Senha incorreta! Por favor, tente novamente.');
-          return;
-        }
-      } else {
-        // 2. Busca nos usuários cadastrados localmente
-        const registered = getRegisteredUsers();
-        if (registered[userVal]) {
-          if (registered[userVal].password === passVal) {
-            currentUser = registered[userVal];
-          } else {
-            alert('Senha incorreta! Por favor, tente novamente.');
+      // 1. Consulta CENTRAL no Supabase primeiro (garante mesma conta e senha em PC e Celular)
+      if (window.supabaseClient) {
+        try {
+          const { data: supaUsers, error } = await window.supabaseClient
+            .from('users')
+            .select('*')
+            .or(`cpf.eq.${userVal},email.eq.${userVal}`)
+            .limit(1);
+
+          if (supaUsers && supaUsers.length > 0) {
+            const supaUser = supaUsers[0];
+            // Verifica senha
+            if (supaUser.senha_hash && supaUser.senha_hash !== passVal) {
+              alert('❌ Senha incorreta! Por favor, digite a senha cadastrada para esta conta.');
+              return;
+            }
+
+            const pMeta = parseUserProfileData(supaUser.condicao_saude);
+            currentUser = {
+              id: supaUser.id,
+              username: supaUser.cpf || supaUser.email,
+              name: supaUser.nome || 'Paciente SUS',
+              role: 'paciente',
+              avatar: (pMeta && pMeta.avatar) || '👤',
+              city: supaUser.cidade || 'São Paulo, SP',
+              phone: (pMeta && pMeta.phone) || '',
+              cns: (pMeta && pMeta.cns) || '',
+              healthNotes: (pMeta && pMeta.healthNotes) || '',
+              password: supaUser.senha_hash,
+              isAdmin: (supaUser.cpf === 'admin' || supaUser.email === 'admin@minhavoz.org.br' || userVal === 'admin')
+            };
+
+            localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+            saveRegisteredUser(currentUser);
+            updateUserUI();
+            renderFeed();
+            closeModal('modal-login');
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            alert(`✓ Bem-vindo(a), ${currentUser.name}! Conectado(a) via banco de dados central.`);
             return;
           }
-        } else {
-          // 3. Consulta no banco Supabase se disponível
-          let foundInSupabase = false;
-          if (window.supabaseClient) {
-            try {
-              const { data } = await window.supabaseClient
-                .from('users')
-                .select('*')
-                .or(`cpf.eq.${userVal},email.eq.${userVal}`)
-                .limit(1);
-
-              if (data && data[0]) {
-                const supaUser = data[0];
-                if (supaUser.senha_hash && supaUser.senha_hash !== passVal) {
-                  alert('Senha incorreta!');
-                  return;
-                }
-                const pMeta = parseUserProfileData(supaUser.condicao_saude);
-                const userAvatar = (pMeta && pMeta.avatar) ? pMeta.avatar : '👤';
-                currentUser = {
-                  id: supaUser.id,
-                  username: supaUser.cpf || supaUser.email || userVal,
-                  name: supaUser.nome || 'Paciente SUS',
-                  role: 'paciente',
-                  avatar: userAvatar,
-                  city: supaUser.cidade || 'São Paulo, SP',
-                  phone: (pMeta && pMeta.phone) || '',
-                  cns: (pMeta && pMeta.cns) || '',
-                  healthNotes: (pMeta && pMeta.healthNotes) || '',
-                  isAdmin: (supaUser.cpf === 'admin' || userVal === 'admin')
-                };
-                foundInSupabase = true;
-              }
-            } catch (err) {
-              console.warn('Consulta Supabase login:', err);
-            }
-          }
-
-          if (!foundInSupabase) {
-            if (confirm(`A conta "${userVal}" não foi encontrada no sistema.\n\nDeseja abrir a tela de cadastro para criar sua conta agora gratuitamente?`)) {
-              switchAuthTab('register');
-              const regUserInput = document.getElementById('register-username');
-              if (regUserInput) regUserInput.value = userVal;
-            }
-            return;
-          }
+        } catch (err) {
+          console.warn('Erro ao consultar Supabase no login:', err);
         }
       }
 
-      localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
-      updateUserUI();
-      renderFeed();
-      closeModal('modal-login');
-      const loginModalEl = document.getElementById('modal-login');
-      if (loginModalEl) loginModalEl.classList.add('hidden');
-      document.getElementById('login-username').value = '';
-      document.getElementById('login-password').value = '';
-      alert(`✓ Bem-vindo(a), ${currentUser.name}!`);
+      // 2. Se for uma das contas predefinidas (jose, maria, admin)
+      if (KNOWN_ACCOUNTS[userVal]) {
+        if (passVal === '123456') {
+          currentUser = { ...KNOWN_ACCOUNTS[userVal] };
+          localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+          updateUserUI();
+          renderFeed();
+          closeModal('modal-login');
+          document.getElementById('login-username').value = '';
+          document.getElementById('login-password').value = '';
+          alert(`✓ Bem-vindo(a), ${currentUser.name}!`);
+          return;
+        } else {
+          alert('❌ Senha incorreta! A senha para esta conta é 123456.');
+          return;
+        }
+      }
+
+      // 3. Fallback: Usuário registrado localmente
+      const registered = getRegisteredUsers();
+      if (registered[userVal]) {
+        if (registered[userVal].password === passVal) {
+          currentUser = registered[userVal];
+          localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+          updateUserUI();
+          renderFeed();
+          closeModal('modal-login');
+          document.getElementById('login-username').value = '';
+          document.getElementById('login-password').value = '';
+          alert(`✓ Bem-vindo(a), ${currentUser.name}!`);
+          return;
+        } else {
+          alert('❌ Senha incorreta! Por favor, tente novamente.');
+          return;
+        }
+      }
+
+      // 4. Não encontrado
+      if (confirm(`A conta "${userVal}" não foi encontrada no banco de dados central.\n\nDeseja abrir a tela de cadastro para criar sua conta agora gratuitamente?`)) {
+        switchAuthTab('register');
+        const regUserInput = document.getElementById('register-username');
+        if (regUserInput) regUserInput.value = userVal;
+      }
     }
 
+    
     async function handleRegisterSubmit(e) {
       e.preventDefault();
       const fullName = document.getElementById('register-fullname').value.trim();
@@ -4264,19 +2830,30 @@
         alert('Por favor, preencha os campos obrigatórios (Nome, Usuário e Senha).');
         return;
       }
-
       if (userPass.length < 4) {
         alert('A senha deve conter no mínimo 4 caracteres.');
         return;
       }
 
-      const registered = getRegisteredUsers();
-      if (KNOWN_ACCOUNTS[userVal] || registered[userVal]) {
-        alert('Este nome de usuário ou e-mail já está cadastrado. Por favor, faça login.');
-        switchAuthTab('login');
-        const loginUserInp = document.getElementById('login-username');
-        if (loginUserInp) loginUserInp.value = userVal;
-        return;
+      // 1. Verifica se já existe centralmente no Supabase
+      if (window.supabaseClient) {
+        try {
+          const { data: existing } = await window.supabaseClient
+            .from('users')
+            .select('id, nome, email, cpf')
+            .or(`cpf.eq.${userVal},email.eq.${userVal}`)
+            .limit(1);
+
+          if (existing && existing.length > 0) {
+            alert(`Este usuário ou e-mail (${userVal}) já está cadastrado no sistema!\nPor favor, faça login com sua senha.`);
+            switchAuthTab('login');
+            const loginUserInp = document.getElementById('login-username');
+            if (loginUserInp) loginUserInp.value = userVal;
+            return;
+          }
+        } catch (e) {
+          console.warn('Erro ao verificar usuário existente:', e);
+        }
       }
 
       const newId = generateUUID();
@@ -4291,47 +2868,44 @@
         isAdmin: false
       };
 
-      // 1. Armazena no registro local
-      saveRegisteredUser(newUser);
-
-      // 2. Persiste no banco de dados Supabase com avatar codificado
+      // 2. Grava no banco de dados central Supabase
       if (window.supabaseClient) {
-        window.supabaseClient
-          .from('users')
-          .insert([{
-            id: newId,
-            nome: fullName,
-            cidade: userCity,
-            email: userVal.includes('@') ? userVal : `${userVal}@minhavoz.org.br`,
-            cpf: userVal,
-            senha_hash: userPass,
-            condicao_saude: encodeUserProfileData(newUser)
-          }])
-          .select()
-          .then(res => {
-            if (res.data && res.data[0]) {
-              newUser.id = res.data[0].id;
-              saveRegisteredUser(newUser);
-              localStorage.setItem('minhavoz_user', JSON.stringify(newUser));
-              console.log('✓ Usuário cadastrado no Supabase com ID:', res.data[0].id);
-            }
-          })
-          .catch(err => console.warn('Cadastro Supabase:', err));
+        try {
+          const { data, error } = await window.supabaseClient
+            .from('users')
+            .insert([{
+              id: newId,
+              nome: fullName,
+              cidade: userCity,
+              email: userVal.includes('@') ? userVal : `${userVal}@minhavoz.org.br`,
+              cpf: userVal,
+              senha_hash: userPass,
+              condicao_saude: encodeUserProfileData(newUser)
+            }])
+            .select();
+
+          if (error) {
+            console.error('Erro no cadastro Supabase:', error);
+          } else if (data && data[0]) {
+            newUser.id = data[0].id;
+            console.log('✓ Usuário cadastrado no Supabase com sucesso:', data[0].id);
+          }
+        } catch (err) {
+          console.error('Erro de conexão no cadastro Supabase:', err);
+        }
       }
 
+      saveRegisteredUser(newUser);
       currentUser = newUser;
       localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
       updateUserUI();
       renderFeed();
       closeModal('modal-login');
-      const regModalEl = document.getElementById('modal-login');
-      if (regModalEl) regModalEl.classList.add('hidden');
       document.getElementById('register-fullname').value = '';
       document.getElementById('register-username').value = '';
-      document.getElementById('register-city').value = '';
       document.getElementById('register-password').value = '';
       removeRegisterPhoto();
-      alert(`✓ Cadastro realizado com sucesso!\nSeja bem-vindo(a) à rede Minha Voz, ${fullName}!`);
+      alert(`✓ Cadastro realizado com sucesso! Bem-vindo(a), ${fullName}!`);
     }
 
     function logoutUser() {
@@ -6028,9 +4602,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       if (!container) return;
 
       let filtered = socialPosts.filter(p => {
-        // Relatos públicos são exibidos para todos
+        // Relatos públicos são SEMPRE visíveis para todos os usuários online e visitantes
         if (p.isPublic !== false) return true;
-        // Relatos privados são exibidos somente para o próprio autor logado ou moderador admin
+        // Relatos privados são visíveis apenas para o autor logado ou moderador
         if (!currentUser) return false;
         if (currentUser.isAdmin) return true;
         if (p.userId && currentUser.id && p.userId === currentUser.id) return true;
@@ -6436,6 +5010,72 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
             updateMapStatistics();
           }
 
+          
+          // 3. Realtime subscription para atualizar em tempo real em todas as telas
+          try {
+            window.supabaseClient
+              .channel('public:reports')
+              .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, payload => {
+                console.log('⚡ Atualização em tempo real recebida do Supabase:', payload.eventType);
+                if (payload.eventType === 'INSERT') {
+                  const r = payload.new;
+                  let meta = null;
+                  if (r.relato && r.relato.includes('[META:')) {
+                    try {
+                      const match = r.relato.match(/\[META:(\{.*?\})\]/);
+                      if (match) meta = JSON.parse(match[1]);
+                    } catch(e) {}
+                  }
+                  const hosp = (meta && meta.hospital) || r.hospital || 'Hospital SUS';
+                  const cat = (meta && meta.category) || r.categoria || 'Emergência';
+                  const spec = (meta && meta.specialty) || r.especialidade || 'Atendimento / Procedimento';
+                  const val = (meta && meta.waitVal) || r.tempo_espera_dias || r.tempo_espera_horas || 2;
+                  const unit = (meta && meta.waitUnit) || (cat === 'Emergência' ? 'horas' : 'dias');
+                  const city = (meta && meta.city) || r.cidade || 'São Paulo';
+                  const state = (meta && meta.state) || r.estado || 'SP';
+                  const cleanText = r.relato ? r.relato.replace(/\[META:\{.*?\}\]\s*/, '') : '';
+                  const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente SUS');
+                  const avatar = r.anonimo ? '🎭' : ((meta && meta.avatar) || '👤');
+                  const isPublic = meta ? (meta.isPublic !== false) : true;
+
+                  if (!socialPosts.find(p => p.id === r.id)) {
+                    socialPosts.unshift({
+                      id: r.id,
+                      author: author,
+                      avatar: avatar,
+                      userId: (meta && meta.userId) || r.user_id,
+                      username: (meta && meta.username) || null,
+                      isPublic: isPublic,
+                      location: `${city}, ${state}`,
+                      hospital: hosp,
+                      category: cat,
+                      specialty: spec,
+                      waitValue: val,
+                      waitUnit: unit,
+                      waitDays: unit === 'dias' ? val : Math.round(val * 24),
+                      waitHours: unit === 'horas' ? val : (val * 24),
+                      mediaType: r.tipo_midia || 'texto',
+                      videoBlobUrl: r.video_url || null,
+                      audioBlobUrl: r.audio_url || null,
+                      text: cleanText,
+                      likes: 1,
+                      hasLiked: false,
+                      pressures: 1,
+                      commentsCount: 0,
+                      createdAt: 'Agora mesmo',
+                      isAnon: Boolean(r.anonimo)
+                    });
+                    renderFeed();
+                    renderStories();
+                    updateMapStatistics();
+                  }
+                }
+              })
+              .subscribe();
+          } catch(e) {
+            console.warn('Realtime channel subscribe:', e);
+          }
+
           // 2. Busca cronômetros da tabela waiting_times
           const { data: waitingData, error: waitErr } = await window.supabaseClient
             .from('waiting_times')
@@ -6738,8 +5378,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       updateMapStatistics();
       document.getElementById('modal-map').classList.remove('hidden'); 
     }
-    function openDefensoriaModal() { const m = document.getElementById('modal-defensoria'); if (m) m.classList.remove('hidden'); }
-    function openDenunciaModal() { const m = document.getElementById('modal-denuncia'); if (m) m.classList.remove('hidden'); }
+    
+    
 
     function setFeedFilter(filter) {
       currentFilter = filter;
@@ -6765,6 +5405,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       );
       container.innerHTML = filtered.map(post => createPostHTML(post)).join('');
     }
+  
   
   </script>
 </body>
