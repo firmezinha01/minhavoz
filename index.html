@@ -179,16 +179,11 @@
             </button>
           </div>
 
-          <!-- Estado: Deslogado (Botões Entrar e CTA Principal Registrar Minha Espera) -->
+          <!-- Estado: Deslogado (Apenas Botão Entrar) -->
           <div id="header-user-logged-out" class="flex items-center space-x-2">
             <button onclick="openLoginModal('login')" class="px-4 py-2 bg-white hover:bg-slate-50 text-[#103D36] border border-[#DDE6E2] text-xs sm:text-sm font-bold rounded-xl shadow-2xs flex items-center gap-1.5 transition-all active-scale">
               <span>🔑</span>
               <span>Entrar</span>
-            </button>
-            <button onclick="scrollToComposer()" class="px-4 py-2 bg-[#16A085] hover:bg-[#103D36] text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-[#16A085]/20 flex items-center gap-1.5 transition-all active-scale">
-              <span>✍️</span>
-              <span class="hidden sm:inline">Registrar minha espera</span>
-              <span class="sm:hidden">Registrar</span>
             </button>
           </div>
 
@@ -2003,6 +1998,29 @@
       return typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
     }
 
+    // Formata Data e Horário em tempo real (ex: "27/10/2026 às 14:35")
+    function formatPostDateTime(inputDate) {
+      if (!inputDate) {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        return `${dateStr} às ${timeStr}`;
+      }
+      if (typeof inputDate === 'string' && inputDate.includes('às')) {
+        return inputDate;
+      }
+      const d = new Date(inputDate);
+      if (isNaN(d.getTime())) {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        return `${dateStr} às ${timeStr}`;
+      }
+      const dateStr = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const timeStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      return `${dateStr} às ${timeStr}`;
+    }
+
     
 
     // Renderiza avatar tanto para URLs/Base64 quanto para Emojis
@@ -3381,7 +3399,8 @@
           hasLiked: true,
           pressures: 1,
           commentsCount: 0,
-          createdAt: 'Agora mesmo',
+          createdAt: formatPostDateTime(new Date()),
+          createdAtIso: new Date().toISOString(),
           isAnon: false
         });
 
@@ -3661,7 +3680,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         userId: currentUserId,
         username: currentUsername,
         isPublic: isPublic,
-        createdAt: 'Agora mesmo',
+        createdAt: formatPostDateTime(new Date()),
+        createdAtIso: new Date().toISOString(),
         text: text || (activeMediaMode === 'video' ? 'Depoimento gravado em vídeo pelo paciente.' : (activeMediaMode === 'audio' ? 'Depoimento em áudio gravado.' : 'Relato publicado na rede Minha Voz.'))
       };
 
@@ -3694,7 +3714,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         hasLiked: true,
         pressures: 1,
         commentsCount: 0,
-        createdAt: 'Agora mesmo',
+        createdAt: formatPostDateTime(new Date()),
+        createdAtIso: new Date().toISOString(),
         isAnon: isAnon
       };
 
@@ -4553,8 +4574,12 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   </span>
                   ${visibilityBadge}
                 </div>
-                <div class="text-[11px] text-slate-400 mt-0.5">
-                  ${post.hospital} • <span class="text-blue-600 font-semibold">${post.createdAt}</span>
+                <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
+                  <span class="font-bold text-slate-700">🏥 ${post.hospital}</span>
+                  <span class="text-slate-300">•</span>
+                  <span class="inline-flex items-center gap-1 font-bold text-[#103D36] bg-[#E9F5F1] px-2 py-0.5 rounded-md border border-[#16A085]/30 shadow-2xs">
+                    <span>🕒</span> ${post.createdAt}
+                  </span>
                 </div>
               </div>
             </div>
@@ -4791,7 +4816,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   userId: postUserId,
                   username: postUsername,
                   isPublic: isPublic,
-                  createdAt: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                  createdAt: formatPostDateTime(r.created_at),
+                  createdAtIso: r.created_at,
                   text: cleanText || 'Relato publicado na rede Minha Voz.'
                 });
               } else {
@@ -4827,7 +4853,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   hasLiked: false,
                   pressures: 1,
                   commentsCount: 0,
-                  createdAt: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                  createdAt: formatPostDateTime(r.created_at),
+                  createdAtIso: r.created_at,
                   isAnon: r.anonimo
                 });
               } else {
@@ -4897,7 +4924,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                       hasLiked: false,
                       pressures: 1,
                       commentsCount: 0,
-                      createdAt: 'Agora mesmo',
+                      createdAt: formatPostDateTime(r.created_at || new Date()),
+                      createdAtIso: r.created_at || new Date().toISOString(),
                       isAnon: Boolean(r.anonimo)
                     });
                     renderFeed();
@@ -4954,7 +4982,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   author: 'Paciente no Hospital',
                   avatar: '⏱️',
                   isPublic: true,
-                  createdAt: new Date(w.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                  createdAt: formatPostDateTime(w.created_at),
+                  createdAtIso: w.created_at,
                   text: cleanText
                 });
               }
@@ -5106,7 +5135,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   author: 'Paciente no Hospital',
                   avatar: '⏱️',
                   isPublic: true,
-                  createdAt: 'Agora mesmo',
+                  createdAt: formatPostDateTime(w.created_at || new Date()),
+                  createdAtIso: w.created_at || new Date().toISOString(),
                   text: cleanText
                 });
                 updateMapStatistics();
