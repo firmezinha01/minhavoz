@@ -117,16 +117,9 @@
 
       <!-- Links de Navegação (Desktop) -->
       <nav class="hidden lg:flex items-center space-x-1 text-sm font-semibold text-[#172B27]">
-        <button onclick="window.scrollTo({top:0, behavior:'smooth'}); setFeedFilter('todos');" class="px-3.5 py-2 rounded-xl text-[#103D36] hover:bg-[#E9F5F1] font-bold transition-colors">
-          Início
-        </button>
-        <button onclick="openMapModal()" class="px-3.5 py-2 rounded-xl text-[#66746F] hover:text-[#103D36] hover:bg-[#E9F5F1] transition-colors flex items-center gap-1.5">
+        <button onclick="openMapModal()" class="px-3.5 py-2 rounded-xl text-[#103D36] hover:bg-[#E9F5F1] transition-colors flex items-center gap-1.5 font-bold">
           <span>🗺️</span>
           <span>Mapa da Espera</span>
-        </button>
-        <button onclick="document.getElementById('posts-container').scrollIntoView({behavior:'smooth'});" class="px-3.5 py-2 rounded-xl text-[#66746F] hover:text-[#103D36] hover:bg-[#E9F5F1] transition-colors flex items-center gap-1.5">
-          <span>📰</span>
-          <span>Relatos</span>
         </button>
       </nav>
 
@@ -230,11 +223,12 @@
       <div class="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 relative z-10">
         <!-- Texto Compacto e Direto -->
         <div class="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap text-center sm:text-left justify-center sm:justify-start">
-          <span class="text-[10px] sm:text-[11px] font-black uppercase tracking-wider bg-[#E9A23B]/20 text-[#E9A23B] px-2 py-0.5 rounded-full border border-[#E9A23B]/40 shrink-0">
-            Estamos em Desenvolvimento (Versão de Testes)
+          <span class="text-[9.5px] sm:text-[11px] font-black uppercase tracking-wider bg-[#E9A23B]/20 text-[#E9A23B] px-2 py-0.5 rounded-full border border-[#E9A23B]/40 shrink-0">
+            Versão de Testes
           </span>
-          <p class="text-[11px] sm:text-xs text-slate-200 leading-tight">
-            Dúvidas, sugestões ou quer colaborar com o projeto? Fale com o idealizador:
+          <p class="text-[9px] sm:text-xs text-slate-200 leading-tight">
+            <span class="sm:hidden">Dúvidas ou sugestões? Fale conosco:</span>
+            <span class="hidden sm:inline">Dúvidas, sugestões ou quer colaborar com o projeto? Fale com o idealizador:</span>
           </p>
         </div>
 
@@ -331,40 +325,31 @@
       <!-- ================================================================ -->
       <main class="col-span-1 lg:col-span-6 space-y-5 pb-24 lg:pb-8">
 
-        <!-- 1. BARRA DE STORIES DINÂMICOS -->
+        <!-- 1. BARRA DE STATUS / STORIES DA COMUNIDADE -->
         <div class="bg-white rounded-3xl p-4 sm:p-5 border border-[#DDE6E2] shadow-xs">
           <div class="flex items-center justify-between mb-3 px-1">
             <h4 class="text-xs font-bold text-[#103D36] uppercase tracking-wider flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-[#16A085] animate-pulse"></span>
-              Depoimentos em Vídeo & Voz
+              Status
             </h4>
-            <span class="text-xs text-[#16A085] font-bold cursor-pointer hover:underline" onclick="openVideoRecordModal()">
-              + Gravar Depoimento
+            <span class="text-xs text-[#16A085] font-bold cursor-pointer hover:underline flex items-center gap-1" onclick="openCreateStoryModal()">
+              <span>+</span> <span>Criar Story</span>
             </span>
           </div>
 
           <div id="stories-container" class="flex items-center space-x-3.5 overflow-x-auto pb-1.5 custom-scrollbar">
-            <!-- Botão Gravar Vídeo -->
-            <div onclick="openVideoRecordModal()" class="flex flex-col items-center shrink-0 cursor-pointer group">
-              <div class="w-14 h-14 rounded-2xl border-2 border-dashed border-[#16A085] flex items-center justify-center bg-[#E9F5F1] group-hover:scale-105 transition-transform">
-                <span class="text-[#103D36] text-xl font-bold">📹+</span>
+            <!-- Botão Único: Criar Story (Upload ou Ao Vivo) -->
+            <div onclick="openCreateStoryModal()" class="flex flex-col items-center shrink-0 cursor-pointer group">
+              <div class="w-14 h-14 rounded-2xl border-2 border-dashed border-[#16A085] flex items-center justify-center bg-[#E9F5F1] group-hover:scale-105 transition-transform relative shadow-xs">
+                <span class="text-[#103D36] text-xl font-bold">✨</span>
+                <span class="absolute -bottom-1 -right-1 w-5 h-5 bg-[#16A085] text-white rounded-full flex items-center justify-center text-xs font-black shadow-xs">+</span>
               </div>
-              <span class="text-[10px] font-bold text-[#172B27] mt-1.5">Gravar Vídeo</span>
+              <span class="text-[10px] font-bold text-[#172B27] mt-1.5">Criar story</span>
             </div>
 
-            <!-- Botão Gravar Áudio -->
-            <div onclick="openAudioRecordModal()" class="flex flex-col items-center shrink-0 cursor-pointer group">
-              <div class="w-14 h-14 rounded-2xl border-2 border-dashed border-[#16A085] flex items-center justify-center bg-[#E9F5F1] group-hover:scale-105 transition-transform">
-                <span class="text-[#103D36] text-xl font-bold">🎙️+</span>
-              </div>
-              <span class="text-[10px] font-bold text-[#172B27] mt-1.5">Gravar Voz</span>
-            </div>
-
-            <!-- Lista Dinâmica de Stories Reais -->
+            <!-- Lista de Stories de Outras Pessoas -->
             <div id="stories-list" class="flex items-center space-x-3.5">
-              <span class="text-xs text-[#66746F] italic pl-1">
-                Grave um vídeo ou áudio para aparecer nos destaques!
-              </span>
+              <!-- Renderizado dinamicamente via renderStories() -->
             </div>
           </div>
         </div>
@@ -1181,11 +1166,8 @@
           </button>
         </div>
 
-        <!-- Opções Avançadas: Zerar Dados Locais de Teste & Sair -->
-        <div class="pt-3 border-t border-[#DDE6E2] flex items-center justify-between text-[11px]">
-          <button type="button" onclick="resetAllSystemData()" class="text-[#E9A23B] hover:text-amber-800 font-bold flex items-center gap-1 hover:underline">
-            <span>🗑️</span> Zerar Relatos de Teste
-          </button>
+        <!-- Opções da Conta: Sair -->
+        <div class="pt-3 border-t border-[#DDE6E2] flex items-center justify-end text-[11px]">
           <button type="button" onclick="logoutUser(); closeModal('modal-profile');" class="text-[#C93C45] hover:text-rose-800 font-bold flex items-center gap-1 hover:underline">
             <span>🚪</span> Sair da Conta
           </button>
@@ -1790,6 +1772,88 @@
       </div>
     </div>
   </div>
+  <!-- MODAL: CRIAR STORY (ESCOLHA: UPLOAD OU GRAVAR AO VIVO) -->
+  <div id="modal-create-story" onclick="if(event.target === this) closeModal('modal-create-story')" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-2xl border border-[#DDE6E2] space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-[#DDE6E2]">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-2xl bg-[#E9F5F1] text-[#16A085] flex items-center justify-center text-lg font-bold">
+            ✨
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-[#103D36]">Criar Story no Status</h3>
+            <p class="text-[11px] text-[#66746F]">Compartilhe sua situação com a rede</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-create-story')" class="text-slate-400 hover:text-slate-700 text-lg p-1 cursor-pointer">✕</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+        <!-- 1. Gravar Vídeo ao Vivo -->
+        <button onclick="closeModal('modal-create-story'); openVideoRecordModal();" class="p-4 rounded-2xl border-2 border-[#16A085] bg-[#E9F5F1]/70 hover:bg-[#E9F5F1] transition-all flex flex-col items-center text-center gap-2 group cursor-pointer active-scale">
+          <div class="w-12 h-12 rounded-2xl bg-[#16A085] text-white flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition-transform">
+            📹
+          </div>
+          <span class="text-xs font-bold text-[#103D36]">Gravar Vídeo ao Vivo</span>
+          <span class="text-[10px] text-[#66746F]">Grave com a câmera agora</span>
+        </button>
+
+        <!-- 2. Fazer Upload de Vídeo ou Foto -->
+        <label class="p-4 rounded-2xl border-2 border-slate-200 hover:border-[#16A085] bg-white hover:bg-slate-50 transition-all flex flex-col items-center text-center gap-2 group cursor-pointer active-scale">
+          <div class="w-12 h-12 rounded-2xl bg-slate-100 text-[#103D36] flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition-transform">
+            📁
+          </div>
+          <span class="text-xs font-bold text-[#172B27]">Fazer Upload</span>
+          <span class="text-[10px] text-[#66746F]">Vídeo ou foto da galeria</span>
+          <input type="file" id="story-file-upload-input" accept="video/*,image/*" onchange="handleStoryUpload(event)" class="hidden">
+        </label>
+      </div>
+
+      <p class="text-center text-[10px] text-[#66746F] pt-1">
+        O story fica disponível na barra de Status para outros pacientes acompanharem.
+      </p>
+    </div>
+  </div>
+
+  <!-- MODAL: VISUALIZADOR DE STORY / STATUS -->
+  <div id="modal-story-viewer" onclick="if(event.target === this) closeStoryViewer()" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-50 hidden">
+    <div class="relative w-full max-w-sm bg-slate-950 text-white rounded-3xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col max-h-[90vh]">
+      <!-- Barra de Progresso no topo -->
+      <div class="p-3 pb-1 flex items-center gap-2">
+        <div class="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
+          <div id="story-progress-bar" class="h-full bg-emerald-400 transition-all duration-300 w-0"></div>
+        </div>
+        <button onclick="closeStoryViewer()" class="text-white hover:text-rose-400 p-1 text-base ml-1 cursor-pointer">✕</button>
+      </div>
+
+      <!-- Cabeçalho do Story com dados do Paciente -->
+      <div class="px-4 py-2 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div id="story-viewer-avatar" class="w-9 h-9 rounded-full bg-[#16A085] border border-white flex items-center justify-center text-sm font-bold overflow-hidden">
+            👤
+          </div>
+          <div>
+            <div id="story-viewer-author" class="text-xs font-bold text-white leading-tight">Paciente</div>
+            <div id="story-viewer-hospital" class="text-[10px] text-emerald-300">Hospital</div>
+          </div>
+        </div>
+        <span id="story-viewer-time" class="text-[10px] text-slate-300 bg-white/10 px-2 py-0.5 rounded-full">Hoje</span>
+      </div>
+
+      <!-- Conteúdo do Story (Vídeo, Imagem ou Áudio) -->
+      <div id="story-viewer-media-container" class="flex-1 min-h-[300px] bg-black flex items-center justify-center p-2 relative overflow-hidden">
+        <!-- Injetado dinamicamente -->
+      </div>
+
+      <!-- Legenda / Texto do Story -->
+      <div class="p-4 bg-gradient-to-t from-black via-black/80 to-transparent">
+        <p id="story-viewer-caption" class="text-xs text-slate-200 leading-relaxed">
+          Relato de atendimento na fila.
+        </p>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================================================================== -->
   <!-- 5. JAVASCRIPT EM TEMPO REAL: WEBRTC, GEOLOCALIZAÇÃO E SUPABASE       -->
   <!-- ==================================================================== -->
@@ -2452,7 +2516,8 @@
         likes: r.likes || 1,
         hasLiked: false,
         pressures: r.pressures || 1,
-        commentsCount: 0,
+        comments: Array.isArray(r.comments) ? r.comments : [],
+        commentsCount: Array.isArray(r.comments) ? r.comments.length : 0,
         createdAt: r.createdAt || 'Hoje',
         isAnon: r.isAnon || (r.author === 'Paciente Anônimo')
       }));
@@ -4616,6 +4681,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         ? `${post.waitValue || post.waitHours || 2} horas` 
         : `${post.waitValue || post.waitDays || 180} dias`;
 
+      const postComments = (post.comments && Array.isArray(post.comments)) ? post.comments : [];
+      const commentsCount = postComments.length;
+
       return `
         <article class="bg-white rounded-3xl p-5 sm:p-6 border border-[#DDE6E2] shadow-xs space-y-3.5 transition-all hover:border-[#16A085]/40 ${!isPublic ? 'ring-2 ring-[#E9A23B]/60 bg-amber-50/20' : ''}">
           
@@ -4660,20 +4728,27 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
           ${mediaSnippet}
 
-          <div class="flex items-center justify-between pt-2.5 border-t border-slate-100 text-xs font-semibold">
-            <div class="flex items-center space-x-3 sm:space-x-4">
-              <button onclick="handleLike('${post.id}')" class="flex items-center gap-1.5 ${post.hasLiked ? 'text-rose-600 font-bold' : 'text-slate-600 hover:text-rose-600'} transition-colors">
+          <!-- Barra de Interações: Força, Pressionar, Comentar, Difundir -->
+          <div class="flex items-center justify-between pt-2.5 border-t border-slate-100 text-xs font-semibold flex-wrap gap-2">
+            <div class="flex items-center space-x-2.5 sm:space-x-3.5 flex-wrap">
+              <button onclick="handleLike('${post.id}')" class="flex items-center gap-1.5 ${post.hasLiked ? 'text-rose-600 font-bold' : 'text-slate-600 hover:text-rose-600'} transition-colors cursor-pointer active-scale">
                 <span>${post.hasLiked ? '❤️' : '🤍'}</span>
                 <span>${post.likes} Força</span>
               </button>
 
-              <button onclick="handlePressure('${post.id}')" class="flex items-center gap-1.5 text-slate-600 hover:text-amber-600 transition-colors">
+              <button onclick="handlePressure('${post.id}')" class="flex items-center gap-1.5 text-slate-600 hover:text-amber-600 transition-colors cursor-pointer active-scale">
                 <span>📢</span>
                 <span class="hidden sm:inline">Pressionar</span>
                 <span>(${post.pressures})</span>
               </button>
 
-              <button onclick="openShareModal('${post.id}')" class="flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 rounded-lg transition-all font-bold active-scale">
+              <button onclick="toggleComments('${post.id}')" class="flex items-center gap-1.5 text-slate-600 hover:text-[#16A085] transition-colors cursor-pointer active-scale font-semibold">
+                <span>💬</span>
+                <span class="hidden sm:inline">Comentar</span>
+                <span id="comment-count-${post.id}">(${commentsCount})</span>
+              </button>
+
+              <button onclick="openShareModal('${post.id}')" class="flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 hover:bg-[#E9F5F1] hover:text-[#103D36] text-slate-700 rounded-lg transition-all font-bold active-scale cursor-pointer">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
                 <span>Difundir</span>
               </button>
@@ -4682,6 +4757,25 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
             <div class="flex items-center gap-2">
               ${visibilityActionBtn}
               ${adminDeleteBtn}
+            </div>
+          </div>
+
+          <!-- SEÇÃO EXPANSÍVEL DE COMENTÁRIOS DA COMUNIDADE -->
+          <div id="comments-section-${post.id}" class="hidden pt-3 border-t border-slate-100 space-y-2.5">
+            <div id="comments-list-${post.id}" class="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-1">
+              ${renderCommentsHTML(postComments)}
+            </div>
+
+            <!-- Formulário para Inserir Comentário -->
+            <div class="flex items-center gap-2 pt-1">
+              <div class="w-8 h-8 rounded-full bg-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs">
+                ${renderAvatarHTML((currentUser && currentUser.avatar) || '👤')}
+              </div>
+              <input type="text" id="comment-input-${post.id}" onkeydown="if(event.key==='Enter') submitComment('${post.id}')" placeholder="Deixe uma mensagem de apoio ou informe a fila..." class="flex-1 p-2.5 bg-[#F6F8F7] border border-[#DDE6E2] rounded-xl text-xs text-[#172B27] focus:bg-white focus:ring-2 focus:ring-[#16A085] outline-hidden placeholder:text-[#66746F]">
+              <button onclick="submitComment('${post.id}')" class="px-3.5 py-2.5 bg-[#16A085] hover:bg-[#103D36] text-white text-xs font-bold rounded-xl active-scale transition-all flex items-center gap-1 shrink-0 cursor-pointer shadow-2xs">
+                <span>Enviar</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </button>
             </div>
           </div>
 
@@ -4730,24 +4824,327 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       );
     }
 
+    // ====================================================================
+    // SISTEMA DE COMENTÁRIOS NOS RELATOS
+    // ====================================================================
+    function toggleComments(postId) {
+      const section = document.getElementById('comments-section-' + postId);
+      if (!section) return;
+      const isHidden = section.classList.contains('hidden');
+      if (isHidden) {
+        section.classList.remove('hidden');
+        const input = document.getElementById('comment-input-' + postId);
+        if (input) setTimeout(() => input.focus(), 150);
+      } else {
+        section.classList.add('hidden');
+      }
+    }
+
+    function renderCommentsHTML(comments) {
+      if (!comments || comments.length === 0) {
+        return `<p class="text-[11px] text-[#66746F] italic py-1 text-center bg-[#F6F8F7] rounded-xl p-2.5 border border-[#DDE6E2]/50">Nenhum comentário ainda. Seja o primeiro a deixar uma palavra de apoio ou informação sobre a fila!</p>`;
+      }
+      return comments.map(c => `
+        <div class="flex items-start gap-2.5 p-2.5 bg-[#F6F8F7] rounded-xl text-xs border border-[#DDE6E2]/60">
+          <div class="w-7 h-7 rounded-full bg-[#103D36] text-white flex items-center justify-center text-[10px] font-bold shrink-0 overflow-hidden mt-0.5">
+            ${renderAvatarHTML(c.avatar || '👤')}
+          </div>
+          <div class="flex-1 overflow-hidden">
+            <div class="flex items-center justify-between gap-1 flex-wrap">
+              <span class="font-bold text-[#103D36] text-[11px]">${c.author || 'Paciente'}</span>
+              <span class="text-[10px] text-[#66746F]">${c.createdAt || 'Agora'}</span>
+            </div>
+            <p class="text-[11px] text-[#172B27] mt-0.5 leading-snug break-words">${c.text}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function submitComment(postId) {
+      const input = document.getElementById('comment-input-' + postId);
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) {
+        alert('Por favor, digite seu comentário antes de enviar.');
+        return;
+      }
+
+      const post = socialPosts.find(p => p.id === postId);
+      if (!post) return;
+
+      if (!Array.isArray(post.comments)) {
+        post.comments = [];
+      }
+
+      const authorName = (currentUser && currentUser.name) || 'Paciente da Rede';
+      const authorAvatar = (currentUser && currentUser.avatar) || '💬';
+
+      const newComment = {
+        id: 'comm-' + Date.now(),
+        author: authorName,
+        avatar: authorAvatar,
+        text: text,
+        createdAt: formatPostDateTime(new Date().toISOString())
+      };
+
+      post.comments.push(newComment);
+      post.commentsCount = post.comments.length;
+
+      const rec = realWaitingRecords.find(r => r.id === postId);
+      if (rec) {
+        if (!Array.isArray(rec.comments)) rec.comments = [];
+        rec.comments.push(newComment);
+      }
+
+      // Atualiza visualmente a lista e o contador
+      const listEl = document.getElementById('comments-list-' + postId);
+      if (listEl) listEl.innerHTML = renderCommentsHTML(post.comments);
+      const countEl = document.getElementById('comment-count-' + postId);
+      if (countEl) countEl.innerText = `(${post.comments.length})`;
+      input.value = '';
+
+      saveWaitRecords();
+
+      // Sincroniza comentário com Supabase na tabela reports ou waiting_times
+      if (window.supabaseClient) {
+        if (postId.startsWith('wait-')) {
+          const rawId = postId.replace('wait-', '');
+          if (isValidUUID(rawId)) {
+            try {
+              const { data } = await window.supabaseClient.from('waiting_times').select('*').eq('id', rawId).limit(1);
+              if (data && data[0]) {
+                let meta = {};
+                if (data[0].comentario && data[0].comentario.includes('[META:')) {
+                  const match = data[0].comentario.match(/\[META:(\{.*?\})\]/);
+                  if (match) {
+                    try { meta = JSON.parse(match[1]); } catch(e){}
+                  }
+                }
+                meta.comments = post.comments;
+                const cleanText = (data[0].comentario || '').replace(/\[META:\{.*?\}\]\s*/, '');
+                const updatedComentario = `[META:${JSON.stringify(meta)}] ${cleanText}`;
+                await window.supabaseClient.from('waiting_times').update({ comentario: updatedComentario }).eq('id', rawId);
+              }
+            } catch (e) {
+              console.warn('Erro ao persistir comentário em waiting_times Supabase:', e);
+            }
+          }
+        } else if (isValidUUID(postId)) {
+          try {
+            const { data } = await window.supabaseClient.from('reports').select('*').eq('id', postId).limit(1);
+            if (data && data[0]) {
+              let meta = {};
+              if (data[0].relato && data[0].relato.includes('[META:')) {
+                const match = data[0].relato.match(/\[META:(\{.*?\})\]/);
+                if (match) {
+                  try { meta = JSON.parse(match[1]); } catch(e){}
+                }
+              }
+              meta.comments = post.comments;
+              const cleanText = data[0].relato.replace(/\[META:\{.*?\}\]\s*/, '');
+              const updatedRelato = `[META:${JSON.stringify(meta)}] ${cleanText}`;
+              await window.supabaseClient.from('reports').update({ relato: updatedRelato }).eq('id', postId);
+            }
+          } catch (e) {
+            console.warn('Erro ao persistir comentário no Supabase:', e);
+          }
+        }
+      }
+    }
+
+    // ====================================================================
+    // SISTEMA DE STATUS & STORIES DA COMUNIDADE (UPLOAD OU AO VIVO)
+    // ====================================================================
+    let communityStories = [
+      {
+        id: 'story-mariana',
+        author: 'Mariana Costa',
+        avatar: '👩',
+        hospital: 'UPA Campo Limpo',
+        time: 'Há 15 min',
+        type: 'text_story',
+        bgGradient: 'from-emerald-700 to-teal-900',
+        caption: 'Triada na classificação amarela. Médico chamando rápido hoje!'
+      },
+      {
+        id: 'story-carlos',
+        author: 'Carlos Eduardo',
+        avatar: '👨‍💼',
+        hospital: 'Hospital São Paulo',
+        time: 'Há 40 min',
+        type: 'text_story',
+        bgGradient: 'from-blue-700 to-slate-900',
+        caption: 'Fila do raio-X organizada, cerca de 30 minutos de espera.'
+      },
+      {
+        id: 'story-juliana',
+        author: 'Juliana Mendes',
+        avatar: '👩‍🦰',
+        hospital: 'Hospital HMU',
+        time: 'Há 1h',
+        type: 'text_story',
+        bgGradient: 'from-rose-700 to-slate-900',
+        caption: 'Aguardando medicação na sala de observação. Equipe prestativa.'
+      }
+    ];
+
+    let currentStoryTimer = null;
+
+    function openCreateStoryModal() {
+      const modal = document.getElementById('modal-create-story');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function handleStoryUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      if (file.size > 30 * 1024 * 1024) {
+        alert('O arquivo selecionado é muito grande. Escolha um vídeo ou imagem com até 30MB.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        const isVideo = file.type.startsWith('video');
+        const authorName = (currentUser && currentUser.name) || 'Meu Status';
+        const authorAvatar = (currentUser && currentUser.avatar) || '✨';
+        const hospName = detectedHospitalName || 'Hospital / Unidade de Saúde';
+
+        const newStory = {
+          id: 'story-upload-' + Date.now(),
+          author: authorName,
+          avatar: authorAvatar,
+          hospital: hospName,
+          time: 'Agora mesmo',
+          type: isVideo ? 'video' : 'image',
+          mediaUrl: dataUrl,
+          caption: isVideo ? 'Depoimento em vídeo compartilhado pelo paciente.' : 'Foto da unidade de saúde compartilhada no Status.'
+        };
+
+        communityStories.unshift(newStory);
+        renderStories();
+        closeModal('modal-create-story');
+        openStoryViewer(newStory.id);
+        alert('✓ Story publicado com sucesso no seu Status!');
+      };
+      reader.readAsDataURL(file);
+      event.target.value = '';
+    }
+
+    function openStoryViewer(storyId) {
+      let story = communityStories.find(s => s.id === storyId);
+      if (!story) {
+        const post = socialPosts.find(p => p.id === storyId);
+        if (post) {
+          story = {
+            id: post.id,
+            author: post.author,
+            avatar: post.avatar,
+            hospital: post.hospital,
+            time: post.createdAt || 'Hoje',
+            type: post.mediaType === 'video' ? 'video' : (post.mediaType === 'audio' ? 'audio' : 'text_story'),
+            mediaUrl: post.videoBlobUrl || post.audioBlobUrl,
+            caption: post.text
+          };
+        }
+      }
+      if (!story) return;
+
+      const modal = document.getElementById('modal-story-viewer');
+      const authorEl = document.getElementById('story-viewer-author');
+      const avatarEl = document.getElementById('story-viewer-avatar');
+      const hospitalEl = document.getElementById('story-viewer-hospital');
+      const timeEl = document.getElementById('story-viewer-time');
+      const captionEl = document.getElementById('story-viewer-caption');
+      const mediaContainer = document.getElementById('story-viewer-media-container');
+      const progressBar = document.getElementById('story-progress-bar');
+
+      if (authorEl) authorEl.innerText = story.author;
+      if (avatarEl) avatarEl.innerHTML = renderAvatarHTML(story.avatar);
+      if (hospitalEl) hospitalEl.innerText = story.hospital;
+      if (timeEl) timeEl.innerText = story.time;
+      if (captionEl) captionEl.innerText = story.caption || 'Relato de espera no atendimento.';
+
+      if (mediaContainer) {
+        if (story.type === 'video' && story.mediaUrl) {
+          mediaContainer.innerHTML = `<video src="${story.mediaUrl}" autoplay controls playsinline class="max-h-[55vh] max-w-full rounded-2xl bg-black"></video>`;
+        } else if (story.type === 'image' && story.mediaUrl) {
+          mediaContainer.innerHTML = `<img src="${story.mediaUrl}" alt="Story" class="max-h-[55vh] max-w-full rounded-2xl object-contain bg-black">`;
+        } else if (story.type === 'audio' && story.mediaUrl) {
+          mediaContainer.innerHTML = `
+            <div class="p-6 text-center space-y-3 bg-slate-900 rounded-2xl border border-slate-800 w-full max-w-xs">
+              <div class="text-4xl animate-bounce">🎙️</div>
+              <div class="text-xs font-bold text-emerald-400">Depoimento em Áudio</div>
+              <audio src="${story.mediaUrl}" autoplay controls class="w-full"></audio>
+            </div>
+          `;
+        } else {
+          mediaContainer.innerHTML = `
+            <div class="p-6 text-center space-y-3 bg-gradient-to-br ${story.bgGradient || 'from-teal-800 to-slate-900'} rounded-2xl w-full max-w-xs flex flex-col items-center justify-center min-h-[220px]">
+              <div class="text-3xl">🏥</div>
+              <p class="text-sm font-semibold text-white leading-relaxed">${story.caption}</p>
+            </div>
+          `;
+        }
+      }
+
+      if (modal) modal.classList.remove('hidden');
+
+      // Animação da barra de progresso
+      if (progressBar) {
+        progressBar.style.width = '0%';
+        if (currentStoryTimer) clearInterval(currentStoryTimer);
+        let progress = 0;
+        currentStoryTimer = setInterval(() => {
+          progress += 2;
+          progressBar.style.width = progress + '%';
+          if (progress >= 100) {
+            clearInterval(currentStoryTimer);
+          }
+        }, 150);
+      }
+    }
+
+    function closeStoryViewer() {
+      if (currentStoryTimer) clearInterval(currentStoryTimer);
+      const modal = document.getElementById('modal-story-viewer');
+      if (modal) modal.classList.add('hidden');
+      const mediaContainer = document.getElementById('story-viewer-media-container');
+      if (mediaContainer) mediaContainer.innerHTML = '';
+    }
+
     function renderStories() {
       const list = document.getElementById('stories-list');
       if (!list) return;
 
-      const mediaPosts = socialPosts.filter(p => p.mediaType === 'video' || p.mediaType === 'audio');
-      if (mediaPosts.length === 0) {
-        list.innerHTML = `<span class="text-xs text-slate-400 italic pl-1">Grave um vídeo ou áudio para aparecer nos destaques!</span>`;
-        return;
-      }
+      // Unifica relatos com mídia real com os stories da comunidade
+      const allDisplayStories = [...communityStories];
+      
+      socialPosts.forEach(p => {
+        if ((p.mediaType === 'video' || p.mediaType === 'audio') && !allDisplayStories.some(s => s.id === p.id)) {
+          allDisplayStories.push({
+            id: p.id,
+            author: p.isAnon ? 'Anônimo' : p.author,
+            avatar: p.isAnon ? '🎭' : p.avatar,
+            hospital: p.hospital,
+            time: p.createdAt || 'Hoje',
+            type: p.mediaType,
+            mediaUrl: p.videoBlobUrl || p.audioBlobUrl,
+            caption: p.text
+          });
+        }
+      });
 
-      list.innerHTML = mediaPosts.map(p => `
-        <div onclick="alert('Depoimento de ${p.author}: ${p.text}')" class="flex flex-col items-center shrink-0 cursor-pointer group">
+      list.innerHTML = allDisplayStories.map(s => `
+        <div onclick="openStoryViewer('${s.id}')" class="flex flex-col items-center shrink-0 cursor-pointer group">
           <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full p-0.5 story-ring group-hover:scale-105 transition-transform">
-            <div class="w-full h-full rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-white text-sm font-bold">
-              ${p.mediaType === 'video' ? '📹' : '🎙️'}
+            <div class="w-full h-full rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-white text-sm font-bold overflow-hidden">
+              ${renderAvatarHTML(s.avatar)}
             </div>
           </div>
-          <span class="text-[10px] font-semibold text-slate-700 mt-1 max-w-[65px] truncate text-center">${p.isAnon ? 'Anônimo' : p.author}</span>
+          <span class="text-[10px] font-semibold text-slate-700 mt-1 max-w-[65px] truncate text-center">${s.author}</span>
         </div>
       `).join('');
     }
@@ -4875,6 +5272,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               const postUsername = (meta && meta.username) || null;
               const videoUrl = r.video_url || null;
               const audioUrl = r.audio_url || null;
+              const postComments = (meta && Array.isArray(meta.comments)) ? meta.comments : [];
 
               freshWaitRecords.push({
                 id: r.id,
@@ -4891,6 +5289,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                 userId: postUserId,
                 username: postUsername,
                 isPublic: isPublic,
+                comments: postComments,
                 createdAt: formatPostDateTime(r.created_at),
                 createdAtIso: r.created_at,
                 text: cleanText || 'Relato publicado na rede Minha Voz.'
@@ -4918,7 +5317,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                 likes: 1,
                 hasLiked: false,
                 pressures: 1,
-                commentsCount: 0,
+                comments: postComments,
+                commentsCount: postComments.length,
                 createdAt: formatPostDateTime(r.created_at),
                 createdAtIso: r.created_at,
                 isAnon: Boolean(r.anonimo)
@@ -4949,6 +5349,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               const isPublic = meta ? (meta.isPublic !== false) : true;
               const postUserId = (meta && meta.userId) || w.user_id || null;
               const postUsername = (meta && meta.username) || null;
+              const postComments = (meta && Array.isArray(meta.comments)) ? meta.comments : [];
 
               if (!freshWaitRecords.some(r => r.id === w.id)) {
                 freshWaitRecords.push({
@@ -4966,6 +5367,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   userId: postUserId,
                   username: postUsername,
                   isPublic: isPublic,
+                  comments: postComments,
                   createdAt: formatPostDateTime(w.created_at),
                   createdAtIso: w.created_at,
                   text: cleanText
@@ -4994,7 +5396,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   likes: 1,
                   hasLiked: false,
                   pressures: 1,
-                  commentsCount: 0,
+                  comments: postComments,
+                  commentsCount: postComments.length,
                   createdAt: formatPostDateTime(w.created_at),
                   createdAtIso: w.created_at,
                   isAnon: false
@@ -5044,6 +5447,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   const isPublic = meta ? (meta.isPublic !== false) : true;
                   const postUserId = (meta && meta.userId) || r.user_id || null;
                   const postUsername = (meta && meta.username) || null;
+                  const postComments = (meta && Array.isArray(meta.comments)) ? meta.comments : [];
 
                   const newPostObj = {
                     id: r.id,
@@ -5067,7 +5471,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                     likes: 1,
                     hasLiked: false,
                     pressures: 1,
-                    commentsCount: 0,
+                    comments: postComments,
+                    commentsCount: postComments.length,
                     createdAt: formatPostDateTime(r.created_at || new Date()),
                     createdAtIso: r.created_at || new Date().toISOString(),
                     isAnon: Boolean(r.anonimo)
@@ -5091,6 +5496,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                     userId: postUserId,
                     username: postUsername,
                     isPublic: isPublic,
+                    comments: postComments,
                     createdAt: formatPostDateTime(r.created_at || new Date()),
                     createdAtIso: r.created_at || new Date().toISOString(),
                     text: cleanText
@@ -5123,6 +5529,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   const city = (meta && meta.city) || w.cidade || 'São Paulo';
                   const state = (meta && meta.state) || w.estado || 'SP';
                   const cleanText = w.comentario ? w.comentario.replace(/\[META:\{.*?\}\]\s*/, '') : `Espera apurada no hospital ${hosp}`;
+                  const postComments = (meta && Array.isArray(meta.comments)) ? meta.comments : [];
 
                   const waitPost = {
                     id: waitPostId,
@@ -5142,7 +5549,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                     likes: 1,
                     hasLiked: false,
                     pressures: 1,
-                    commentsCount: 0,
+                    comments: postComments,
+                    commentsCount: postComments.length,
                     createdAt: formatPostDateTime(w.created_at || new Date()),
                     createdAtIso: w.created_at || new Date().toISOString(),
                     isAnon: false
