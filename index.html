@@ -1794,6 +1794,8 @@
   <!-- 5. JAVASCRIPT EM TEMPO REAL: WEBRTC, GEOLOCALIZAÇÃO E SUPABASE       -->
   <!-- ==================================================================== -->
   <script>
+    // Modo de mídia ativo no compositor ('texto', 'audio' ou 'video')
+    let activeMediaMode = 'texto';
 
     // ====================================================================
     // NAVEGAÇÃO E CONTROLES DE INTERFACE
@@ -3639,159 +3641,183 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     // PUBLICAÇÃO DE RELATO COM DADOS ESTRUTURADOS E SINCRONIZAÇÃO TOTAL
     // ====================================================================
     async function publishPost() {
-      const text = document.getElementById('composer-text').value.trim();
-      const category = document.getElementById('composer-category').value;
-      const specialty = document.getElementById('composer-specialty').value.trim() || 'Atendimento / Procedimento';
-      const waitVal = parseFloat(document.getElementById('composer-wait-val').value) || 2;
-      const waitUnit = document.getElementById('composer-wait-unit').value;
-      const hospital = document.getElementById('composer-hospital').value.trim() || detectedLocationName;
-      const locationVal = document.getElementById('composer-location').value.trim() || ((currentUser && currentUser.city) || 'São Paulo, SP');
-      const isAnon = document.getElementById('composer-anon').checked;
-      const isPublic = document.getElementById('composer-visibility') 
-        ? (document.getElementById('composer-visibility').value === 'public') 
-        : true;
-
-      if (!text && !recordedVideoBlobUrl && !recordedAudioBlobUrl && !recordedVideoDataUrl && !recordedAudioDataUrl) {
-        alert('Por favor, escreva um relato ou grave um áudio/vídeo antes de publicar.');
-        return;
+      const btnPublish = document.querySelector('#composer-step-5 button[onclick="publishPost()"]');
+      const originalBtnHTML = btnPublish ? btnPublish.innerHTML : '<span>✓ Confirmar e Publicar Relato</span>';
+      if (btnPublish) {
+        btnPublish.disabled = true;
+        btnPublish.innerHTML = '<span>⏳ Confirmando e Publicando...</span>';
       }
 
-      let city = 'São Paulo';
-      let state = 'SP';
-      if (locationVal.includes(',')) {
-        const parts = locationVal.split(',');
-        city = parts[0].trim();
-        state = parts[1].trim().toUpperCase();
-      } else {
-        city = locationVal;
-      }
+      try {
+        const textEl = document.getElementById('composer-text');
+        const text = textEl ? textEl.value.trim() : '';
+        const catEl = document.getElementById('composer-category');
+        const category = catEl ? catEl.value : 'Emergência';
+        const specEl = document.getElementById('composer-specialty');
+        const specialty = (specEl && specEl.value.trim()) || 'Atendimento / Procedimento';
+        const waitValEl = document.getElementById('composer-wait-val');
+        const waitVal = parseFloat(waitValEl ? waitValEl.value : '2') || 2;
+        const waitUnitEl = document.getElementById('composer-wait-unit');
+        const waitUnit = waitUnitEl ? waitUnitEl.value : 'horas';
+        const hospEl = document.getElementById('composer-hospital');
+        const hospital = (hospEl && hospEl.value.trim()) || detectedHospitalName || 'Hospital / Unidade de Saúde';
+        const locEl = document.getElementById('composer-location');
+        const locationVal = (locEl && locEl.value.trim()) || ((currentUser && currentUser.city) || 'São Paulo, SP');
+        const anonEl = document.getElementById('composer-anon');
+        const isAnon = anonEl ? anonEl.checked : false;
+        const visEl = document.getElementById('composer-visibility');
+        const isPublic = visEl ? (visEl.value === 'public') : true;
 
-      const currentAuthor = isAnon ? 'Paciente Anônimo' : ((currentUser && currentUser.name) || 'Paciente');
-      const currentAvatar = isAnon ? '🎭' : ((currentUser && currentUser.avatar) || '👨');
-      const currentUserId = (currentUser && currentUser.id) || null;
-      const currentUsername = (currentUser && currentUser.username) || null;
+        let city = 'São Paulo';
+        let state = 'SP';
+        if (locationVal.includes(',')) {
+          const parts = locationVal.split(',');
+          city = parts[0].trim();
+          state = parts[1].trim().toUpperCase();
+        } else {
+          city = locationVal;
+        }
 
-      const metaObj = { 
-        hospital, 
-        category, 
-        specialty, 
-        waitVal, 
-        waitUnit, 
-        city, 
-        state, 
-        author: currentAuthor, 
-        avatar: currentAvatar,
-        userId: currentUserId,
-        username: currentUsername,
-        isPublic: isPublic
-      };
+        const currentAuthor = isAnon ? 'Paciente Anônimo' : ((currentUser && currentUser.name) || 'Paciente');
+        const currentAvatar = isAnon ? '🎭' : ((currentUser && currentUser.avatar) || '👨');
+        const currentUserId = (currentUser && currentUser.id) || null;
+        const currentUsername = (currentUser && currentUser.username) || null;
 
-      const payloadPost = {
-        mediaType: activeMediaMode,
-        isAnon: isAnon,
-        text: text || (activeMediaMode === 'video' ? 'Depoimento gravado em vídeo pelo paciente.' : (activeMediaMode === 'audio' ? 'Depoimento em áudio gravado.' : 'Relato publicado na rede Minha Voz.')),
-        videoDataUrl: recordedVideoDataUrl,
-        audioDataUrl: recordedAudioDataUrl
-      };
+        const defaultText = `Registro de tempo de espera em ${hospital} (${category} - ${specialty}): ${waitVal} ${waitUnit}.`;
+        const finalPostText = text || (activeMediaMode === 'video' ? 'Depoimento gravado em vídeo pelo paciente.' : (activeMediaMode === 'audio' ? 'Depoimento em áudio gravado.' : defaultText));
 
-      // 1. Gravação direta no Supabase
-      let savedRecord = null;
-      if (window.supabaseClient) {
-        savedRecord = await saveReportToSupabase(payloadPost, metaObj);
-      }
+        const metaObj = { 
+          hospital, 
+          category, 
+          specialty, 
+          waitVal, 
+          waitUnit, 
+          city, 
+          state, 
+          author: currentAuthor, 
+          avatar: currentAvatar,
+          userId: currentUserId,
+          username: currentUsername,
+          isPublic: isPublic
+        };
 
-      const finalId = (savedRecord && savedRecord.id) ? savedRecord.id : ('post-' + Date.now());
-      const finalCreatedAtIso = (savedRecord && savedRecord.created_at) ? savedRecord.created_at : new Date().toISOString();
-      const finalCreatedAtStr = formatPostDateTime(finalCreatedAtIso);
+        const payloadPost = {
+          mediaType: typeof activeMediaMode !== 'undefined' ? activeMediaMode : 'texto',
+          isAnon: isAnon,
+          text: finalPostText,
+          videoDataUrl: typeof recordedVideoDataUrl !== 'undefined' ? recordedVideoDataUrl : null,
+          audioDataUrl: typeof recordedAudioDataUrl !== 'undefined' ? recordedAudioDataUrl : null
+        };
 
-      const waitRecord = {
-        id: finalId,
-        hospital: hospital,
-        hospitalShort: hospital.length > 25 ? hospital.slice(0, 22) + '...' : hospital,
-        category: category,
-        specialty: specialty,
-        waitValue: waitVal,
-        waitUnit: waitUnit,
-        city: city,
-        state: state,
-        author: currentAuthor,
-        avatar: currentAvatar,
-        userId: currentUserId,
-        username: currentUsername,
-        isPublic: isPublic,
-        createdAt: finalCreatedAtStr,
-        createdAtIso: finalCreatedAtIso,
-        text: payloadPost.text
-      };
+        // 1. Gravação direta no Supabase
+        let savedRecord = null;
+        if (window.supabaseClient) {
+          try {
+            savedRecord = await saveReportToSupabase(payloadPost, metaObj);
+          } catch (errSup) {
+            console.warn('Erro na chamada saveReportToSupabase:', errSup);
+          }
+        }
 
-      const newPost = {
-        id: finalId,
-        author: waitRecord.author,
-        avatar: waitRecord.avatar,
-        userId: currentUserId,
-        username: currentUsername,
-        isPublic: isPublic,
-        location: `${city}, ${state}`,
-        hospital: waitRecord.hospitalShort,
-        category: category,
-        specialty: specialty,
-        waitValue: waitVal,
-        waitUnit: waitUnit,
-        waitDays: waitUnit === 'dias' ? waitVal : Math.round(waitVal * 24),
-        waitHours: waitUnit === 'horas' ? waitVal : (waitVal * 24),
-        mediaType: activeMediaMode,
-        videoBlobUrl: recordedVideoBlobUrl || recordedVideoDataUrl,
-        audioBlobUrl: recordedAudioBlobUrl || recordedAudioDataUrl,
-        videoDataUrl: recordedVideoDataUrl,
-        audioDataUrl: recordedAudioDataUrl,
-        text: waitRecord.text,
-        likes: 1,
-        hasLiked: true,
-        pressures: 1,
-        commentsCount: 0,
-        createdAt: finalCreatedAtStr,
-        createdAtIso: finalCreatedAtIso,
-        isAnon: isAnon
-      };
+        const finalId = (savedRecord && savedRecord.id) ? savedRecord.id : ('post-' + Date.now());
+        const finalCreatedAtIso = (savedRecord && savedRecord.created_at) ? savedRecord.created_at : new Date().toISOString();
+        const finalCreatedAtStr = formatPostDateTime(finalCreatedAtIso);
 
-      // Adiciona no topo e ordena estritamente por data decrescente
-      const existingIdx = socialPosts.findIndex(p => p.id === finalId);
-      if (existingIdx !== -1) {
-        socialPosts[existingIdx] = newPost;
-      } else {
-        socialPosts.unshift(newPost);
-      }
-      socialPosts.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
+        const waitRecord = {
+          id: finalId,
+          hospital: hospital,
+          hospitalShort: hospital.length > 25 ? hospital.slice(0, 22) + '...' : hospital,
+          category: category,
+          specialty: specialty,
+          waitValue: waitVal,
+          waitUnit: waitUnit,
+          city: city,
+          state: state,
+          author: currentAuthor,
+          avatar: currentAvatar,
+          userId: currentUserId,
+          username: currentUsername,
+          isPublic: isPublic,
+          createdAt: finalCreatedAtStr,
+          createdAtIso: finalCreatedAtIso,
+          text: finalPostText
+        };
 
-      const existingRecIdx = realWaitingRecords.findIndex(r => r.id === finalId);
-      if (existingRecIdx !== -1) {
-        realWaitingRecords[existingRecIdx] = waitRecord;
-      } else {
-        realWaitingRecords.unshift(waitRecord);
-      }
-      realWaitingRecords.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
+        const newPost = {
+          id: finalId,
+          author: waitRecord.author,
+          avatar: waitRecord.avatar,
+          userId: currentUserId,
+          username: currentUsername,
+          isPublic: isPublic,
+          location: `${city}, ${state}`,
+          hospital: waitRecord.hospitalShort,
+          category: category,
+          specialty: specialty,
+          waitValue: waitVal,
+          waitUnit: waitUnit,
+          waitDays: waitUnit === 'dias' ? waitVal : Math.round(waitVal * 24),
+          waitHours: waitUnit === 'horas' ? waitVal : (waitVal * 24),
+          mediaType: payloadPost.mediaType,
+          videoBlobUrl: (typeof recordedVideoBlobUrl !== 'undefined' && recordedVideoBlobUrl) || payloadPost.videoDataUrl,
+          audioBlobUrl: (typeof recordedAudioBlobUrl !== 'undefined' && recordedAudioBlobUrl) || payloadPost.audioDataUrl,
+          videoDataUrl: payloadPost.videoDataUrl,
+          audioDataUrl: payloadPost.audioDataUrl,
+          text: finalPostText,
+          likes: 1,
+          hasLiked: true,
+          pressures: 1,
+          commentsCount: 0,
+          createdAt: finalCreatedAtStr,
+          createdAtIso: finalCreatedAtIso,
+          isAnon: isAnon
+        };
 
-      saveWaitRecords();
-      renderFeed();
-      renderStories();
-      updateMapStatistics();
+        // Adiciona no topo e ordena estritamente por data decrescente
+        const existingIdx = socialPosts.findIndex(p => p.id === finalId);
+        if (existingIdx !== -1) {
+          socialPosts[existingIdx] = newPost;
+        } else {
+          socialPosts.unshift(newPost);
+        }
+        socialPosts.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
 
-      // Reset dos campos do compositor
-      document.getElementById('composer-text').value = '';
-      if (typeof removeAttachedMedia === 'function') removeAttachedMedia();
-      if (typeof cancelMediaRecord === 'function') cancelMediaRecord();
-      if (typeof setComposerStep === 'function') setComposerStep(1);
+        const existingRecIdx = realWaitingRecords.findIndex(r => r.id === finalId);
+        if (existingRecIdx !== -1) {
+          realWaitingRecords[existingRecIdx] = waitRecord;
+        } else {
+          realWaitingRecords.unshift(waitRecord);
+        }
+        realWaitingRecords.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
 
-      // Scroll suave para o novo relato
-      const postsContainer = document.getElementById('posts-container');
-      if (postsContainer) postsContainer.scrollIntoView({ behavior: 'smooth' });
+        saveWaitRecords();
+        renderFeed();
+        renderStories();
+        updateMapStatistics();
 
-      if (savedRecord) {
+        // Reset dos campos do compositor
+        if (textEl) textEl.value = '';
+        if (typeof removeAttachedMedia === 'function') removeAttachedMedia();
+        if (typeof cancelMediaRecord === 'function') cancelMediaRecord();
+        activeMediaMode = 'texto';
+        if (typeof setComposerStep === 'function') setComposerStep(1);
+
+        // Scroll suave para o novo relato publicado
+        const postsContainer = document.getElementById('posts-container');
+        if (postsContainer) postsContainer.scrollIntoView({ behavior: 'smooth' });
+
         alert(isPublic 
           ? '✓ Relato publicado com sucesso!\nGravado e sincronizado no banco de dados Supabase em tempo real.' 
           : '🔒 Relato salvo como PRIVADO no Supabase com sucesso!\nFica visível apenas para você na sua conta.');
-      } else {
-        alert('✓ Relato publicado com sucesso!');
+
+      } catch (err) {
+        console.error('Erro ao publicar relato:', err);
+        alert('Aconteceu um erro ao tentar publicar. Por favor, tente novamente.');
+      } finally {
+        if (btnPublish) {
+          btnPublish.disabled = false;
+          btnPublish.innerHTML = originalBtnHTML;
+        }
       }
     }
 
