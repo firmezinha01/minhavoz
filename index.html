@@ -104,14 +104,11 @@
   <header class="bg-white/95 backdrop-blur-md border-b border-[#DDE6E2] sticky top-0 z-40 shadow-xs">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-3 sm:gap-6">
       
-      <!-- Logo Principal com Tag DODA em Negrito -->
-      <div class="flex items-center space-x-3 cursor-pointer shrink-0" onclick="window.scrollTo({top:0, behavior:'smooth'}); setFeedFilter('todos');">
-        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-[#103D36] to-[#16A085] flex items-center justify-center text-white font-black shadow-md shadow-[#16A085]/20 text-xl sm:text-2xl">
-          <span>🏥</span>
-        </div>
-        <div class="flex flex-col justify-center">
-          <span class="text-2xl sm:text-3xl font-black tracking-wider text-[#103D36] uppercase leading-none">DODA</span>
-          <span class="text-xs sm:text-sm font-bold text-[#16A085] tracking-normal leading-tight mt-0.5">Minha Voz</span>
+      <!-- Logo Principal Tipográfico: DODA Centralizado com Minha Voz (Sem Ícone) -->
+      <div class="flex items-center cursor-pointer shrink-0" onclick="window.scrollTo({top:0, behavior:'smooth'}); setFeedFilter('todos');">
+        <div class="flex flex-col items-center justify-center text-center">
+          <span class="text-lg sm:text-xl font-black tracking-wider text-[#103D36] uppercase leading-none">DODA</span>
+          <span class="text-xs sm:text-sm font-bold text-[#16A085] tracking-wide leading-tight mt-0.5">Minha Voz</span>
           <span class="text-[10px] sm:text-[11px] text-[#66746F] hidden md:inline-block font-medium mt-0.5">
             Rede Social da Saúde e Transparência das Filas do SUS
           </span>
@@ -150,11 +147,7 @@
       <!-- Ações do Cabeçalho e Usuário -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         
-        <!-- Botão Cronômetro Mobile Rápido -->
-        <button onclick="openTimerModal()" class="lg:hidden flex items-center gap-1 px-3 py-1.5 bg-[#C93C45] hover:bg-rose-700 text-white font-bold text-xs rounded-full shadow-xs active-scale">
-          <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-          <span>⏱️ Espera</span>
-        </button>
+
 
         <!-- Seção Usuário / Login no Header -->
         <div id="header-user-section" class="flex items-center space-x-2 pl-2 border-l border-[#DDE6E2]">
@@ -303,26 +296,7 @@
           </div>
         </div>
 
-        <!-- Card Quando Deslogado (NÃO MOSTRA PACIENTE VISITANTE!) -->
-        <div id="sidebar-logged-out-card" class="bg-white rounded-3xl p-5 border border-[#DDE6E2] shadow-xs text-center space-y-3">
-          <div class="w-12 h-12 rounded-2xl bg-[#E9F5F1] text-[#103D36] flex items-center justify-center text-2xl mx-auto font-bold shadow-xs border border-[#16A085]/30">
-            🔑
-          </div>
-          <div>
-            <h4 class="text-sm font-bold text-[#103D36]">Conecte sua Conta</h4>
-            <p class="text-xs text-[#66746F] mt-1 leading-relaxed">
-              Faça login ou cadastre-se para registrar relatos, medir sua espera e acompanhar suas filas no SUS.
-            </p>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pt-1">
-            <button onclick="openLoginModal('login')" class="py-2.5 bg-[#103D36] hover:bg-[#16A085] text-white font-bold text-xs rounded-xl shadow-xs transition-all active-scale flex items-center justify-center gap-1">
-              <span>🔑 Entrar</span>
-            </button>
-            <button onclick="openLoginModal('register')" class="py-2.5 bg-[#16A085] hover:bg-[#103D36] text-white font-bold text-xs rounded-xl shadow-xs transition-all active-scale flex items-center justify-center gap-1">
-              <span>📝 Cadastrar</span>
-            </button>
-          </div>
-        </div>
+
 
         <!-- Menu Lateral com Ícones Consistentes -->
         <nav class="bg-white rounded-3xl p-2.5 border border-[#DDE6E2] shadow-xs space-y-1 text-xs font-semibold">
@@ -2568,7 +2542,7 @@
 
       // Sidebar
       const sCard = document.getElementById('sidebar-user-card');
-      const sLoggedOut = document.getElementById('sidebar-logged-out-card');
+      // sLoggedOut removido
       const sAvatar = document.getElementById('sidebar-user-avatar');
       const sName = document.getElementById('sidebar-user-name');
       const sInfo = document.getElementById('sidebar-user-info');
@@ -2576,7 +2550,7 @@
 
       if (isLogged) {
         if (sCard) sCard.classList.remove('hidden');
-        if (sLoggedOut) sLoggedOut.classList.add('hidden');
+        
         if (sAvatar) sAvatar.innerHTML = renderAvatarHTML(currentUser.avatar);
         if (sName) sName.innerText = currentUser.name || currentUser.username;
         if (sInfo) sInfo.innerHTML = `Login: <strong>${currentUser.username}</strong> • ${currentUser.city || 'São Paulo, SP'}`;
@@ -2588,7 +2562,7 @@
         }
       } else {
         if (sCard) sCard.classList.add('hidden');
-        if (sLoggedOut) sLoggedOut.classList.remove('hidden');
+        
       }
 
       // Composer
