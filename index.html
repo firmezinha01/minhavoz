@@ -3416,16 +3416,36 @@
             waitVal: elapsedHours,
             waitUnit: 'horas',
             city: city,
-            state: state
+            state: state,
+            author: (currentUser && currentUser.name) || 'Paciente SUS',
+            avatar: (currentUser && currentUser.avatar) || '⏱️',
+            userId: (currentUser && currentUser.id) || null,
+            username: (currentUser && currentUser.username) || null,
+            isPublic: true
           };
           saveWaitingTimeRecordToSupabase({
             inicio: new Date(Date.now() - timerSeconds * 1000).toISOString(),
             fim: new Date().toISOString(),
             text: `Atendimento no setor ${sectorName} do ${hospName}${addrName ? ' (' + addrName + ')' : ''} cronometrado em ${finalTime}.`
-          }, waitMeta).then(savedId => {
-            if (savedId) {
-              waitRecord.id = savedId;
+          }, waitMeta).then(savedRow => {
+            if (savedRow) {
+              const realId = savedRow.id || savedRow;
+              const realIso = (savedRow && savedRow.created_at) ? savedRow.created_at : new Date().toISOString();
+              const oldId = waitRecord.id;
+              waitRecord.id = realId;
+              waitRecord.createdAtIso = realIso;
+              waitRecord.createdAt = formatPostDateTime(realIso);
+
+              const sp = socialPosts.find(p => p.id === oldId);
+              if (sp) {
+                sp.id = 'wait-' + realId;
+                sp.createdAtIso = realIso;
+                sp.createdAt = formatPostDateTime(realIso);
+              }
+              socialPosts.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
+              realWaitingRecords.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
               saveWaitRecords();
+              renderFeed();
             }
           });
         }
@@ -3563,7 +3583,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
         if (res.data && res.data[0]) {
           console.log('✓ Relato persistido no Supabase com ID:', res.data[0].id);
-          return res.data[0].id;
+          return res.data[0];
         }
       } catch (err) {
         console.error('Exceção ao inserir no Supabase:', err);
@@ -3620,7 +3640,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
         if (res.data && res.data[0]) {
           console.log('✓ Tempo de espera persistido no Supabase:', res.data[0].id);
-          return res.data[0].id;
+          return res.data[0];
         }
       } catch (err) {
         console.error('Exceção ao inserir waiting_times no Supabase:', err);
@@ -3659,14 +3679,46 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         city = locationVal;
       }
 
-      const tempId = 'post-' + Date.now();
       const currentAuthor = isAnon ? 'Paciente Anônimo' : ((currentUser && currentUser.name) || 'Paciente SUS');
       const currentAvatar = isAnon ? '🎭' : ((currentUser && currentUser.avatar) || '👨');
       const currentUserId = (currentUser && currentUser.id) || null;
       const currentUsername = (currentUser && currentUser.username) || null;
 
+      const metaObj = { 
+        hospital, 
+        category, 
+        specialty, 
+        waitVal, 
+        waitUnit, 
+        city, 
+        state, 
+        author: currentAuthor, 
+        avatar: currentAvatar,
+        userId: currentUserId,
+        username: currentUsername,
+        isPublic: isPublic
+      };
+
+      const payloadPost = {
+        mediaType: activeMediaMode,
+        isAnon: isAnon,
+        text: text || (activeMediaMode === 'video' ? 'Depoimento gravado em vídeo pelo paciente.' : (activeMediaMode === 'audio' ? 'Depoimento em áudio gravado.' : 'Relato publicado na rede Minha Voz.')),
+        videoDataUrl: recordedVideoDataUrl,
+        audioDataUrl: recordedAudioDataUrl
+      };
+
+      // 1. Gravação direta no Supabase
+      let savedRecord = null;
+      if (window.supabaseClient) {
+        savedRecord = await saveReportToSupabase(payloadPost, metaObj);
+      }
+
+      const finalId = (savedRecord && savedRecord.id) ? savedRecord.id : ('post-' + Date.now());
+      const finalCreatedAtIso = (savedRecord && savedRecord.created_at) ? savedRecord.created_at : new Date().toISOString();
+      const finalCreatedAtStr = formatPostDateTime(finalCreatedAtIso);
+
       const waitRecord = {
-        id: tempId,
+        id: finalId,
         hospital: hospital,
         hospitalShort: hospital.length > 25 ? hospital.slice(0, 22) + '...' : hospital,
         category: category,
@@ -3680,17 +3732,13 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         userId: currentUserId,
         username: currentUsername,
         isPublic: isPublic,
-        createdAt: formatPostDateTime(new Date()),
-        createdAtIso: new Date().toISOString(),
-        text: text || (activeMediaMode === 'video' ? 'Depoimento gravado em vídeo pelo paciente.' : (activeMediaMode === 'audio' ? 'Depoimento em áudio gravado.' : 'Relato publicado na rede Minha Voz.'))
+        createdAt: finalCreatedAtStr,
+        createdAtIso: finalCreatedAtIso,
+        text: payloadPost.text
       };
 
-      // 1. Atualização Otimista no Banco do Mapa e no Feed Social
-      realWaitingRecords.unshift(waitRecord);
-      saveWaitRecords();
-
       const newPost = {
-        id: tempId,
+        id: finalId,
         author: waitRecord.author,
         avatar: waitRecord.avatar,
         userId: currentUserId,
@@ -3714,52 +3762,49 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         hasLiked: true,
         pressures: 1,
         commentsCount: 0,
-        createdAt: formatPostDateTime(new Date()),
-        createdAtIso: new Date().toISOString(),
+        createdAt: finalCreatedAtStr,
+        createdAtIso: finalCreatedAtIso,
         isAnon: isAnon
       };
 
-      socialPosts.unshift(newPost);
+      // Adiciona no topo e ordena estritamente por data decrescente
+      const existingIdx = socialPosts.findIndex(p => p.id === finalId);
+      if (existingIdx !== -1) {
+        socialPosts[existingIdx] = newPost;
+      } else {
+        socialPosts.unshift(newPost);
+      }
+      socialPosts.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
+
+      const existingRecIdx = realWaitingRecords.findIndex(r => r.id === finalId);
+      if (existingRecIdx !== -1) {
+        realWaitingRecords[existingRecIdx] = waitRecord;
+      } else {
+        realWaitingRecords.unshift(waitRecord);
+      }
+      realWaitingRecords.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
+
+      saveWaitRecords();
       renderFeed();
       renderStories();
       updateMapStatistics();
 
-      // 2. Sincronização Real com o Supabase
-      let supabaseSaved = false;
-      if (window.supabaseClient) {
-        const metaObj = { 
-          hospital, 
-          category, 
-          specialty, 
-          waitVal, 
-          waitUnit, 
-          city, 
-          state, 
-          author: waitRecord.author, 
-          avatar: waitRecord.avatar,
-          userId: currentUserId,
-          username: currentUsername,
-          isPublic: isPublic
-        };
-        const savedId = await saveReportToSupabase(newPost, metaObj);
-        if (savedId) {
-          newPost.id = savedId;
-          waitRecord.id = savedId;
-          saveWaitRecords();
-          supabaseSaved = true;
-        }
-      }
-
       // Reset dos campos do compositor
       document.getElementById('composer-text').value = '';
-      removeAttachedMedia();
+      if (typeof removeAttachedMedia === 'function') removeAttachedMedia();
+      if (typeof cancelMediaRecord === 'function') cancelMediaRecord();
+      if (typeof setComposerStep === 'function') setComposerStep(1);
 
-      if (!isPublic) {
-        alert(`🔒 Relato salvo como PRIVADO com sucesso!\n\nEste relato fica visível apenas para você na sua conta (${currentAuthor}).\nVocê pode torná-lo público a qualquer momento clicando em "Tornar Público Agora".`);
-      } else if (supabaseSaved) {
-        alert(`✓ Relato publicado com sucesso!\nGravado e sincronizado em tempo real no banco de dados Supabase para todos os usuários online.\nO Mapa de Espera do ${waitRecord.hospitalShort} foi recalculado.`);
+      // Scroll suave para o novo relato
+      const postsContainer = document.getElementById('posts-container');
+      if (postsContainer) postsContainer.scrollIntoView({ behavior: 'smooth' });
+
+      if (savedRecord) {
+        alert(isPublic 
+          ? '✓ Relato publicado com sucesso!\nGravado e sincronizado no banco de dados Supabase em tempo real.' 
+          : '🔒 Relato salvo como PRIVADO no Supabase com sucesso!\nFica visível apenas para você na sua conta.');
       } else {
-        alert(`✓ Relato publicado com sucesso!\nO Mapa de Espera do ${waitRecord.hospitalShort} foi recalculado.`);
+        alert('✓ Relato publicado com sucesso!');
       }
     }
 
@@ -4762,9 +4807,15 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               .catch(err => console.warn('Supabase current user sync:', err));
           }
 
-          // 1. Busca relatos da tabela reports
+          // 1. Busca relatos da tabela reports (ORDENAÇÃO DESCENDENTE)
           const { data: reportsData, error: reportsErr } = await window.supabaseClient
             .from('reports')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+          // 2. Busca cronômetros da tabela waiting_times (ORDENAÇÃO DESCENDENTE)
+          const { data: waitingData, error: waitErr } = await window.supabaseClient
+            .from('waiting_times')
             .select('*')
             .order('created_at', { ascending: false });
 
@@ -4773,7 +4824,20 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
             if (reportsErr.code === '42501' || (reportsErr.message && reportsErr.message.includes('row-level security'))) {
               showDbSyncAlert(reportsErr);
             }
-          } else if (reportsData && reportsData.length > 0) {
+          }
+
+          if (waitErr) {
+            console.warn('Supabase waiting_times fetch error:', waitErr);
+            if (waitErr.code === '42501' || (waitErr.message && waitErr.message.includes('row-level security'))) {
+              showDbSyncAlert(waitErr);
+            }
+          }
+
+          const freshPosts = [];
+          const freshWaitRecords = [];
+
+          // Processa relatos da tabela reports
+          if (reportsData && reportsData.length > 0) {
             reportsData.forEach(r => {
               let meta = null;
               if (r.relato && r.relato.includes('[META:')) {
@@ -4799,16 +4863,89 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               const videoUrl = r.video_url || null;
               const audioUrl = r.audio_url || null;
 
-              const existingRecord = realWaitingRecords.find(item => item.id === r.id);
-              if (!existingRecord) {
-                realWaitingRecords.unshift({
-                  id: r.id,
+              freshWaitRecords.push({
+                id: r.id,
+                hospital: hosp,
+                hospitalShort: hosp.length > 25 ? hosp.slice(0, 22) + '...' : hosp,
+                category: cat,
+                specialty: spec,
+                waitValue: val,
+                waitUnit: unit,
+                city: city,
+                state: state,
+                author: author,
+                avatar: avatar,
+                userId: postUserId,
+                username: postUsername,
+                isPublic: isPublic,
+                createdAt: formatPostDateTime(r.created_at),
+                createdAtIso: r.created_at,
+                text: cleanText || 'Relato publicado na rede Minha Voz.'
+              });
+
+              freshPosts.push({
+                id: r.id,
+                author: author,
+                avatar: avatar,
+                userId: postUserId,
+                username: postUsername,
+                isPublic: isPublic,
+                location: `${city}, ${state}`,
+                hospital: hosp,
+                category: cat,
+                specialty: spec,
+                waitValue: val,
+                waitUnit: unit,
+                waitDays: unit === 'dias' ? val : Math.round(val * 24),
+                waitHours: unit === 'horas' ? val : (val * 24),
+                mediaType: r.tipo_midia || 'texto',
+                videoBlobUrl: videoUrl,
+                audioBlobUrl: audioUrl,
+                text: cleanText,
+                likes: 1,
+                hasLiked: false,
+                pressures: 1,
+                commentsCount: 0,
+                createdAt: formatPostDateTime(r.created_at),
+                createdAtIso: r.created_at,
+                isAnon: Boolean(r.anonimo)
+              });
+            });
+          }
+
+          // Processa cronômetros da tabela waiting_times (integrados ao feed)
+          if (waitingData && waitingData.length > 0) {
+            waitingData.forEach(w => {
+              let meta = null;
+              if (w.comentario && w.comentario.includes('[META:')) {
+                try {
+                  const match = w.comentario.match(/\[META:(\{.*?\})\]/);
+                  if (match) meta = JSON.parse(match[1]);
+                } catch(e) {}
+              }
+
+              const hosp = (meta && meta.hospital) || w.hospital || 'Hospital SUS';
+              const cat = (meta && meta.category) || w.categoria || 'Emergência';
+              const spec = (meta && meta.specialty) || (meta && meta.sector) || w.setor || 'Emergência';
+              const val = (meta && (meta.waitVal || meta.hours)) || w.tempo_horas || 2.0;
+              const city = (meta && meta.city) || w.cidade || 'São Paulo';
+              const state = (meta && meta.state) || w.estado || 'SP';
+              const cleanText = w.comentario ? w.comentario.replace(/\[META:\{.*?\}\]\s*/, '') : `Espera apurada no hospital ${hosp}`;
+              const author = (meta && meta.author) || 'Paciente no Hospital';
+              const avatar = (meta && meta.avatar) || '⏱️';
+              const isPublic = meta ? (meta.isPublic !== false) : true;
+              const postUserId = (meta && meta.userId) || w.user_id || null;
+              const postUsername = (meta && meta.username) || null;
+
+              if (!freshWaitRecords.some(r => r.id === w.id)) {
+                freshWaitRecords.push({
+                  id: w.id,
                   hospital: hosp,
                   hospitalShort: hosp.length > 25 ? hosp.slice(0, 22) + '...' : hosp,
                   category: cat,
                   specialty: spec,
                   waitValue: val,
-                  waitUnit: unit,
+                  waitUnit: 'horas',
                   city: city,
                   state: state,
                   author: author,
@@ -4816,71 +4953,63 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   userId: postUserId,
                   username: postUsername,
                   isPublic: isPublic,
-                  createdAt: formatPostDateTime(r.created_at),
-                  createdAtIso: r.created_at,
-                  text: cleanText || 'Relato publicado na rede Minha Voz.'
+                  createdAt: formatPostDateTime(w.created_at),
+                  createdAtIso: w.created_at,
+                  text: cleanText
                 });
-              } else {
-                existingRecord.author = author;
-                existingRecord.avatar = avatar;
-                existingRecord.isPublic = isPublic;
-                existingRecord.userId = postUserId;
-                existingRecord.username = postUsername;
               }
 
-              const existingPost = socialPosts.find(p => p.id === r.id);
-              if (!existingPost) {
-                socialPosts.unshift({
-                  id: r.id,
+              const waitPostId = 'wait-' + w.id;
+              if (!freshPosts.some(p => p.id === w.id || p.id === waitPostId)) {
+                freshPosts.push({
+                  id: waitPostId,
                   author: author,
                   avatar: avatar,
                   userId: postUserId,
                   username: postUsername,
                   isPublic: isPublic,
                   location: `${city}, ${state}`,
-                  hospital: hosp,
+                  hospital: hosp.length > 25 ? hosp.slice(0, 22) + '...' : hosp,
                   category: cat,
                   specialty: spec,
                   waitValue: val,
-                  waitUnit: unit,
-                  waitDays: unit === 'dias' ? val : Math.round(val * 24),
-                  waitHours: unit === 'horas' ? val : (val * 24),
-                  mediaType: r.tipo_midia || 'texto',
-                  videoBlobUrl: videoUrl,
-                  audioBlobUrl: audioUrl,
+                  waitUnit: 'horas',
+                  waitDays: 1,
+                  waitHours: val,
+                  mediaType: 'texto',
                   text: cleanText,
                   likes: 1,
                   hasLiked: false,
                   pressures: 1,
                   commentsCount: 0,
-                  createdAt: formatPostDateTime(r.created_at),
-                  createdAtIso: r.created_at,
-                  isAnon: r.anonimo
+                  createdAt: formatPostDateTime(w.created_at),
+                  createdAtIso: w.created_at,
+                  isAnon: false
                 });
-              } else {
-                existingPost.author = author;
-                existingPost.avatar = avatar;
-                existingPost.isPublic = isPublic;
-                existingPost.userId = postUserId;
-                existingPost.username = postUsername;
-                if (videoUrl) existingPost.videoBlobUrl = videoUrl;
-                if (audioUrl) existingPost.audioBlobUrl = audioUrl;
               }
             });
+          }
+
+          // ORDENAÇÃO ESTREITAMENTE DESCENDENTE POR DATA: OS MAIS RECENTES SEMPRE NO TOPO
+          freshPosts.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
+          freshWaitRecords.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
+
+          if (freshPosts.length > 0) {
+            socialPosts = freshPosts;
+            realWaitingRecords = freshWaitRecords;
+            saveWaitRecords();
             renderFeed();
             renderStories();
             updateMapStatistics();
           }
 
-          
-          // 3. Realtime subscription para atualizar em tempo real em todas as telas
+          // 3. Subscriptions em Tempo Real (INSERT e UPDATE)
           try {
             window.supabaseClient
-              .channel('public:reports')
-              .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, payload => {
-                console.log('⚡ Atualização em tempo real recebida do Supabase:', payload.eventType);
-                if (payload.eventType === 'INSERT') {
-                  const r = payload.new;
+              .channel('public:realtime_reports_channel')
+              .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reports' }, payload => {
+                const r = payload.new;
+                if (!socialPosts.some(p => p.id === r.id)) {
                   let meta = null;
                   if (r.relato && r.relato.includes('[META:')) {
                     try {
@@ -4888,6 +5017,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                       if (match) meta = JSON.parse(match[1]);
                     } catch(e) {}
                   }
+
                   const hosp = (meta && meta.hospital) || r.hospital || 'Hospital SUS';
                   const cat = (meta && meta.category) || r.categoria || 'Emergência';
                   const spec = (meta && meta.specialty) || r.especialidade || 'Atendimento / Procedimento';
@@ -4899,250 +5029,123 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente SUS');
                   const avatar = r.anonimo ? '🎭' : ((meta && meta.avatar) || '👤');
                   const isPublic = meta ? (meta.isPublic !== false) : true;
+                  const postUserId = (meta && meta.userId) || r.user_id || null;
+                  const postUsername = (meta && meta.username) || null;
 
-                  if (!socialPosts.find(p => p.id === r.id)) {
-                    socialPosts.unshift({
-                      id: r.id,
-                      author: author,
-                      avatar: avatar,
-                      userId: (meta && meta.userId) || r.user_id,
-                      username: (meta && meta.username) || null,
-                      isPublic: isPublic,
-                      location: `${city}, ${state}`,
-                      hospital: hosp,
-                      category: cat,
-                      specialty: spec,
-                      waitValue: val,
-                      waitUnit: unit,
-                      waitDays: unit === 'dias' ? val : Math.round(val * 24),
-                      waitHours: unit === 'horas' ? val : (val * 24),
-                      mediaType: r.tipo_midia || 'texto',
-                      videoBlobUrl: r.video_url || null,
-                      audioBlobUrl: r.audio_url || null,
-                      text: cleanText,
-                      likes: 1,
-                      hasLiked: false,
-                      pressures: 1,
-                      commentsCount: 0,
-                      createdAt: formatPostDateTime(r.created_at || new Date()),
-                      createdAtIso: r.created_at || new Date().toISOString(),
-                      isAnon: Boolean(r.anonimo)
-                    });
-                    renderFeed();
-                    renderStories();
-                    updateMapStatistics();
+                  const newPostObj = {
+                    id: r.id,
+                    author: author,
+                    avatar: avatar,
+                    userId: postUserId,
+                    username: postUsername,
+                    isPublic: isPublic,
+                    location: `${city}, ${state}`,
+                    hospital: hosp,
+                    category: cat,
+                    specialty: spec,
+                    waitValue: val,
+                    waitUnit: unit,
+                    waitDays: unit === 'dias' ? val : Math.round(val * 24),
+                    waitHours: unit === 'horas' ? val : (val * 24),
+                    mediaType: r.tipo_midia || 'texto',
+                    videoBlobUrl: r.video_url || null,
+                    audioBlobUrl: r.audio_url || null,
+                    text: cleanText,
+                    likes: 1,
+                    hasLiked: false,
+                    pressures: 1,
+                    commentsCount: 0,
+                    createdAt: formatPostDateTime(r.created_at || new Date()),
+                    createdAtIso: r.created_at || new Date().toISOString(),
+                    isAnon: Boolean(r.anonimo)
+                  };
+
+                  socialPosts.unshift(newPostObj);
+                  socialPosts.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
+
+                  const newWaitRec = {
+                    id: r.id,
+                    hospital: hosp,
+                    hospitalShort: hosp.length > 25 ? hosp.slice(0, 22) + '...' : hosp,
+                    category: cat,
+                    specialty: spec,
+                    waitValue: val,
+                    waitUnit: unit,
+                    city: city,
+                    state: state,
+                    author: author,
+                    avatar: avatar,
+                    userId: postUserId,
+                    username: postUsername,
+                    isPublic: isPublic,
+                    createdAt: formatPostDateTime(r.created_at || new Date()),
+                    createdAtIso: r.created_at || new Date().toISOString(),
+                    text: cleanText
+                  };
+                  realWaitingRecords.unshift(newWaitRec);
+                  realWaitingRecords.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
+
+                  saveWaitRecords();
+                  renderFeed();
+                  renderStories();
+                  updateMapStatistics();
+                }
+              })
+              .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'waiting_times' }, payload => {
+                const w = payload.new;
+                const waitPostId = 'wait-' + w.id;
+                if (!socialPosts.some(p => p.id === w.id || p.id === waitPostId)) {
+                  let meta = null;
+                  if (w.comentario && w.comentario.includes('[META:')) {
+                    try {
+                      const match = w.comentario.match(/\[META:(\{.*?\})\]/);
+                      if (match) meta = JSON.parse(match[1]);
+                    } catch(e) {}
                   }
+
+                  const hosp = (meta && meta.hospital) || w.hospital || 'Hospital SUS';
+                  const cat = (meta && meta.category) || w.categoria || 'Emergência';
+                  const spec = (meta && meta.specialty) || (meta && meta.sector) || w.setor || 'Emergência';
+                  const val = (meta && (meta.waitVal || meta.hours)) || w.tempo_horas || 2.0;
+                  const city = (meta && meta.city) || w.cidade || 'São Paulo';
+                  const state = (meta && meta.state) || w.estado || 'SP';
+                  const cleanText = w.comentario ? w.comentario.replace(/\[META:\{.*?\}\]\s*/, '') : `Espera apurada no hospital ${hosp}`;
+
+                  const waitPost = {
+                    id: waitPostId,
+                    author: 'Paciente no Hospital',
+                    avatar: '⏱️',
+                    isPublic: true,
+                    location: `${city}, ${state}`,
+                    hospital: hosp.length > 25 ? hosp.slice(0, 22) + '...' : hosp,
+                    category: cat,
+                    specialty: spec,
+                    waitValue: val,
+                    waitUnit: 'horas',
+                    waitDays: 1,
+                    waitHours: val,
+                    mediaType: 'texto',
+                    text: cleanText,
+                    likes: 1,
+                    hasLiked: false,
+                    pressures: 1,
+                    commentsCount: 0,
+                    createdAt: formatPostDateTime(w.created_at || new Date()),
+                    createdAtIso: w.created_at || new Date().toISOString(),
+                    isAnon: false
+                  };
+
+                  socialPosts.unshift(waitPost);
+                  socialPosts.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
+                  renderFeed();
+                  renderStories();
+                  updateMapStatistics();
                 }
               })
               .subscribe();
           } catch(e) {
-            console.warn('Realtime channel subscribe:', e);
+            console.warn('Realtime channel error:', e);
           }
-
-          // 2. Busca cronômetros da tabela waiting_times
-          const { data: waitingData, error: waitErr } = await window.supabaseClient
-            .from('waiting_times')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-          if (waitErr) {
-            console.warn('Supabase waiting_times fetch error:', waitErr);
-            if (waitErr.code === '42501' || (waitErr.message && waitErr.message.includes('row-level security'))) {
-              showDbSyncAlert(waitErr);
-            }
-          } else if (waitingData && waitingData.length > 0) {
-            waitingData.forEach(w => {
-              if (w.hospital && !realWaitingRecords.some(r => r.id === w.id)) {
-                let meta = null;
-                if (w.comentario && w.comentario.includes('[META:')) {
-                  try {
-                    const match = w.comentario.match(/\[META:(\{.*?\})\]/);
-                    if (match) meta = JSON.parse(match[1]);
-                  } catch(e) {}
-                }
-
-                const hosp = (meta && meta.hospital) || w.hospital;
-                const cat = (meta && meta.category) || w.categoria || 'Emergência';
-                const spec = (meta && meta.specialty) || (meta && meta.sector) || w.setor || 'Emergência';
-                const val = (meta && (meta.waitVal || meta.hours)) || w.tempo_horas || 2.0;
-                const city = (meta && meta.city) || w.cidade || 'São Paulo';
-                const state = (meta && meta.state) || w.estado || 'SP';
-                const cleanText = w.comentario ? w.comentario.replace(/\[META:\{.*?\}\]\s*/, '') : `Espera apurada no hospital ${hosp}`;
-
-                realWaitingRecords.unshift({
-                  id: w.id,
-                  hospital: hosp,
-                  hospitalShort: hosp.length > 25 ? hosp.slice(0, 22) + '...' : hosp,
-                  category: cat,
-                  specialty: spec,
-                  waitValue: val,
-                  waitUnit: 'horas',
-                  city: city,
-                  state: state,
-                  author: 'Paciente no Hospital',
-                  avatar: '⏱️',
-                  isPublic: true,
-                  createdAt: formatPostDateTime(w.created_at),
-                  createdAtIso: w.created_at,
-                  text: cleanText
-                });
-              }
-            });
-            updateMapStatistics();
-          }
-
-          // 3. Subscriptions em Tempo Real (INSERT e UPDATE)
-          window.supabaseClient
-            .channel('realtime:all')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reports' }, payload => {
-              const r = payload.new;
-              let meta = null;
-              if (r.relato && r.relato.includes('[META:')) {
-                try {
-                  const match = r.relato.match(/\[META:(\{.*?\})\]/);
-                  if (match) meta = JSON.parse(match[1]);
-                } catch(e) {}
-              }
-              const hosp = (meta && meta.hospital) || r.hospital || 'Hospital SUS';
-              const cat = (meta && meta.category) || r.categoria || 'Emergência';
-              const spec = (meta && meta.specialty) || r.especialidade || 'Procedimento SUS';
-              const val = (meta && meta.waitVal) || r.tempo_espera_dias || r.tempo_espera_horas || 2;
-              const unit = (meta && meta.waitUnit) || (cat === 'Emergência' ? 'horas' : 'dias');
-              const city = (meta && meta.city) || r.cidade || 'São Paulo';
-              const state = (meta && meta.state) || r.estado || 'SP';
-              const cleanText = r.relato ? r.relato.replace(/\[META:\{.*?\}\]\s*/, '') : '';
-              const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente SUS');
-              const avatar = r.anonimo ? '🎭' : ((meta && meta.avatar) || '👤');
-              const isPublic = meta ? (meta.isPublic !== false) : true;
-              const postUserId = (meta && meta.userId) || r.user_id || null;
-              const postUsername = (meta && meta.username) || null;
-              const videoUrl = r.video_url || null;
-              const audioUrl = r.audio_url || null;
-
-              if (!realWaitingRecords.some(item => item.id === r.id)) {
-                realWaitingRecords.unshift({
-                  id: r.id,
-                  hospital: hosp,
-                  hospitalShort: hosp,
-                  category: cat,
-                  specialty: spec,
-                  waitValue: val,
-                  waitUnit: unit,
-                  city: city,
-                  state: state,
-                  author: author,
-                  avatar: avatar,
-                  userId: postUserId,
-                  username: postUsername,
-                  isPublic: isPublic,
-                  createdAt: 'Agora mesmo',
-                  text: cleanText
-                });
-              }
-
-              if (!socialPosts.some(p => p.id === r.id)) {
-                socialPosts.unshift({
-                  id: r.id,
-                  author: author,
-                  avatar: avatar,
-                  userId: postUserId,
-                  username: postUsername,
-                  isPublic: isPublic,
-                  location: `${city}, ${state}`,
-                  hospital: hosp,
-                  category: cat,
-                  specialty: spec,
-                  waitValue: val,
-                  waitUnit: unit,
-                  waitDays: unit === 'dias' ? val : Math.round(val * 24),
-                  waitHours: unit === 'horas' ? val : (val * 24),
-                  mediaType: r.tipo_midia || 'texto',
-                  videoBlobUrl: videoUrl,
-                  audioBlobUrl: audioUrl,
-                  text: cleanText,
-                  likes: 1,
-                  hasLiked: false,
-                  pressures: 1,
-                  commentsCount: 0,
-                  createdAt: 'Agora mesmo',
-                  isAnon: r.anonimo
-                });
-              }
-              renderFeed();
-              renderStories();
-              updateMapStatistics();
-            })
-            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reports' }, payload => {
-              const r = payload.new;
-              let meta = null;
-              if (r.relato && r.relato.includes('[META:')) {
-                try {
-                  const match = r.relato.match(/\[META:(\{.*?\})\]/);
-                  if (match) meta = JSON.parse(match[1]);
-                } catch(e) {}
-              }
-              const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente SUS');
-              const avatar = r.anonimo ? '🎭' : ((meta && meta.avatar) || '👤');
-              const isPublic = meta ? (meta.isPublic !== false) : true;
-              const post = socialPosts.find(p => p.id === r.id);
-              if (post) {
-                post.author = author;
-                post.avatar = avatar;
-                post.isPublic = isPublic;
-                if (r.video_url) post.videoBlobUrl = r.video_url;
-                if (r.audio_url) post.audioBlobUrl = r.audio_url;
-                if (r.relato) post.text = r.relato.replace(/\[META:\{.*?\}\]\s*/, '');
-              }
-              const rec = realWaitingRecords.find(item => item.id === r.id);
-              if (rec) {
-                rec.author = author;
-                rec.avatar = avatar;
-                rec.isPublic = isPublic;
-              }
-              renderFeed();
-              renderStories();
-              updateMapStatistics();
-            })
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'waiting_times' }, payload => {
-              const w = payload.new;
-              if (w.hospital && !realWaitingRecords.some(r => r.id === w.id)) {
-                let meta = null;
-                if (w.comentario && w.comentario.includes('[META:')) {
-                  try {
-                    const match = w.comentario.match(/\[META:(\{.*?\})\]/);
-                    if (match) meta = JSON.parse(match[1]);
-                  } catch(e) {}
-                }
-
-                const hosp = (meta && meta.hospital) || w.hospital;
-                const cat = (meta && meta.category) || w.categoria || 'Emergência';
-                const spec = (meta && meta.specialty) || (meta && meta.sector) || w.setor || 'Emergência';
-                const val = (meta && (meta.waitVal || meta.hours)) || w.tempo_horas || 2.0;
-                const city = (meta && meta.city) || w.cidade || 'São Paulo';
-                const state = (meta && meta.state) || w.estado || 'SP';
-                const cleanText = w.comentario ? w.comentario.replace(/\[META:\{.*?\}\]\s*/, '') : 'Cronômetro finalizado no hospital';
-
-                realWaitingRecords.unshift({
-                  id: w.id,
-                  hospital: hosp,
-                  hospitalShort: hosp,
-                  category: cat,
-                  specialty: spec,
-                  waitValue: val,
-                  waitUnit: 'horas',
-                  city: city,
-                  state: state,
-                  author: 'Paciente no Hospital',
-                  avatar: '⏱️',
-                  isPublic: true,
-                  createdAt: formatPostDateTime(w.created_at || new Date()),
-                  createdAtIso: w.created_at || new Date().toISOString(),
-                  text: cleanText
-                });
-                updateMapStatistics();
-              }
-            })
-            .subscribe();
 
         } catch (e) {
           console.error('Erro na inicialização Supabase:', e);
