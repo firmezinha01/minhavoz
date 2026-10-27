@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <title>Minha Voz | Rede Social da Saúde e Transparência das Filas do SUS</title>
-  <meta name="description" content="Plataforma comunitária independente de transparência e participação cidadã. Acompanhe filas do SUS, meça seu tempo de espera real e compartilhe sua experiência com dignidade e segurança.">
+  <title>Minha Voz | Rede Social da Saúde e Transparência das Filas de Espera</title>
+  <meta name="description" content="Plataforma comunitária independente de transparência e participação cidadã. Acompanhe filas de espera na saúde (hospitais públicos, convênios e particulares), meça seu tempo de atendimento real e compartilhe sua experiência com dignidade e segurança.">
 
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -110,7 +110,7 @@
           <span class="text-lg sm:text-xl font-black tracking-wider text-[#103D36] uppercase leading-none">DODA</span>
           <span class="text-xs sm:text-sm font-bold text-[#16A085] tracking-wide leading-tight mt-0.5">Minha Voz</span>
           <span class="text-[10px] sm:text-[11px] text-[#66746F] hidden md:inline-block font-medium mt-0.5">
-            Rede Social da Saúde e Transparência das Filas do SUS
+            Rede Social da Saúde e Transparência de Atendimento
           </span>
         </div>
       </div>
@@ -127,10 +127,6 @@
         <button onclick="document.getElementById('posts-container').scrollIntoView({behavior:'smooth'});" class="px-3.5 py-2 rounded-xl text-[#66746F] hover:text-[#103D36] hover:bg-[#E9F5F1] transition-colors flex items-center gap-1.5">
           <span>📰</span>
           <span>Relatos</span>
-        </button>
-        <button onclick="openDefensoriaModal()" class="px-3.5 py-2 rounded-xl text-[#66746F] hover:text-[#103D36] hover:bg-[#E9F5F1] transition-colors flex items-center gap-1.5">
-          <span>⚖️</span>
-          <span>Orientação</span>
         </button>
       </nav>
 
@@ -153,7 +149,7 @@
         <div id="header-user-section" class="flex items-center space-x-2 pl-2 border-l border-[#DDE6E2]">
           
           <!-- Estado: Logado -->
-          <div id="header-user-logged-in" class="flex items-center space-x-2 hidden">
+          <div id="header-user-logged-in" class="flex items-center space-x-2 hidden lg:hidden">
             <div onclick="openProfileModal()" class="flex items-center space-x-2 cursor-pointer p-1 rounded-xl hover:bg-[#E9F5F1] transition-colors" title="Acessar e Editar Meus Dados & Foto">
               <div id="header-user-avatar" class="w-9 h-9 rounded-full bg-[#16A085] text-white font-bold flex items-center justify-center text-sm shadow-xs border-2 border-white ring-1 ring-[#16A085] overflow-hidden">
                 👤
@@ -161,7 +157,7 @@
               <div class="hidden xl:block text-left">
                 <div id="header-user-name" class="text-xs font-bold text-[#172B27] leading-tight">Usuário</div>
                 <div id="header-user-badge" class="text-[10px] text-[#16A085] font-extrabold flex items-center gap-0.5">
-                  <span>Paciente SUS</span>
+                  <span>Paciente</span>
                 </div>
               </div>
             </div>
@@ -267,10 +263,10 @@
               👤
             </div>
             <div class="overflow-hidden">
-              <h3 id="sidebar-user-name" class="text-sm font-bold text-[#103D36] leading-tight truncate">Cidadão SUS</h3>
+              <h3 id="sidebar-user-name" class="text-sm font-bold text-[#103D36] leading-tight truncate">Paciente</h3>
               <p id="sidebar-user-info" class="text-[11px] text-[#66746F] mt-0.5">Login: <strong>--</strong></p>
               <span id="sidebar-user-role" class="inline-block mt-1 text-[10px] font-extrabold bg-[#E9F5F1] text-[#103D36] px-2.5 py-0.5 rounded-full border border-[#16A085]/30">
-                Prontuário SUS Ativo
+                Perfil Ativo
               </span>
             </div>
           </div>
@@ -295,15 +291,7 @@
 
         <!-- Menu Lateral com Ícones Consistentes -->
         <nav class="bg-white rounded-3xl p-2.5 border border-[#DDE6E2] shadow-xs space-y-1 text-xs font-semibold">
-          <button onclick="setFeedFilter('todos')" class="w-full flex items-center justify-between px-3.5 py-3 rounded-2xl bg-[#E9F5F1] text-[#103D36] font-bold transition-all">
-            <span class="flex items-center gap-3">
-              <svg class="w-4 h-4 text-[#16A085]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-              <span>Feed Social em Tempo Real</span>
-            </span>
-            <span class="w-2 h-2 rounded-full bg-[#16A085]"></span>
-          </button>
-
-          <button onclick="openTimerModal()" class="w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-[#172B27] hover:bg-[#E9F5F1] transition-all">
+          <button onclick="openTimerModal()" class="w-full flex items-center justify-between px-3.5 py-3 rounded-2xl bg-[#E9F5F1] text-[#103D36] font-bold hover:bg-[#d5ece4] transition-all">
             <span class="flex items-center gap-3">
               <svg class="w-4 h-4 text-[#16A085]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               <span>Cronômetro no Hospital</span>
@@ -318,14 +306,6 @@
             </span>
           </button>
 
-          <button onclick="openDefensoriaModal()" class="w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-[#172B27] hover:bg-[#E9F5F1] transition-all">
-            <span class="flex items-center gap-3">
-              <svg class="w-4 h-4 text-[#16A085]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
-              <span>Defensoria Pública & ONGs</span>
-            </span>
-            <span class="text-[10px] bg-[#E9F5F1] text-[#103D36] px-2 py-0.5 rounded-full font-bold">Grátis</span>
-          </button>
-
           <button onclick="openDenunciaModal()" class="w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-[#172B27] hover:bg-[#E9F5F1] transition-all">
             <span class="flex items-center gap-3">
               <svg class="w-4 h-4 text-[#C93C45]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
@@ -337,10 +317,10 @@
         <!-- Card Institucional de Apoio -->
         <div class="bg-gradient-to-br from-[#103D36] to-[#0b2b26] text-white rounded-3xl p-5 shadow-xs text-xs space-y-2 border border-[#16A085]/30">
           <div class="font-bold text-[#D5ECE4] flex items-center gap-1.5 text-sm">
-            <span>🛡️</span> Dados Conectados ao SUS
+            <span>🛡️</span> Transparência & Cidadania
           </div>
           <p class="text-[11px] text-slate-200 leading-relaxed font-normal">
-            Plataforma pública e independente. Todos os relatos geram relatórios consolidados para a Defensoria Pública e Ministério Público.
+            Plataforma independente e transparente. Acompanhe e colabore com relatos reais de espera em hospitais públicos, convênios e particulares.
           </p>
         </div>
 
@@ -396,7 +376,7 @@
           <div class="border-b border-[#DDE6E2] pb-3">
             <div class="flex items-center justify-between mb-2">
               <h3 class="text-sm sm:text-base font-bold text-[#103D36] flex items-center gap-2">
-                <span>✍️</span> Registrar Minha Espera no SUS
+                <span>✍️</span> Registrar Minha Espera
               </h3>
               <span class="text-[11px] text-[#16A085] font-bold">Passo a Passo Guiado</span>
             </div>
@@ -668,7 +648,7 @@
             <option value="Hematologia">
             <option value="Infectologia">
             <option value="Geriatria">
-            <option value="Fisioterapia / Reabilitação SUS">
+            <option value="Fisioterapia / Reabilitação">
             <option value="Fonoaudiologia">
             <option value="Nutrição / Nutrologia">
             <option value="Ressonância Magnética (RM)">
@@ -788,9 +768,9 @@
                 <div class="w-12 h-12 rounded-2xl bg-[#E9F5F1] text-[#103D36] flex items-center justify-center text-xl mb-3.5 group-hover:scale-105 transition-transform">
                   <svg class="w-6 h-6 text-[#16A085]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
                 </div>
-                <h3 class="font-bold text-base text-[#103D36]">Orientação e canais de apoio</h3>
+                <h3 class="font-bold text-base text-[#103D36]">Orientação e direitos do paciente</h3>
                 <p class="text-xs text-[#66746F] mt-1.5 leading-relaxed">
-                  Conheça seus direitos constitucionais e acione a Defensoria Pública gratuitamente.
+                  Conheça seus direitos no atendimento médico e canais oficiais de suporte e ouvidoria.
                 </p>
               </div>
               <div class="mt-4 pt-3 border-t border-[#DDE6E2] flex items-center justify-between text-xs font-bold text-[#16A085]">
@@ -848,16 +828,16 @@
           </button>
         </div>
 
-        <!-- WIDGET DEFENSORIA PÚBLICA & APOIO JURÍDICO -->
+        <!-- Card Informativo de Direitos e Transparência -->
         <div class="bg-gradient-to-br from-[#103D36] to-[#0a2723] text-white rounded-3xl p-5 shadow-xs space-y-3 text-xs border border-[#16A085]/30">
           <div class="font-bold text-[#D5ECE4] flex items-center gap-2 text-sm">
-            <span>⚖️</span> Defensoria Pública da União
+            <span>⚖️</span> Direitos do Paciente & Ouvidoria
           </div>
           <p class="text-[11px] text-slate-200 leading-relaxed font-normal">
-            A espera abusiva no SUS permite ação judicial com pedido de liminar para fornecimento imediato de cirurgias, consultas e remédios.
+            Atrasos abusivos em hospitais públicos, planos de saúde ou consultórios particulares dão direito à formalização de reclamações junto aos órgãos competentes e ouvidoria.
           </p>
-          <button onclick="openDefensoriaModal()" class="w-full py-2.5 bg-white text-[#103D36] hover:bg-[#E9F5F1] font-bold rounded-xl text-xs shadow-xs transition-all active-scale">
-            Acessar Orientação Gratuita
+          <button onclick="openDenunciaModal()" class="w-full py-2.5 bg-white text-[#103D36] hover:bg-[#E9F5F1] font-bold rounded-xl text-xs shadow-xs transition-all active-scale">
+            Formalizar Notificação
           </button>
         </div>
 
@@ -877,7 +857,7 @@
           Como funciona a rede Minha Voz
         </h2>
         <p class="text-xs sm:text-sm text-[#66746F] leading-relaxed">
-          Nossa missão é dar visibilidade aos tempos reais de atendimento do SUS por meio da colaboração direta e segura de pacientes e profissionais.
+          Nossa missão é dar visibilidade aos tempos reais de atendimento na saúde (pública, convênios e particular) por meio da colaboração direta e segura de pacientes e profissionais.
         </p>
       </div>
 
@@ -908,7 +888,7 @@
           </div>
           <h4 class="font-bold text-sm text-[#103D36]">Limites dos Dados</h4>
           <p class="text-[#66746F] leading-relaxed">
-            As estimativas refletem relatos de pacientes e não substituem prontuários clínicos nem a regulação oficial do SUS (Cross ou Sisreg).
+            As estimativas refletem relatos de pacientes e não substituem prontuários clínicos nem a regulação médica oficial.
           </p>
         </div>
 
@@ -918,7 +898,7 @@
           </div>
           <h4 class="font-bold text-sm text-[#103D36]">Canais Oficiais de Apoio</h4>
           <p class="text-[#66746F] leading-relaxed">
-            Casos de risco à saúde podem ser encaminhados à Defensoria Pública da União, DPE ou ao Disque 136 da Ouvidoria Geral do SUS.
+            Casos de risco à saúde ou atrasos abusivos podem ser encaminhados aos órgãos competentes ou ao Disque 136 da Ouvidoria Geral da Saúde e ANS.
           </p>
         </div>
       </div>
@@ -1167,15 +1147,15 @@
           </div>
         </div>
 
-        <!-- Cidade/Estado & Cartão SUS / CNS -->
+        <!-- Cidade/Estado & Carteirinha / Convênio / CNS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block font-bold text-[#172B27] mb-1">Cidade / Estado:</label>
             <input type="text" id="profile-city" placeholder="Ex: São Paulo, SP" class="w-full p-2.5 border border-[#DDE6E2] rounded-xl bg-[#F6F8F7] font-medium focus:bg-white focus:ring-2 focus:ring-[#16A085] outline-hidden transition-all text-[#172B27]">
           </div>
           <div>
-            <label class="block font-bold text-[#172B27] mb-1">Cartão SUS / CNS (Opcional):</label>
-            <input type="text" id="profile-cns" placeholder="Número do Cartão SUS" class="w-full p-2.5 border border-[#DDE6E2] rounded-xl bg-[#F6F8F7] font-medium focus:bg-white focus:ring-2 focus:ring-[#16A085] outline-hidden transition-all text-[#172B27]">
+            <label class="block font-bold text-[#172B27] mb-1">Carteirinha / Convênio / CNS (Opcional):</label>
+            <input type="text" id="profile-cns" placeholder="Número da Carteirinha / Cartão CNS" class="w-full p-2.5 border border-[#DDE6E2] rounded-xl bg-[#F6F8F7] font-medium focus:bg-white focus:ring-2 focus:ring-[#16A085] outline-hidden transition-all text-[#172B27]">
           </div>
         </div>
 
@@ -1355,7 +1335,7 @@
       
       <div class="flex justify-between items-center border-b border-[#DDE6E2] pb-3">
         <h3 class="text-base font-bold text-[#103D36] flex items-center gap-2">
-          <span>⏱️</span> Cronômetro de Espera no SUS
+          <span>⏱️</span> Cronômetro de Espera na Saúde
         </h3>
         <button onclick="closeModal('modal-timer')" class="text-slate-400 hover:text-slate-600 text-lg p-1">✕</button>
       </div>
@@ -1424,7 +1404,7 @@
               <option value="Psiquiatria e Saúde Mental">🧘 Psiquiatria / Saúde Mental</option>
               <option value="Centro de Queimados">🔥 Tratamento de Queimados</option>
             </optgroup>
-            <optgroup label="🩺 Consultas Ambulatoriais SUS">
+            <optgroup label="🩺 Consultas Ambulatoriais">
               <option value="Consulta - Clínica Médica">🩺 Clínica Médica Geral</option>
               <option value="Consulta - Cardiologia">❤️ Cardiologia</option>
               <option value="Consulta - Ortopedia">🦴 Ortopedia</option>
@@ -1495,18 +1475,18 @@
         <div class="flex justify-between items-center text-[10px] text-[#D5ECE4] border-b border-white/10 pb-2 mb-3">
           <span class="font-bold flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-[#16A085]"></span>
-            REDE MINHA VOZ • SUS
+            REDE MINHA VOZ
           </span>
           <span>#SaudeNaoPodeEsperar</span>
         </div>
 
         <p class="text-xs sm:text-sm italic leading-relaxed text-slate-100 mb-3" id="share-modal-text">
-          "Relato real da espera pelo SUS."
+          "Relato real da espera por atendimento."
         </p>
 
         <div class="flex justify-between items-center text-[10px] pt-2 border-t border-white/10">
           <span class="text-[#D5ECE4]" id="share-modal-author">Relato Verificado</span>
-          <span class="bg-[#C93C45] text-white font-extrabold px-2 py-0.5 rounded text-[9px]" id="share-modal-badge">Fila SUS</span>
+          <span class="bg-[#C93C45] text-white font-extrabold px-2 py-0.5 rounded text-[9px]" id="share-modal-badge">Fila de Atendimento</span>
         </div>
       </div>
 
@@ -1732,7 +1712,7 @@
 
         <div class="bg-[#F6F8F7] border border-[#DDE6E2] rounded-2xl p-4 space-y-1.5">
           <h4 class="font-bold text-sm text-[#103D36] flex items-center gap-1.5">
-            <span>📞</span> Ouvidoria Geral do SUS — Disque 136
+            <span>📞</span> Ouvidoria Geral da Saúde / ANS — Disque 136
           </h4>
           <p class="text-[#66746F] leading-relaxed">
             Canal oficial do Ministério da Saúde para denúncias, reclamações de mau atendimento, falta de medicamentos ou ausência de profissionais em UPAs.
@@ -2372,7 +2352,7 @@
         'Hematologia',
         'Infectologia',
         'Geriatria',
-        'Fisioterapia / Reabilitação SUS',
+        'Fisioterapia / Reabilitação',
         'Fonoaudiologia',
         'Nutrição / Nutrologia'
       ]
@@ -2453,7 +2433,7 @@
     function syncSocialPostsFromWaitRecords() {
       socialPosts = realWaitingRecords.map(r => ({
         id: r.id,
-        author: r.author || 'Paciente SUS',
+        author: r.author || 'Paciente',
         avatar: r.avatar || '👤',
         location: `${r.city || ''}, ${r.state || ''}`.trim().replace(/^,|,$/g, ''),
         hospital: r.hospitalShort || r.hospital,
@@ -2544,18 +2524,25 @@
       const hBadge = document.getElementById('header-user-badge');
 
       if (isLogged) {
-        if (headerLoggedIn) headerLoggedIn.classList.remove('hidden');
+        if (headerLoggedIn) {
+          headerLoggedIn.classList.remove('hidden');
+          headerLoggedIn.classList.add('lg:hidden'); // Não aparece no modo desktop quando logado
+        }
         if (headerLoggedOut) headerLoggedOut.classList.add('hidden');
+        const headerSection = document.getElementById('header-user-section');
+        if (headerSection) headerSection.classList.add('lg:hidden'); // Esconde no desktop
         if (hAvatar) hAvatar.innerHTML = renderAvatarHTML(currentUser.avatar);
         if (hName) hName.innerText = currentUser.name || currentUser.username;
         if (hBadge) {
           hBadge.innerHTML = currentUser.isAdmin 
             ? '<span class="text-indigo-600 font-extrabold">👑 Administrador</span>' 
-            : '<span class="text-blue-600 font-bold">Paciente SUS</span>';
+            : '<span class="text-blue-600 font-bold">Paciente</span>';
         }
       } else {
         if (headerLoggedIn) headerLoggedIn.classList.add('hidden');
         if (headerLoggedOut) headerLoggedOut.classList.remove('hidden');
+        const headerSection = document.getElementById('header-user-section');
+        if (headerSection) headerSection.classList.remove('lg:hidden');
       }
 
       // Sidebar
@@ -2573,7 +2560,7 @@
         if (sName) sName.innerText = currentUser.name || currentUser.username;
         if (sInfo) sInfo.innerHTML = `Login: <strong>${currentUser.username}</strong> • ${currentUser.city || 'São Paulo, SP'}`;
         if (sRole) {
-          sRole.innerText = currentUser.isAdmin ? '👑 Painel de Moderação Ativo' : 'Prontuário SUS Ativo';
+          sRole.innerText = currentUser.isAdmin ? '👑 Painel de Moderação Ativo' : 'Perfil Ativo';
           sRole.className = currentUser.isAdmin 
             ? 'inline-block mt-0.5 text-[10px] font-extrabold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full border border-indigo-200'
             : 'inline-block mt-0.5 text-[10px] font-extrabold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full border border-blue-200';
@@ -2627,7 +2614,7 @@
             currentUser = {
               id: supaUser.id,
               username: supaUser.cpf || supaUser.email,
-              name: supaUser.nome || 'Paciente SUS',
+              name: supaUser.nome || 'Paciente',
               role: 'paciente',
               avatar: (pMeta && pMeta.avatar) || '👤',
               city: supaUser.cidade || 'São Paulo, SP',
@@ -3234,9 +3221,9 @@
                 if (hosp) {
                   detectedHospitalName = hosp;
                 } else if (road) {
-                  detectedHospitalName = `Unidade SUS (${road})`;
+                  detectedHospitalName = `Unidade de Saúde (${road})`;
                 } else {
-                  detectedHospitalName = `Unidade SUS em ${city}`;
+                  detectedHospitalName = `Unidade de Saúde em ${city}`;
                 }
 
                 const addrParts = [];
@@ -3341,7 +3328,7 @@
         if (btnModal) btnModal.innerHTML = '<span>Iniciar Cronômetro</span>';
         if (sidebarSub) sidebarSub.innerText = 'Status: Pronto para Iniciar';
 
-        const hospName = currentHosp || 'Hospital SUS';
+        const hospName = currentHosp || 'Hospital / Unidade de Saúde';
         const addrName = currentAddr || '';
         const sectorName = (inputSector && inputSector.value) || 'Emergência';
         const elapsedHours = parseFloat((Math.max(timerSeconds, 60) / 3600).toFixed(2));
@@ -3372,7 +3359,7 @@
           waitUnit: 'horas',
           city: city,
           state: state,
-          author: (currentUser && currentUser.name) || 'Paciente SUS',
+          author: (currentUser && currentUser.name) || 'Paciente',
           avatar: (currentUser && currentUser.avatar) || '👨',
           createdAt: 'Agora mesmo',
           text: `Atendimento no setor ${sectorName} do ${hospName}${addrName ? ' (' + addrName + ')' : ''} cronometrado em ${finalTime}.`
@@ -3417,7 +3404,7 @@
             waitUnit: 'horas',
             city: city,
             state: state,
-            author: (currentUser && currentUser.name) || 'Paciente SUS',
+            author: (currentUser && currentUser.name) || 'Paciente',
             avatar: (currentUser && currentUser.avatar) || '⏱️',
             userId: (currentUser && currentUser.id) || null,
             username: (currentUser && currentUser.username) || null,
@@ -3504,9 +3491,9 @@ ALTER TABLE public.waiting_times ALTER COLUMN fim SET DEFAULT now();
 
 INSERT INTO public.users (id, nome, idade, cidade, email, cpf, senha_hash, condicao_saude)
 VALUES 
-    ('a0000000-0000-0000-0000-000000000001', 'Administrador Minha Voz', 35, 'Brasília, DF', 'admin@minhavoz.org.br', 'admin', '123456', 'Gestão e Moderação SUS'),
+    ('a0000000-0000-0000-0000-000000000001', 'Administrador Minha Voz', 35, 'Brasília, DF', 'admin@minhavoz.org.br', 'admin', '123456', 'Gestão e Moderação Geral'),
     ('a0000000-0000-0000-0000-000000000002', 'José Silva', 48, 'São Paulo, SP', 'jose@minhavoz.org.br', 'jose', '123456', 'Ortopedia / Fila Cirurgia'),
-    ('a0000000-0000-0000-0000-000000000003', 'Maria Silva', 42, 'São Paulo, SP', 'maria@minhavoz.org.br', 'maria', '123456', 'Paciente SUS / Consultas e Exames')
+    ('a0000000-0000-0000-0000-000000000003', 'Maria Silva', 42, 'São Paulo, SP', 'maria@minhavoz.org.br', 'maria', '123456', 'Paciente / Convênio e Particular')
 ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
       if (navigator.clipboard) {
@@ -3679,7 +3666,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         city = locationVal;
       }
 
-      const currentAuthor = isAnon ? 'Paciente Anônimo' : ((currentUser && currentUser.name) || 'Paciente SUS');
+      const currentAuthor = isAnon ? 'Paciente Anônimo' : ((currentUser && currentUser.name) || 'Paciente');
       const currentAvatar = isAnon ? '🎭' : ((currentUser && currentUser.avatar) || '👨');
       const currentUserId = (currentUser && currentUser.id) || null;
       const currentUsername = (currentUser && currentUser.username) || null;
@@ -3813,7 +3800,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     // ====================================================================
 
     function normalizeHospitalKey(name) {
-      if (!name) return 'Hospital SUS';
+      if (!name) return 'Hospital / Unidade de Saúde';
       const clean = name.trim().toLowerCase();
       if (clean.includes('hmu')) return 'Hospital HMU';
       if (clean.includes('grajaú') || clean.includes('grajau')) return 'Hospital Geral do Grajaú';
@@ -3948,7 +3935,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         const rState = (rec.state || 'SP').toUpperCase();
         if (uf && rState !== uf) return;
 
-        const pName = rec.specialty || 'Procedimento SUS';
+        const pName = rec.specialty || 'Procedimento / Consulta';
         if (s && !pName.toLowerCase().includes(s) && !rec.hospital.toLowerCase().includes(s) && !rec.category.toLowerCase().includes(s)) return;
 
         const queueKey = `${rec.category} - ${pName}`;
@@ -4435,7 +4422,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         waitUnit: unit,
         city: city,
         state: state,
-        author: (currentUser && currentUser.name) || 'Paciente SUS',
+        author: (currentUser && currentUser.name) || 'Paciente',
         avatar: (currentUser && currentUser.avatar) || '👨',
         createdAt: 'Agora mesmo',
         text: `Registro de espera no ${hosp} (${cat} - ${spec}): ${val} ${unit}.`
@@ -4525,7 +4512,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
             </div>
             <h3 class="text-sm sm:text-base font-bold text-slate-800">Nenhum relato cadastrado ainda</h3>
             <p class="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
-              Compartilhe sua espera ou grave um vídeo para dar voz às milhares de pessoas que aguardam pelo SUS no Brasil.
+              Compartilhe sua espera ou grave um vídeo para dar voz a quem aguarda por atendimento em hospitais públicos, convênios ou particulares no Brasil.
             </p>
             <button onclick="document.getElementById('composer-text').focus();" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md active-scale">
               + Publicar Primeiro Relato
@@ -4847,7 +4834,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                 } catch(e) {}
               }
 
-              const hosp = (meta && meta.hospital) || r.hospital || 'Hospital SUS';
+              const hosp = (meta && meta.hospital) || r.hospital || 'Hospital / Unidade de Saúde';
               const cat = (meta && meta.category) || r.categoria || 'Emergência';
               const spec = (meta && meta.specialty) || r.especialidade || 'Atendimento / Procedimento';
               const val = (meta && meta.waitVal) || r.tempo_espera_dias || r.tempo_espera_horas || 2;
@@ -4855,7 +4842,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               const city = (meta && meta.city) || r.cidade || 'São Paulo';
               const state = (meta && meta.state) || r.estado || 'SP';
               const cleanText = r.relato ? r.relato.replace(/\[META:\{.*?\}\]\s*/, '') : '';
-              const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente SUS');
+              const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente');
               const avatar = r.anonimo ? '🎭' : ((meta && meta.avatar) || '👤');
               const isPublic = meta ? (meta.isPublic !== false) : true;
               const postUserId = (meta && meta.userId) || r.user_id || null;
@@ -4924,7 +4911,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                 } catch(e) {}
               }
 
-              const hosp = (meta && meta.hospital) || w.hospital || 'Hospital SUS';
+              const hosp = (meta && meta.hospital) || w.hospital || 'Hospital / Unidade de Saúde';
               const cat = (meta && meta.category) || w.categoria || 'Emergência';
               const spec = (meta && meta.specialty) || (meta && meta.sector) || w.setor || 'Emergência';
               const val = (meta && (meta.waitVal || meta.hours)) || w.tempo_horas || 2.0;
@@ -5018,7 +5005,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                     } catch(e) {}
                   }
 
-                  const hosp = (meta && meta.hospital) || r.hospital || 'Hospital SUS';
+                  const hosp = (meta && meta.hospital) || r.hospital || 'Hospital / Unidade de Saúde';
                   const cat = (meta && meta.category) || r.categoria || 'Emergência';
                   const spec = (meta && meta.specialty) || r.especialidade || 'Atendimento / Procedimento';
                   const val = (meta && meta.waitVal) || r.tempo_espera_dias || r.tempo_espera_horas || 2;
@@ -5026,7 +5013,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   const city = (meta && meta.city) || r.cidade || 'São Paulo';
                   const state = (meta && meta.state) || r.estado || 'SP';
                   const cleanText = r.relato ? r.relato.replace(/\[META:\{.*?\}\]\s*/, '') : '';
-                  const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente SUS');
+                  const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente');
                   const avatar = r.anonimo ? '🎭' : ((meta && meta.avatar) || '👤');
                   const isPublic = meta ? (meta.isPublic !== false) : true;
                   const postUserId = (meta && meta.userId) || r.user_id || null;
@@ -5103,7 +5090,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                     } catch(e) {}
                   }
 
-                  const hosp = (meta && meta.hospital) || w.hospital || 'Hospital SUS';
+                  const hosp = (meta && meta.hospital) || w.hospital || 'Hospital / Unidade de Saúde';
                   const cat = (meta && meta.category) || w.categoria || 'Emergência';
                   const spec = (meta && meta.specialty) || (meta && meta.sector) || w.setor || 'Emergência';
                   const val = (meta && (meta.waitVal || meta.hours)) || w.tempo_horas || 2.0;
@@ -5175,7 +5162,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       if (post) {
         post.pressures++;
         renderFeed();
-        alert('📢 Notificação de cobrança enviada à Secretaria de Saúde e Defensoria Pública!');
+        alert('📢 Notificação de cobrança por celeridade registrada no sistema!');
       }
     }
 
@@ -5217,7 +5204,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       if (platform.includes('Instagram')) {
         alert('📸 Formato Stories & Reels (9:16) gerado com sticker de dias de espera! Abra o Instagram e selecione o card para publicação.');
       } else {
-        alert(`Redirecionando para ${platform} com o relato oficial da fila do SUS.`);
+        alert(`Redirecionando para ${platform} com o relato oficial da fila de atendimento.`);
       }
     }
 
