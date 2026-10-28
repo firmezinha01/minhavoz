@@ -104,15 +104,17 @@
   <header class="bg-white/95 backdrop-blur-md border-b border-[#DDE6E2] sticky top-0 z-40 shadow-xs">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-3 sm:gap-6">
       
-      <!-- Logo Principal Tipográfico: DODA Centralizado com Minha Voz (Sem Ícone) -->
+      <!-- Logo Principal Tipográfico: DODA Minha Voz para a esquerda -->
       <div class="flex items-center cursor-pointer shrink-0" onclick="window.scrollTo({top:0, behavior:'smooth'}); setFeedFilter('todos');">
-        <div class="flex flex-col items-center justify-center text-center">
+        <div class="flex flex-col items-start justify-center text-left">
           <span class="text-lg sm:text-xl font-black tracking-wider text-[#103D36] uppercase leading-none">DODA</span>
           <span class="text-xs sm:text-sm font-bold text-[#16A085] tracking-wide leading-tight mt-0.5">Minha Voz</span>
-          <span class="text-[10px] sm:text-[11px] text-[#66746F] hidden md:inline-block font-medium mt-0.5">
-            Rede Social da Saúde e Transparência de Atendimento
-          </span>
         </div>
+      </div>
+
+      <!-- Texto Institucional entre o Logo e o Campo de Busca (Desktop) -->
+      <div class="hidden lg:flex items-center px-4 py-1 border-l border-[#DDE6E2] text-[#66746F] text-xs font-semibold leading-tight max-w-xs">
+        <span>Rede Social da Saúde e Transparência de Atendimento</span>
       </div>
 
       <!-- Barra de Busca Rápida (Desktop) -->
@@ -1722,7 +1724,7 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
         <!-- 1. Gravar Vídeo ao Vivo -->
-        <button onclick="closeModal('modal-create-story'); openVideoRecordModal();" class="p-4 rounded-2xl border-2 border-[#16A085] bg-[#E9F5F1]/70 hover:bg-[#E9F5F1] transition-all flex flex-col items-center text-center gap-2 group cursor-pointer active-scale">
+        <button onclick="closeModal('modal-create-story'); openVideoRecordModal('story');" class="p-4 rounded-2xl border-2 border-[#16A085] bg-[#E9F5F1]/70 hover:bg-[#E9F5F1] transition-all flex flex-col items-center text-center gap-2 group cursor-pointer active-scale">
           <div class="w-12 h-12 rounded-2xl bg-[#16A085] text-white flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition-transform">
             📹
           </div>
@@ -1769,7 +1771,10 @@
             <div id="story-viewer-hospital" class="text-[10px] text-emerald-300">Hospital</div>
           </div>
         </div>
-        <span id="story-viewer-time" class="text-[10px] text-slate-300 bg-white/10 px-2 py-0.5 rounded-full">Hoje</span>
+        <div class="flex items-center gap-2">
+          <span id="story-viewer-time" class="text-[10px] text-slate-300 bg-white/10 px-2 py-0.5 rounded-full">Hoje</span>
+          <button id="story-viewer-delete-btn" onclick="deleteStory(currentViewingStoryId)" class="hidden text-rose-400 hover:text-rose-300 text-xs font-bold px-2 py-0.5 rounded bg-rose-950/60 hover:bg-rose-900 border border-rose-800 transition-colors cursor-pointer" title="Excluir este story">🗑️</button>
+        </div>
       </div>
 
       <!-- Conteúdo do Story (Vídeo, Imagem ou Áudio) -->
@@ -1974,6 +1979,52 @@
 
     function isValidUUID(id) {
       return typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    }
+
+    // Extrai com máxima precisão metadados JSON aninhados e texto do relato
+    function extractMetaAndText(fullStr) {
+      if (!fullStr || typeof fullStr !== 'string') return { meta: null, text: '' };
+      if (fullStr.startsWith('[META:{')) {
+        let depth = 0;
+        let inString = false;
+        let escape = false;
+        for (let i = 6; i < fullStr.length; i++) {
+          const ch = fullStr[i];
+          if (escape) {
+            escape = false;
+            continue;
+          }
+          if (ch === '\\') {
+            escape = true;
+            continue;
+          }
+          if (ch === '"') {
+            inString = !inString;
+            continue;
+          }
+          if (!inString) {
+            if (ch === '{') depth++;
+            else if (ch === '}') {
+              depth--;
+              if (depth === 0) {
+                const jsonStr = fullStr.slice(6, i + 1);
+                const rest = fullStr.slice(i + 1).replace(/^\]\s*/, '');
+                try {
+                  return { meta: JSON.parse(jsonStr), text: rest };
+                } catch(e) {
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+      return { meta: null, text: fullStr };
+    }
+
+    function formatMetaAndText(meta, cleanText) {
+      if (!meta) return cleanText || '';
+      return `[META:${JSON.stringify(meta)}] ${cleanText || ''}`.trim();
     }
 
     // Formata Data e Horário em tempo real (ex: "27/10/2026 às 14:35")
@@ -2436,6 +2487,9 @@
         id: r.id,
         author: r.author || 'Paciente',
         avatar: r.avatar || '👤',
+        userId: r.userId || null,
+        username: r.username || null,
+        isPublic: (r.isPublic !== false),
         location: `${r.city || ''}, ${r.state || ''}`.trim().replace(/^,|,$/g, ''),
         hospital: r.hospitalShort || r.hospital,
         category: r.category,
@@ -2454,6 +2508,7 @@
         comments: Array.isArray(r.comments) ? r.comments : [],
         commentsCount: Array.isArray(r.comments) ? r.comments.length : 0,
         createdAt: r.createdAt || 'Hoje',
+        createdAtIso: r.createdAtIso || null,
         isAnon: r.isAnon || (r.author === 'Paciente Anônimo')
       }));
     }
@@ -2994,8 +3049,17 @@
       }
     }
 
-    async function openVideoRecordModal() {
+    let videoRecordingTarget = 'composer';
+
+    async function openVideoRecordModal(target = 'composer') {
+      videoRecordingTarget = target;
       const modal = document.getElementById('modal-video-recorder');
+      const btnAttach = document.getElementById('modal-btn-video-attach');
+      if (btnAttach) {
+        btnAttach.innerHTML = target === 'story'
+          ? '<span>✨ Publicar Story no Status</span>'
+          : '<span>✓ Anexar ao Relato</span>';
+      }
       if (modal) {
         modal.classList.remove('hidden');
         resetVideoRecording();
@@ -3139,7 +3203,12 @@
         btn.className = 'flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md active-scale flex items-center justify-center gap-2';
       }
       const btnAttach = document.getElementById('modal-btn-video-attach');
-      if (btnAttach) btnAttach.classList.add('hidden');
+      if (btnAttach) {
+        btnAttach.classList.add('hidden');
+        btnAttach.innerHTML = videoRecordingTarget === 'story'
+          ? '<span>✨ Publicar Story no Status</span>'
+          : '<span>✓ Anexar ao Relato</span>';
+      }
       const btnRetry = document.getElementById('modal-btn-video-retry');
       if (btnRetry) btnRetry.classList.add('hidden');
     }
@@ -3149,6 +3218,39 @@
         alert('Nenhum vídeo foi gravado ainda.');
         return;
       }
+
+      // Se foi acionado pelo Status / Stories, publica diretamente no Status sem interferir no compositor
+      if (videoRecordingTarget === 'story') {
+        const authorName = (currentUser && currentUser.name) || 'Meu Status';
+        const authorAvatar = (currentUser && currentUser.avatar) || '✨';
+        const currentUserId = currentUser ? currentUser.id : null;
+        const currentUsername = currentUser ? (currentUser.username || currentUser.cpf || currentUser.email) : null;
+        const hospName = detectedHospitalName || 'Hospital / Unidade de Saúde';
+
+        const newStory = {
+          id: 'story-live-' + Date.now(),
+          author: authorName,
+          avatar: authorAvatar,
+          userId: currentUserId,
+          username: currentUsername,
+          hospital: hospName,
+          time: 'Agora mesmo',
+          type: 'video',
+          mediaUrl: recordedVideoDataUrl || recordedVideoBlobUrl,
+          caption: 'Depoimento em vídeo gravado ao vivo pelo paciente.'
+        };
+
+        communityStories.unshift(newStory);
+        try {
+          localStorage.setItem('minhavoz_community_stories', JSON.stringify(communityStories));
+        } catch(e) {}
+        renderStories();
+        closeVideoRecordModal();
+        openStoryViewer(newStory.id);
+        alert('✓ Story gravado e publicado no seu Status com sucesso!');
+        return;
+      }
+
       activeMediaMode = 'video';
       const attachedBar = document.getElementById('composer-media-attached-bar');
       const label = document.getElementById('composer-media-label');
@@ -4604,10 +4706,10 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         `;
       }
 
-      const adminDeleteBtn = (currentUser && currentUser.isAdmin) ? `
-        <button onclick="deletePostAdmin('${post.id}')" class="text-rose-600 hover:text-rose-800 font-bold text-[11px] flex items-center gap-1 px-2 py-1 rounded bg-rose-50 hover:bg-rose-100 transition-colors">
+      const deletePostBtn = isOwner ? `
+        <button onclick="deleteMyPost('${post.id}')" class="text-rose-600 hover:text-rose-800 font-bold text-[11px] flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-50 hover:bg-rose-100 transition-colors active-scale cursor-pointer" title="Excluir este relato">
           <span>🗑️</span>
-          <span>Excluir (Admin)</span>
+          <span>Excluir</span>
         </button>
       ` : '';
 
@@ -4691,7 +4793,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
             <div class="flex items-center gap-2">
               ${visibilityActionBtn}
-              ${adminDeleteBtn}
+              ${deletePostBtn}
             </div>
           </div>
 
@@ -4725,7 +4827,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       const newPublicState = !isCurrentlyPublic;
       post.isPublic = newPublicState;
 
-      const rec = realWaitingRecords.find(r => r.id === postId);
+      const rawId = postId.startsWith('wait-') ? postId.replace('wait-', '') : postId;
+      const rec = realWaitingRecords.find(r => r.id === postId || r.id === rawId);
       if (rec) rec.isPublic = newPublicState;
       saveWaitRecords();
       renderFeed();
@@ -4734,19 +4837,26 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
       if (window.supabaseClient) {
         try {
-          const { data } = await window.supabaseClient.from('reports').select('*').eq('id', postId).limit(1);
-          if (data && data[0]) {
-            let meta = {};
-            if (data[0].relato && data[0].relato.includes('[META:')) {
-              const match = data[0].relato.match(/\[META:(\{.*?\})\]/);
-              if (match) {
-                try { meta = JSON.parse(match[1]); } catch(e){}
+          if (postId.startsWith('wait-')) {
+            if (isValidUUID(rawId)) {
+              const { data } = await window.supabaseClient.from('waiting_times').select('*').eq('id', rawId).limit(1);
+              if (data && data[0]) {
+                const parsed = extractMetaAndText(data[0].comentario);
+                const meta = parsed.meta || {};
+                meta.isPublic = newPublicState;
+                const updatedComentario = formatMetaAndText(meta, parsed.text);
+                await window.supabaseClient.from('waiting_times').update({ comentario: updatedComentario }).eq('id', rawId);
               }
             }
-            meta.isPublic = newPublicState;
-            const cleanText = data[0].relato.replace(/\[META:\{.*?\}\]\s*/, '');
-            const updatedRelato = `[META:${JSON.stringify(meta)}] ${cleanText}`;
-            await window.supabaseClient.from('reports').update({ relato: updatedRelato }).eq('id', postId);
+          } else if (isValidUUID(rawId)) {
+            const { data } = await window.supabaseClient.from('reports').select('*').eq('id', rawId).limit(1);
+            if (data && data[0]) {
+              const parsed = extractMetaAndText(data[0].relato);
+              const meta = parsed.meta || {};
+              meta.isPublic = newPublicState;
+              const updatedRelato = formatMetaAndText(meta, parsed.text);
+              await window.supabaseClient.from('reports').update({ relato: updatedRelato }).eq('id', rawId);
+            }
           }
         } catch(err) {
           console.warn('Erro ao atualizar visibilidade no Supabase:', err);
@@ -4825,7 +4935,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       post.comments.push(newComment);
       post.commentsCount = post.comments.length;
 
-      const rec = realWaitingRecords.find(r => r.id === postId);
+      const rawId = postId.startsWith('wait-') ? postId.replace('wait-', '') : postId;
+      const rec = realWaitingRecords.find(r => r.id === postId || r.id === rawId);
       if (rec) {
         if (!Array.isArray(rec.comments)) rec.comments = [];
         rec.comments.push(newComment);
@@ -4843,42 +4954,29 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       // Sincroniza comentário com Supabase na tabela reports ou waiting_times
       if (window.supabaseClient) {
         if (postId.startsWith('wait-')) {
-          const rawId = postId.replace('wait-', '');
           if (isValidUUID(rawId)) {
             try {
               const { data } = await window.supabaseClient.from('waiting_times').select('*').eq('id', rawId).limit(1);
               if (data && data[0]) {
-                let meta = {};
-                if (data[0].comentario && data[0].comentario.includes('[META:')) {
-                  const match = data[0].comentario.match(/\[META:(\{.*?\})\]/);
-                  if (match) {
-                    try { meta = JSON.parse(match[1]); } catch(e){}
-                  }
-                }
+                const parsed = extractMetaAndText(data[0].comentario);
+                const meta = parsed.meta || {};
                 meta.comments = post.comments;
-                const cleanText = (data[0].comentario || '').replace(/\[META:\{.*?\}\]\s*/, '');
-                const updatedComentario = `[META:${JSON.stringify(meta)}] ${cleanText}`;
+                const updatedComentario = formatMetaAndText(meta, parsed.text);
                 await window.supabaseClient.from('waiting_times').update({ comentario: updatedComentario }).eq('id', rawId);
               }
             } catch (e) {
               console.warn('Erro ao persistir comentário em waiting_times Supabase:', e);
             }
           }
-        } else if (isValidUUID(postId)) {
+        } else if (isValidUUID(rawId)) {
           try {
-            const { data } = await window.supabaseClient.from('reports').select('*').eq('id', postId).limit(1);
+            const { data } = await window.supabaseClient.from('reports').select('*').eq('id', rawId).limit(1);
             if (data && data[0]) {
-              let meta = {};
-              if (data[0].relato && data[0].relato.includes('[META:')) {
-                const match = data[0].relato.match(/\[META:(\{.*?\})\]/);
-                if (match) {
-                  try { meta = JSON.parse(match[1]); } catch(e){}
-                }
-              }
+              const parsed = extractMetaAndText(data[0].relato);
+              const meta = parsed.meta || {};
               meta.comments = post.comments;
-              const cleanText = data[0].relato.replace(/\[META:\{.*?\}\]\s*/, '');
-              const updatedRelato = `[META:${JSON.stringify(meta)}] ${cleanText}`;
-              await window.supabaseClient.from('reports').update({ relato: updatedRelato }).eq('id', postId);
+              const updatedRelato = formatMetaAndText(meta, parsed.text);
+              await window.supabaseClient.from('reports').update({ relato: updatedRelato }).eq('id', rawId);
             }
           } catch (e) {
             console.warn('Erro ao persistir comentário no Supabase:', e);
@@ -4923,12 +5021,16 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         const isVideo = file.type.startsWith('video');
         const authorName = (currentUser && currentUser.name) || 'Meu Status';
         const authorAvatar = (currentUser && currentUser.avatar) || '✨';
+        const currentUserId = currentUser ? currentUser.id : null;
+        const currentUsername = currentUser ? (currentUser.username || currentUser.cpf || currentUser.email) : null;
         const hospName = detectedHospitalName || 'Hospital / Unidade de Saúde';
 
         const newStory = {
           id: 'story-upload-' + Date.now(),
           author: authorName,
           avatar: authorAvatar,
+          userId: currentUserId,
+          username: currentUsername,
           hospital: hospName,
           time: 'Agora mesmo',
           type: isVideo ? 'video' : 'image',
@@ -4949,24 +5051,28 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       event.target.value = '';
     }
 
+    let currentViewingStoryId = null;
+
     function openStoryViewer(storyId) {
+      currentViewingStoryId = storyId;
       let story = communityStories.find(s => s.id === storyId);
-      if (!story) {
-        const post = socialPosts.find(p => p.id === storyId);
-        if (post) {
-          story = {
-            id: post.id,
-            author: post.author,
-            avatar: post.avatar,
-            hospital: post.hospital,
-            time: post.createdAt || 'Hoje',
-            type: post.mediaType === 'video' ? 'video' : (post.mediaType === 'audio' ? 'audio' : 'text_story'),
-            mediaUrl: post.videoBlobUrl || post.audioBlobUrl,
-            caption: post.text
-          };
+      if (!story) return;
+
+      const deleteBtn = document.getElementById('story-viewer-delete-btn');
+      if (deleteBtn) {
+        const isOwner = currentUser && (
+          currentUser.isAdmin ||
+          (story.userId && currentUser.id && story.userId === currentUser.id) ||
+          (story.username && currentUser.username && story.username.toLowerCase() === currentUser.username.toLowerCase()) ||
+          (story.author && currentUser.name && story.author.toLowerCase() === currentUser.name.toLowerCase()) ||
+          story.author === 'Meu Status'
+        );
+        if (isOwner) {
+          deleteBtn.classList.remove('hidden');
+        } else {
+          deleteBtn.classList.add('hidden');
         }
       }
-      if (!story) return;
 
       const modal = document.getElementById('modal-story-viewer');
       const authorEl = document.getElementById('story-viewer-author');
@@ -5031,27 +5137,28 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       if (mediaContainer) mediaContainer.innerHTML = '';
     }
 
+    function deleteStory(storyId) {
+      if (!storyId) storyId = currentViewingStoryId;
+      if (!storyId) return;
+
+      if (!confirm('Deseja excluir este story do seu status?')) return;
+
+      communityStories = communityStories.filter(s => s.id !== storyId);
+      try {
+        localStorage.setItem('minhavoz_community_stories', JSON.stringify(communityStories));
+      } catch(e) {}
+
+      closeStoryViewer();
+      renderStories();
+      alert('✓ Story excluído com sucesso!');
+    }
+
     function renderStories() {
       const list = document.getElementById('stories-list');
       if (!list) return;
 
-      // Unifica relatos com mídia real com os stories da comunidade
+      // Status/Stories da comunidade (independente do Registrar Minha Espera)
       const allDisplayStories = [...communityStories];
-      
-      socialPosts.forEach(p => {
-        if ((p.mediaType === 'video' || p.mediaType === 'audio') && !allDisplayStories.some(s => s.id === p.id)) {
-          allDisplayStories.push({
-            id: p.id,
-            author: p.isAnon ? 'Anônimo' : p.author,
-            avatar: p.isAnon ? '🎭' : p.avatar,
-            hospital: p.hospital,
-            time: p.createdAt || 'Hoje',
-            type: p.mediaType,
-            mediaUrl: p.videoBlobUrl || p.audioBlobUrl,
-            caption: p.text
-          });
-        }
-      });
 
       if (allDisplayStories.length === 0) {
         list.innerHTML = `<span class="text-[11px] text-[#66746F] italic pl-2 py-2 select-none whitespace-nowrap">Nenhum story ativo no momento. Seja o primeiro a postar!</span>`;
@@ -5070,35 +5177,60 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       `).join('');
     }
 
-    async function deletePostAdmin(id) {
-      if (!currentUser || !currentUser.isAdmin) {
-        alert('Apenas administradores podem moderar publicações.');
+    async function deleteMyPost(id) {
+      if (!currentUser) {
+        alert('Faça login para gerenciar ou excluir suas publicações.');
         return;
       }
 
-      if (confirm('Deseja excluir este relato do sistema?')) {
-        socialPosts = socialPosts.filter(p => p.id !== id);
-        realWaitingRecords = realWaitingRecords.filter(r => r.id !== id);
-        saveWaitRecords();
-        renderFeed();
-        renderStories();
-        updateMapStatistics();
+      const post = socialPosts.find(p => p.id === id);
+      const isOwner = currentUser.isAdmin || (
+        post && (
+          (post.userId && currentUser.id && post.userId === currentUser.id) ||
+          (post.username && currentUser.username && post.username.toLowerCase() === currentUser.username.toLowerCase()) ||
+          (post.author && currentUser.name && post.author.toLowerCase() === currentUser.name.toLowerCase())
+        )
+      );
 
-        if (window.supabaseClient) {
-          try {
-            const { error } = await window.supabaseClient.from('reports').delete().eq('id', id);
-            if (error) {
-              console.warn('Erro ao excluir do Supabase:', error);
-              showDbSyncAlert(error);
-            } else {
-              console.log('✓ Relato excluído do Supabase:', id);
-            }
-          } catch (e) {
-            console.error('Erro na requisição de exclusão Supabase:', e);
-          }
-        }
-        alert('✓ Relato removido com sucesso!');
+      if (!isOwner) {
+        alert('Você só pode excluir publicações criadas pela sua conta.');
+        return;
       }
+
+      if (!confirm('Deseja realmente excluir este relato do sistema?')) {
+        return;
+      }
+
+      const rawId = id.startsWith('wait-') ? id.replace('wait-', '') : id;
+      socialPosts = socialPosts.filter(p => p.id !== id && p.id !== rawId && p.id !== 'wait-' + rawId);
+      realWaitingRecords = realWaitingRecords.filter(r => r.id !== id && r.id !== rawId && ('wait-' + r.id) !== id);
+
+      saveWaitRecords();
+      renderFeed();
+      renderStories();
+      updateMapStatistics();
+
+      if (window.supabaseClient) {
+        try {
+          if (id.startsWith('wait-')) {
+            if (isValidUUID(rawId)) {
+              await window.supabaseClient.from('waiting_times').delete().eq('id', rawId);
+            }
+          } else if (isValidUUID(rawId)) {
+            await window.supabaseClient.from('reports').delete().eq('id', rawId);
+            await window.supabaseClient.from('waiting_times').delete().eq('id', rawId);
+          }
+          console.log('✓ Publicação excluída do banco de dados:', id);
+        } catch (e) {
+          console.warn('Erro ao excluir registro no Supabase:', e);
+        }
+      }
+
+      alert('✓ Relato excluído com sucesso!');
+    }
+
+    async function deletePostAdmin(id) {
+      return deleteMyPost(id);
     }
 
     // ====================================================================
@@ -5170,13 +5302,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
           // Processa relatos da tabela reports
           if (reportsData && reportsData.length > 0) {
             reportsData.forEach(r => {
-              let meta = null;
-              if (r.relato && r.relato.includes('[META:')) {
-                try {
-                  const match = r.relato.match(/\[META:(\{.*?\})\]/);
-                  if (match) meta = JSON.parse(match[1]);
-                } catch(e) {}
-              }
+              const parsed = extractMetaAndText(r.relato);
+              const meta = parsed.meta;
+              const cleanText = parsed.text;
 
               const hosp = (meta && meta.hospital) || r.hospital || 'Hospital / Unidade de Saúde';
               const cat = (meta && meta.category) || r.categoria || 'Emergência';
@@ -5185,7 +5313,6 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               const unit = (meta && meta.waitUnit) || (cat === 'Emergência' ? 'horas' : 'dias');
               const city = (meta && meta.city) || r.cidade || 'São Paulo';
               const state = (meta && meta.state) || r.estado || 'SP';
-              const cleanText = r.relato ? r.relato.replace(/\[META:\{.*?\}\]\s*/, '') : '';
               const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente');
               const avatar = r.anonimo ? '🎭' : ((meta && meta.avatar) || '👤');
               const isPublic = meta ? (meta.isPublic !== false) : true;
@@ -5250,13 +5377,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
           // Processa cronômetros da tabela waiting_times (integrados ao feed)
           if (waitingData && waitingData.length > 0) {
             waitingData.forEach(w => {
-              let meta = null;
-              if (w.comentario && w.comentario.includes('[META:')) {
-                try {
-                  const match = w.comentario.match(/\[META:(\{.*?\})\]/);
-                  if (match) meta = JSON.parse(match[1]);
-                } catch(e) {}
-              }
+              const parsed = extractMetaAndText(w.comentario);
+              const meta = parsed.meta;
+              const cleanText = parsed.text || `Espera apurada no hospital ${w.hospital || 'Hospital'}`;
 
               const hosp = (meta && meta.hospital) || w.hospital || 'Hospital / Unidade de Saúde';
               const cat = (meta && meta.category) || w.categoria || 'Emergência';
@@ -5264,7 +5387,6 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               const val = (meta && (meta.waitVal || meta.hours)) || w.tempo_horas || 2.0;
               const city = (meta && meta.city) || w.cidade || 'São Paulo';
               const state = (meta && meta.state) || w.estado || 'SP';
-              const cleanText = w.comentario ? w.comentario.replace(/\[META:\{.*?\}\]\s*/, '') : `Espera apurada no hospital ${hosp}`;
               const author = (meta && meta.author) || 'Paciente no Hospital';
               const avatar = (meta && meta.avatar) || '⏱️';
               const isPublic = meta ? (meta.isPublic !== false) : true;
@@ -5340,20 +5462,16 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
             updateMapStatistics();
           }
 
-          // 3. Subscriptions em Tempo Real (INSERT e UPDATE)
+          // 3. Subscriptions em Tempo Real (INSERT, UPDATE e DELETE)
           try {
             window.supabaseClient
               .channel('public:realtime_reports_channel')
               .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reports' }, payload => {
                 const r = payload.new;
                 if (!socialPosts.some(p => p.id === r.id)) {
-                  let meta = null;
-                  if (r.relato && r.relato.includes('[META:')) {
-                    try {
-                      const match = r.relato.match(/\[META:(\{.*?\})\]/);
-                      if (match) meta = JSON.parse(match[1]);
-                    } catch(e) {}
-                  }
+                  const parsed = extractMetaAndText(r.relato);
+                  const meta = parsed.meta;
+                  const cleanText = parsed.text;
 
                   const hosp = (meta && meta.hospital) || r.hospital || 'Hospital / Unidade de Saúde';
                   const cat = (meta && meta.category) || r.categoria || 'Emergência';
@@ -5362,7 +5480,6 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   const unit = (meta && meta.waitUnit) || (cat === 'Emergência' ? 'horas' : 'dias');
                   const city = (meta && meta.city) || r.cidade || 'São Paulo';
                   const state = (meta && meta.state) || r.estado || 'SP';
-                  const cleanText = r.relato ? r.relato.replace(/\[META:\{.*?\}\]\s*/, '') : '';
                   const author = r.anonimo ? 'Paciente Anônimo' : ((meta && meta.author) || 'Paciente');
                   const avatar = r.anonimo ? '🎭' : ((meta && meta.avatar) || '👤');
                   const isPublic = meta ? (meta.isPublic !== false) : true;
@@ -5431,17 +5548,46 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   updateMapStatistics();
                 }
               })
+              .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reports' }, payload => {
+                const r = payload.new;
+                const post = socialPosts.find(p => p.id === r.id);
+                if (post) {
+                  const parsed = extractMetaAndText(r.relato);
+                  if (parsed.meta) {
+                    if (Array.isArray(parsed.meta.comments)) {
+                      post.comments = parsed.meta.comments;
+                      post.commentsCount = post.comments.length;
+                    }
+                    if (typeof parsed.meta.isPublic === 'boolean') {
+                      post.isPublic = parsed.meta.isPublic;
+                    }
+                  }
+                  const rec = realWaitingRecords.find(x => x.id === r.id);
+                  if (rec && parsed.meta) {
+                    if (Array.isArray(parsed.meta.comments)) rec.comments = parsed.meta.comments;
+                    if (typeof parsed.meta.isPublic === 'boolean') rec.isPublic = parsed.meta.isPublic;
+                  }
+                  saveWaitRecords();
+                  renderFeed();
+                }
+              })
+              .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'reports' }, payload => {
+                const oldId = payload.old && payload.old.id;
+                if (oldId) {
+                  socialPosts = socialPosts.filter(p => p.id !== oldId);
+                  realWaitingRecords = realWaitingRecords.filter(x => x.id !== oldId);
+                  saveWaitRecords();
+                  renderFeed();
+                  updateMapStatistics();
+                }
+              })
               .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'waiting_times' }, payload => {
                 const w = payload.new;
                 const waitPostId = 'wait-' + w.id;
                 if (!socialPosts.some(p => p.id === w.id || p.id === waitPostId)) {
-                  let meta = null;
-                  if (w.comentario && w.comentario.includes('[META:')) {
-                    try {
-                      const match = w.comentario.match(/\[META:(\{.*?\})\]/);
-                      if (match) meta = JSON.parse(match[1]);
-                    } catch(e) {}
-                  }
+                  const parsed = extractMetaAndText(w.comentario);
+                  const meta = parsed.meta;
+                  const cleanText = parsed.text || `Espera apurada no hospital ${w.hospital || 'Hospital'}`;
 
                   const hosp = (meta && meta.hospital) || w.hospital || 'Hospital / Unidade de Saúde';
                   const cat = (meta && meta.category) || w.categoria || 'Emergência';
@@ -5449,7 +5595,6 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   const val = (meta && (meta.waitVal || meta.hours)) || w.tempo_horas || 2.0;
                   const city = (meta && meta.city) || w.cidade || 'São Paulo';
                   const state = (meta && meta.state) || w.estado || 'SP';
-                  const cleanText = w.comentario ? w.comentario.replace(/\[META:\{.*?\}\]\s*/, '') : `Espera apurada no hospital ${hosp}`;
                   const postComments = (meta && Array.isArray(meta.comments)) ? meta.comments : [];
 
                   const waitPost = {
@@ -5481,6 +5626,41 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   socialPosts.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
                   renderFeed();
                   renderStories();
+                  updateMapStatistics();
+                }
+              })
+              .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'waiting_times' }, payload => {
+                const w = payload.new;
+                const waitPostId = 'wait-' + w.id;
+                const post = socialPosts.find(p => p.id === waitPostId || p.id === w.id);
+                if (post) {
+                  const parsed = extractMetaAndText(w.comentario);
+                  if (parsed.meta) {
+                    if (Array.isArray(parsed.meta.comments)) {
+                      post.comments = parsed.meta.comments;
+                      post.commentsCount = post.comments.length;
+                    }
+                    if (typeof parsed.meta.isPublic === 'boolean') {
+                      post.isPublic = parsed.meta.isPublic;
+                    }
+                  }
+                  const rec = realWaitingRecords.find(x => x.id === w.id);
+                  if (rec && parsed.meta) {
+                    if (Array.isArray(parsed.meta.comments)) rec.comments = parsed.meta.comments;
+                    if (typeof parsed.meta.isPublic === 'boolean') rec.isPublic = parsed.meta.isPublic;
+                  }
+                  saveWaitRecords();
+                  renderFeed();
+                }
+              })
+              .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'waiting_times' }, payload => {
+                const oldId = payload.old && payload.old.id;
+                if (oldId) {
+                  const waitPostId = 'wait-' + oldId;
+                  socialPosts = socialPosts.filter(p => p.id !== oldId && p.id !== waitPostId);
+                  realWaitingRecords = realWaitingRecords.filter(x => x.id !== oldId);
+                  saveWaitRecords();
+                  renderFeed();
                   updateMapStatistics();
                 }
               })
