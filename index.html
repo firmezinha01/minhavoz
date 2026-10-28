@@ -1761,13 +1761,13 @@
         </button>
 
         <!-- 2. Fazer Upload de Vídeo ou Foto -->
-        <label class="p-4 rounded-2xl border-2 border-slate-200 hover:border-[#16A085] bg-white hover:bg-slate-50 transition-all flex flex-col items-center text-center gap-2 group cursor-pointer active-scale">
+        <label class="p-4 rounded-2xl border-2 border-slate-200 hover:border-[#16A085] bg-white hover:bg-slate-50 transition-all flex flex-col items-center text-center gap-2 group cursor-pointer active-scale relative overflow-hidden">
           <div class="w-12 h-12 rounded-2xl bg-slate-100 text-[#103D36] flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition-transform">
             📁
           </div>
           <span class="text-xs font-bold text-[#172B27]">Fazer Upload</span>
           <span class="text-[10px] text-[#66746F]">Vídeo ou foto da galeria</span>
-          <input type="file" id="story-file-upload-input" accept="video/*,image/*" onchange="handleStoryUpload(event)" class="hidden">
+          <input type="file" id="story-file-upload-input" accept="video/*,image/*" onchange="handleStoryUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
         </label>
       </div>
 
@@ -1989,6 +1989,19 @@
 // 1. SUPABASE CREDENCIAIS
     const SUPABASE_URL = 'https://rtpuzrjjcrwlivwtlcya.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0cHV6cmpqY3J3bGl2d3RsY3lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjI3NTYsImV4cCI6MjEwNzU5ODc1Nn0._letC6F8us6Idehchk-zbO_xfItWZ3brCjHQwIxxbLM';
+
+    function getSupabaseClient() {
+      if (window.supabaseClient) return window.supabaseClient;
+      if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.createClient === 'function') {
+        window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        return window.supabaseClient;
+      }
+      return null;
+    }
+    // Inicializa client de imediato se o script do CDN já estiver carregado
+    if (typeof window !== 'undefined' && window.supabase) {
+      getSupabaseClient();
+    }
 
     // 2. CONTAS DISPONÍVEIS (JOSE, MARIA E ADMIN COM SENHA 123456)
     const KNOWN_ACCOUNTS = {
@@ -2520,6 +2533,14 @@
         communityStories = [];
         return;
       }
+
+      try {
+        const storedStories = localStorage.getItem('minhavoz_community_stories');
+        if (storedStories) {
+          const parsedStories = JSON.parse(storedStories);
+          if (Array.isArray(parsedStories)) communityStories = parsedStories;
+        }
+      } catch (e) {}
 
       try {
         const stored = localStorage.getItem('minhavoz_wait_records');
@@ -3180,7 +3201,16 @@
           }
 
           videoChunks = [];
-          videoRecorder = new MediaRecorder(videoMediaStream);
+          const recOptions = { videoBitsPerSecond: 800000 };
+          if (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported) {
+            if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) recOptions.mimeType = 'video/webm;codecs=vp8,opus';
+            else if (MediaRecorder.isTypeSupported('video/mp4')) recOptions.mimeType = 'video/mp4';
+          }
+          try {
+            videoRecorder = new MediaRecorder(videoMediaStream, recOptions);
+          } catch(recErr) {
+            videoRecorder = new MediaRecorder(videoMediaStream);
+          }
 
           videoRecorder.ondataavailable = e => {
             if (e.data && e.data.size > 0) videoChunks.push(e.data);
@@ -5771,7 +5801,18 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     }
 
     async function saveStoryToSupabase(story) {
-      if (!window.supabaseClient) return null;
+      const client = getSupabaseClient();
+      if (!client) {
+        console.error('Supabase client não disponível para salvar story.');
+        if (typeof showNotificationToast === 'function') {
+          showNotificationToast('⚠️ Erro de conexão com o banco de dados Supabase.', 'error');
+        }
+        return null;
+      }
+
+      if (typeof showNotificationToast === 'function') {
+        showNotificationToast('⏳ Salvando story no banco de dados...', 'info');
+      }
 
       try {
         let mediaDataUrl = story.mediaUrl;
@@ -5792,6 +5833,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
         const hospName = story.hospital || (typeof detectedHospitalName !== 'undefined' ? detectedHospitalName : 'Hospital / Unidade de Saúde');
 
+        // IMPORTANTE: NÃO duplicamos mediaDataUrl dentro de storyMeta (relato) para não dobrar o tamanho do payload HTTP!
+        // O vídeo ou imagem vai exclusivamente na coluna video_url do Supabase.
         const storyMeta = {
           isStory: true,
           author: story.author,
@@ -5800,7 +5843,6 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
           username: story.username || null,
           hospital: hospName,
           type: story.type,
-          mediaUrl: mediaDataUrl,
           caption: story.caption,
           time: story.time
         };
@@ -5821,11 +5863,13 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
           payload.user_id = currentUser.id;
         }
 
-        let res = await window.supabaseClient.from('reports').insert([payload]).select();
+        let res = await client.from('reports').insert([payload]).select();
         if (res.error && payload.user_id) {
+          console.warn('Tentando novamente sem user_id devido a:', res.error);
           delete payload.user_id;
-          res = await window.supabaseClient.from('reports').insert([payload]).select();
+          res = await client.from('reports').insert([payload]).select();
         }
+
         if (res.data && res.data[0]) {
           console.log('✓ Story persistido no Supabase com ID:', res.data[0].id);
           const oldId = story.id;
@@ -5836,12 +5880,21 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
             localStorage.setItem('minhavoz_community_stories', JSON.stringify(communityStories));
           } catch(e) {}
           renderStories();
+          if (typeof showNotificationToast === 'function') {
+            showNotificationToast('✓ Story salvo no banco de dados com sucesso!', 'success');
+          }
           return res.data[0];
         } else if (res.error) {
           console.error('Erro retornado do Supabase ao salvar story:', res.error);
+          if (typeof showNotificationToast === 'function') {
+            showNotificationToast(`❌ Falha ao salvar story no banco: ${res.error.message || 'Erro no servidor'}`, 'error');
+          }
         }
       } catch (err) {
-        console.warn('Erro ao salvar story no Supabase:', err);
+        console.error('Erro ao salvar story no Supabase:', err);
+        if (typeof showNotificationToast === 'function') {
+          showNotificationToast(`❌ Erro ao enviar story: ${err.message || 'Falha de rede'}`, 'error');
+        }
       }
       return null;
     }
@@ -5850,8 +5903,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       const file = event.target.files && event.target.files[0];
       if (!file) return;
 
-      if (file.size > 25 * 1024 * 1024) {
-        alert('O arquivo selecionado é muito grande. Escolha um vídeo ou imagem com até 25MB.');
+      if (file.size > 12 * 1024 * 1024) {
+        alert('O arquivo selecionado é muito grande. Para envio rápido de stories, escolha um arquivo de vídeo ou imagem com até 12MB.');
         return;
       }
 
@@ -5999,16 +6052,25 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       closeStoryViewer();
       renderStories();
 
-      if (window.supabaseClient && isValidUUID(storyId)) {
+      const client = getSupabaseClient();
+      if (client && isValidUUID(storyId)) {
         try {
-          await window.supabaseClient.from('reports').delete().eq('id', storyId);
-          console.log('✓ Story excluído do Supabase:', storyId);
+          const { error } = await client.from('reports').delete().eq('id', storyId);
+          if (error) {
+            console.warn('Erro ao excluir story do Supabase:', error);
+          } else {
+            console.log('✓ Story excluído do Supabase:', storyId);
+          }
         } catch (e) {
           console.warn('Erro ao excluir story do Supabase:', e);
         }
       }
 
-      alert('✓ Story excluído com sucesso!');
+      if (typeof showNotificationToast === 'function') {
+        showNotificationToast('✓ Story excluído com sucesso!', 'success');
+      } else {
+        alert('✓ Story excluído com sucesso!');
+      }
     }
 
     function renderStories() {
@@ -6095,9 +6157,10 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     // INTEGRAÇÃO REAL COM SUPABASE & SUBSCRIPTION EM TEMPO REAL
     // ====================================================================
     async function initSupabaseClient() {
-      if (window.supabase) {
+      const client = getSupabaseClient();
+      if (client) {
         try {
-          window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          window.supabaseClient = client;
 
           // 0. Sincroniza foto e dados do usuário logado diretamente do Supabase
           if (currentUser && currentUser.username) {
@@ -6367,6 +6430,13 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               localStorage.setItem('minhavoz_community_stories', JSON.stringify(communityStories));
             } catch(e) {}
             renderStories();
+          } else if (!reportsErr) {
+            // Se o banco não tem stories, mantém apenas itens locais provisórios que estejam sendo salvos
+            communityStories = communityStories.filter(s => s.id && s.id.startsWith('story-'));
+            try {
+              localStorage.setItem('minhavoz_community_stories', JSON.stringify(communityStories));
+            } catch(e) {}
+            renderStories();
           }
 
           if (freshPosts.length > 0) {
@@ -6398,26 +6468,42 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
                 const isStory = r.categoria === 'story' || (meta && meta.isStory === true);
                 if (isStory) {
-                  if (!communityStories.some(s => s.id === r.id)) {
-                    const newStoryObj = {
-                      id: r.id,
-                      author: (meta && meta.author) || (r.anonimo ? 'Paciente Anônimo' : 'Paciente'),
-                      avatar: (meta && meta.avatar) || (r.anonimo ? '🎭' : '✨'),
-                      userId: (meta && meta.userId) || r.user_id || null,
-                      username: (meta && meta.username) || null,
-                      hospital: (meta && meta.hospital) || r.hospital || 'Hospital / Unidade de Saúde',
-                      time: formatPostDateTime(r.created_at || new Date()),
-                      createdAtIso: r.created_at || new Date().toISOString(),
-                      type: (meta && meta.type) || (r.tipo_midia === 'video' ? 'video' : 'image'),
-                      mediaUrl: (meta && meta.mediaUrl) || r.video_url || r.audio_url,
-                      caption: (meta && meta.caption) || cleanText || 'Depoimento em story'
-                    };
-                    communityStories.unshift(newStoryObj);
+                  // Se o story já existe pelo ID no array local, ignora para não duplicar
+                  if (communityStories.some(s => s.id === r.id)) {
+                    return;
+                  }
+                  // Se o usuário acabou de publicar localmente com ID provisório, atualiza para o ID definitivo do banco
+                  const pendingLocalIdx = communityStories.findIndex(s => 
+                    s.id.startsWith('story-') &&
+                    ((r.user_id && s.userId === r.user_id) || (meta && meta.username && s.username === meta.username) || (meta && meta.author && s.author === meta.author))
+                  );
+                  if (pendingLocalIdx !== -1) {
+                    communityStories[pendingLocalIdx].id = r.id;
                     try {
                       localStorage.setItem('minhavoz_community_stories', JSON.stringify(communityStories));
                     } catch(e) {}
-                    renderStories();
+                    return;
                   }
+
+                  const newStoryObj = {
+                    id: r.id,
+                    author: (meta && meta.author) || (r.anonimo ? 'Paciente Anônimo' : 'Paciente'),
+                    avatar: (meta && meta.avatar) || (r.anonimo ? '🎭' : '✨'),
+                    userId: (meta && meta.userId) || r.user_id || null,
+                    username: (meta && meta.username) || null,
+                    hospital: (meta && meta.hospital) || r.hospital || 'Hospital / Unidade de Saúde',
+                    time: formatPostDateTime(r.created_at || new Date()),
+                    createdAtIso: r.created_at || new Date().toISOString(),
+                    type: (meta && meta.type) || (r.tipo_midia === 'video' ? 'video' : 'image'),
+                    mediaUrl: (meta && meta.mediaUrl) || r.video_url || r.audio_url,
+                    caption: (meta && meta.caption) || cleanText || 'Depoimento em story'
+                  };
+                  communityStories.unshift(newStoryObj);
+                  communityStories.sort((a, b) => new Date(b.createdAtIso || 0) - new Date(a.createdAtIso || 0));
+                  try {
+                    localStorage.setItem('minhavoz_community_stories', JSON.stringify(communityStories));
+                  } catch(e) {}
+                  renderStories();
                   return;
                 }
 
