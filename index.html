@@ -155,6 +155,13 @@
               <span class="hidden sm:inline">Meus Dados</span>
             </button>
 
+            <!-- Botão Minhas Conexões & Amigos -->
+            <button onclick="openSocialModal()" id="btn-header-social" title="Minhas Conexões & Amizades" class="px-3 py-1.5 bg-[#E9F5F1] hover:bg-[#d5ece4] text-[#103D36] rounded-xl text-xs font-bold transition-all flex items-center gap-1 active-scale border border-[#16A085]/30 shadow-2xs relative">
+              <span>🤝</span>
+              <span class="hidden md:inline">Amigos</span>
+              <span id="header-social-badge" class="hidden text-[10px] bg-emerald-600 text-white px-1.5 py-0.2 rounded-full font-bold">0</span>
+            </button>
+
             <!-- Botão Sair Visível no Header -->
             <button onclick="logoutUser()" id="btn-header-logout" title="Sair da Conta" class="p-2 text-[#66746F] hover:text-[#C93C45] rounded-xl hover:bg-rose-50 transition-colors flex items-center gap-1 text-xs font-bold active-scale">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
@@ -193,6 +200,10 @@
       </button>
       <button onclick="openDefensoriaModal(); closeMobileMenu();" class="w-full text-left py-2 px-3 rounded-xl hover:bg-[#E9F5F1] text-[#172B27] flex items-center gap-2">
         <span>⚖️ Orientação Jurídica & Apoio</span>
+      </button>
+      <button onclick="openSocialModal(); closeMobileMenu();" class="w-full text-left py-2 px-3 rounded-xl hover:bg-[#E9F5F1] text-[#172B27] flex items-center justify-between">
+        <span class="flex items-center gap-2"><span>🤝</span><span>Minhas Conexões & Amizades</span></span>
+        <span id="mobile-social-badge" class="hidden text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">0</span>
       </button>
       <div class="pt-2 border-t border-[#DDE6E2] flex gap-2">
         <button onclick="openLoginModal('login'); closeMobileMenu();" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#172B27] font-bold text-xs rounded-xl text-center">
@@ -259,7 +270,24 @@
             </div>
           </div>
 
-          <div class="pt-3 border-t border-[#DDE6E2] space-y-2">
+          <!-- Resumo de Conexões Sociais: Amigos & Seguindo -->
+          <div class="grid grid-cols-2 gap-2 my-2.5 py-2.5 border-y border-[#DDE6E2] text-center text-xs">
+            <div onclick="openSocialModal('friends')" class="cursor-pointer hover:bg-slate-50 p-1.5 rounded-xl transition-colors active-scale" title="Ver meus amigos confirmados">
+              <span id="sidebar-friends-count" class="block font-extrabold text-[#103D36] text-sm">0</span>
+              <span class="text-[10px] text-[#66746F]">Amigos</span>
+            </div>
+            <div onclick="openSocialModal('following')" class="cursor-pointer hover:bg-slate-50 p-1.5 rounded-xl transition-colors active-scale" title="Ver quem estou seguindo">
+              <span id="sidebar-following-count" class="block font-extrabold text-[#103D36] text-sm">0</span>
+              <span class="text-[10px] text-[#66746F]">Seguindo</span>
+            </div>
+          </div>
+
+          <div class="pt-1 space-y-2">
+            <button onclick="openSocialModal()" class="w-full py-2 bg-[#E9F5F1] hover:bg-[#d5ece4] text-[#103D36] text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 active-scale border border-[#16A085]/30 shadow-2xs">
+              <span>🤝</span>
+              <span>Minhas Conexões & Amizades</span>
+              <span id="sidebar-social-badge" class="hidden text-[10px] bg-emerald-600 text-white px-1.5 py-0.2 rounded-full font-bold">0</span>
+            </button>
             <button onclick="openProfileModal()" class="w-full py-2.5 bg-[#16A085] hover:bg-[#103D36] text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 active-scale shadow-xs">
               <span>👤</span>
               <span>Acessar Meus Dados & Foto</span>
@@ -1749,6 +1777,55 @@
     </div>
   </div>
 
+  <!-- MODAL: MINHA REDE DE AMIZADES & CONEXÕES -->
+  <div id="modal-social-connections" onclick="if(event.target === this) closeModal('modal-social-connections')" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DDE6E2] space-y-4 max-h-[90vh] flex flex-col">
+      <!-- Cabeçalho do Modal -->
+      <div class="flex items-center justify-between pb-3 border-b border-[#DDE6E2] shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-[#E9F5F1] text-[#16A085] flex items-center justify-center text-xl font-bold shadow-2xs">
+            🤝
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-[#103D36]">Rede de Conexões & Amizades</h3>
+            <p class="text-[11px] text-[#66746F]">Acompanhe pacientes e fortaleça a rede</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-social-connections')" class="text-slate-400 hover:text-slate-700 text-lg p-1.5 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer">✕</button>
+      </div>
+
+      <!-- Abas de Navegação: Amigos / Seguindo / Solicitações -->
+      <div class="flex items-center bg-[#F6F8F7] p-1 rounded-2xl border border-[#DDE6E2] text-xs font-bold shrink-0">
+        <button id="tab-btn-friends" onclick="switchSocialTab('friends')" class="flex-1 py-2 px-2 rounded-xl bg-white text-[#103D36] shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+          <span>🤝 Amigos</span>
+          <span id="tab-count-friends" class="text-[10px] bg-[#E9F5F1] text-[#103D36] px-1.5 py-0.2 rounded-full font-extrabold">0</span>
+        </button>
+        <button id="tab-btn-following" onclick="switchSocialTab('following')" class="flex-1 py-2 px-2 rounded-xl text-[#66746F] hover:text-[#103D36] transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+          <span>✨ Seguindo</span>
+          <span id="tab-count-following" class="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded-full font-extrabold">0</span>
+        </button>
+        <button id="tab-btn-requests" onclick="switchSocialTab('requests')" class="flex-1 py-2 px-2 rounded-xl text-[#66746F] hover:text-[#103D36] transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+          <span>📬 Pedidos</span>
+          <span id="tab-count-requests" class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-full font-extrabold">0</span>
+        </button>
+      </div>
+
+      <!-- Conteúdo da Aba com Scroll -->
+      <div id="social-tab-content" class="flex-1 overflow-y-auto custom-scrollbar pr-1 min-h-[220px] max-h-[360px] space-y-2.5">
+        <!-- Preenchido dinamicamente via JS -->
+      </div>
+
+      <!-- Rodapé informativo -->
+      <div class="pt-2 border-t border-[#DDE6E2] flex items-center justify-between text-[11px] text-[#66746F] shrink-0">
+        <span>Conecte-se com pacientes em hospitais</span>
+        <button onclick="closeModal('modal-social-connections')" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-[#172B27] font-bold rounded-xl active-scale cursor-pointer">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTAINER DE TOASTS FLUTUANTES DE NOTIFICAÇÃO -->
+  <div id="toast-notification-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none flex flex-col items-center gap-2"></div>
+
   <!-- MODAL: VISUALIZADOR DE STORY / STATUS -->
   <div id="modal-story-viewer" onclick="if(event.target === this) closeStoryViewer()" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-50 hidden">
     <div class="relative w-full max-w-sm bg-slate-950 text-white rounded-3xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col max-h-[90vh]">
@@ -2418,9 +2495,11 @@
     // INICIALIZAÇÃO
     document.addEventListener('DOMContentLoaded', () => {
       loadStoredUser();
+      loadSocialConnections();
       loadStoredWaitRecords();
       syncSocialPostsFromWaitRecords();
       updateUserUI();
+      updateSocialUI();
       detectUserLocation(false);
       updateComposerSpecialties('Emergência');
       updateMapStatistics();
@@ -2448,6 +2527,8 @@
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed)) {
             realWaitingRecords = parsed.filter(r => 
+              r.category !== 'friend_request' && 
+              r.categoria !== 'friend_request' &&
               !r.id.startsWith('rec-hmu-') && 
               !r.id.startsWith('rec-grajau-') && 
               !r.id.startsWith('rec-hsp-') && 
@@ -2455,7 +2536,10 @@
               !r.id.startsWith('rec-ba-') && 
               !r.id.startsWith('rec-mg-') && 
               !r.id.startsWith('rec-ce-')
-            );
+            ).map(r => {
+              if (Array.isArray(r.comments)) r.comments = deduplicateComments(r.comments);
+              return r;
+            });
             return;
           }
         }
@@ -2506,8 +2590,8 @@
         hasLiked: Boolean(r.hasLiked),
         likedBy: Array.isArray(r.likedBy) ? r.likedBy : [],
         pressures: (typeof r.pressures === 'number') ? r.pressures : 1,
-        comments: Array.isArray(r.comments) ? r.comments : [],
-        commentsCount: Array.isArray(r.comments) ? r.comments.length : 0,
+        comments: deduplicateComments(r.comments),
+        commentsCount: deduplicateComments(r.comments).length,
         createdAt: r.createdAt || 'Hoje',
         createdAtIso: r.createdAtIso || null,
         isAnon: r.isAnon || (r.author === 'Paciente Anônimo')
@@ -2638,6 +2722,8 @@
         if (isLogged) modalLogoutBtn.classList.remove('hidden');
         else modalLogoutBtn.classList.add('hidden');
       }
+
+      updateSocialUI();
     }
 
     
@@ -4734,7 +4820,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         ? `${post.waitValue || post.waitHours || 2} horas` 
         : `${post.waitValue || post.waitDays || 180} dias`;
 
-      const postComments = (post.comments && Array.isArray(post.comments)) ? post.comments : [];
+      const postComments = (post.comments && Array.isArray(post.comments)) ? deduplicateComments(post.comments) : [];
       const commentsCount = postComments.length;
 
       return `
@@ -4748,6 +4834,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               <div>
                 <div class="flex items-center gap-1.5 flex-wrap">
                   <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-tight">${isAnonName}</h4>
+                  ${renderSocialActionButtons(post, isOwner)}
                   <span class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-md">
                     📍 ${post.location}
                   </span>
@@ -4901,11 +4988,28 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       }
     }
 
+    // Deduplica lista de comentários por ID ou (autor + texto + data) garantindo ausência total de duplicatas
+    function deduplicateComments(comments) {
+      if (!Array.isArray(comments)) return [];
+      const seen = new Set();
+      const unique = [];
+      for (const c of comments) {
+        if (!c) continue;
+        const key = c.id || `${c.author || ''}_${c.text || ''}_${c.createdAt || ''}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          unique.push(c);
+        }
+      }
+      return unique;
+    }
+
     function renderCommentsHTML(comments) {
-      if (!comments || comments.length === 0) {
+      const cleanComments = deduplicateComments(comments);
+      if (!cleanComments || cleanComments.length === 0) {
         return `<p class="text-[11px] text-[#66746F] italic py-1 text-center bg-[#F6F8F7] rounded-xl p-2.5 border border-[#DDE6E2]/50">Nenhum comentário ainda. Seja o primeiro a deixar uma palavra de apoio ou informação sobre a fila!</p>`;
       }
-      return comments.map(c => `
+      return cleanComments.map(c => `
         <div class="flex items-start gap-2.5 p-2.5 bg-[#F6F8F7] rounded-xl text-xs border border-[#DDE6E2]/60">
           <div class="w-7 h-7 rounded-full bg-[#103D36] text-white flex items-center justify-center text-[10px] font-bold shrink-0 overflow-hidden mt-0.5">
             ${renderAvatarHTML(c.avatar || '👤')}
@@ -4941,21 +5045,22 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       const authorAvatar = (currentUser && currentUser.avatar) || '💬';
 
       const newComment = {
-        id: 'comm-' + Date.now(),
+        id: 'comm-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6),
         author: authorName,
         avatar: authorAvatar,
         text: text,
         createdAt: formatPostDateTime(new Date().toISOString())
       };
 
-      post.comments.push(newComment);
+      // Adiciona e deduplica garantindo inserção estritamente única
+      post.comments = deduplicateComments([...(post.comments || []), newComment]);
       post.commentsCount = post.comments.length;
 
       const rawId = postId.startsWith('wait-') ? postId.replace('wait-', '') : postId;
       const rec = realWaitingRecords.find(r => r.id === postId || r.id === rawId);
       if (rec) {
-        if (!Array.isArray(rec.comments)) rec.comments = [];
-        rec.comments.push(newComment);
+        rec.comments = [...post.comments];
+        rec.commentsCount = post.comments.length;
       }
 
       // Atualiza visualmente a lista e o contador
@@ -4999,6 +5104,613 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
           }
         }
       }
+    }
+
+    // ====================================================================
+    // SISTEMA DE CONEXÕES SOCIAIS: SEGUIR & SOLICITAR AMIZADE
+    // ====================================================================
+    let socialConnections = {
+      following: [],
+      friends: [],
+      sentRequests: [],
+      receivedRequests: []
+    };
+
+    function loadSocialConnections() {
+      try {
+        const raw = localStorage.getItem('minhavoz_social_connections');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') socialConnections = parsed;
+        }
+      } catch (e) {}
+      if (!socialConnections) socialConnections = {};
+      if (!Array.isArray(socialConnections.following)) socialConnections.following = [];
+      if (!Array.isArray(socialConnections.friends)) socialConnections.friends = [];
+      if (!Array.isArray(socialConnections.sentRequests)) socialConnections.sentRequests = [];
+      if (!Array.isArray(socialConnections.receivedRequests)) socialConnections.receivedRequests = [];
+    }
+
+    function saveSocialConnections() {
+      try {
+        localStorage.setItem('minhavoz_social_connections', JSON.stringify(socialConnections));
+      } catch (e) {}
+      updateSocialUI();
+    }
+
+    function isUserFollowing(targetKey) {
+      if (!targetKey) return false;
+      const tk = String(targetKey).toLowerCase();
+      return socialConnections.following.some(u => 
+        (u.key && String(u.key).toLowerCase() === tk) || 
+        (u.name && String(u.name).toLowerCase() === tk)
+      );
+    }
+
+    function isUserFriend(targetKey) {
+      if (!targetKey) return false;
+      const tk = String(targetKey).toLowerCase();
+      return socialConnections.friends.some(u => 
+        (u.key && String(u.key).toLowerCase() === tk) || 
+        (u.name && String(u.name).toLowerCase() === tk)
+      );
+    }
+
+    function isUserPendingSent(targetKey) {
+      if (!targetKey) return false;
+      const tk = String(targetKey).toLowerCase();
+      return socialConnections.sentRequests.some(u => 
+        (u.key && String(u.key).toLowerCase() === tk) || 
+        (u.name && String(u.name).toLowerCase() === tk)
+      );
+    }
+
+    function isUserPendingReceived(targetKey) {
+      if (!targetKey) return false;
+      const tk = String(targetKey).toLowerCase();
+      return socialConnections.receivedRequests.some(u => 
+        (u.key && String(u.key).toLowerCase() === tk) || 
+        (u.name && String(u.name).toLowerCase() === tk)
+      );
+    }
+
+    function renderSocialActionButtons(post, isOwner) {
+      if (!post || isOwner || post.isAnon) return '';
+      const authorName = post.author || 'Paciente';
+      const targetKey = post.userId || post.username || authorName;
+      const targetAvatar = post.avatar || '👤';
+
+      const following = isUserFollowing(targetKey);
+      const friend = isUserFriend(targetKey);
+      const pendingSent = isUserPendingSent(targetKey);
+      const pendingReceived = isUserPendingReceived(targetKey);
+
+      const safeTargetKey = String(targetKey).replace(/'/g, "\\'");
+      const safeAuthorName = String(authorName).replace(/'/g, "\\'");
+      const safeAvatar = (typeof targetAvatar === 'string' && targetAvatar.startsWith('data:') ? '👤' : targetAvatar).replace(/'/g, "\\'");
+
+      const followBtn = following ? `
+        <button onclick="toggleFollowUser('${safeTargetKey}', '${safeAuthorName}', '${safeAvatar}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#103D36] text-white hover:bg-rose-700 transition-all cursor-pointer shadow-2xs" title="Você está seguindo esta pessoa. Clique para deixar de seguir.">
+          <span>✓</span>
+          <span>Seguindo</span>
+        </button>
+      ` : `
+        <button onclick="toggleFollowUser('${safeTargetKey}', '${safeAuthorName}', '${safeAvatar}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E9F5F1] hover:bg-[#16A085] text-[#103D36] hover:text-white border border-[#16A085]/30 transition-all cursor-pointer shadow-2xs" title="Seguir relatos desta pessoa">
+          <span>+</span>
+          <span>Seguir</span>
+        </button>
+      `;
+
+      let friendBtn = '';
+      if (friend) {
+        friendBtn = `
+          <button onclick="openSocialModal('friends')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 transition-all cursor-pointer shadow-2xs" title="Vocês são amigos na rede Minha Voz">
+            <span>🤝</span>
+            <span>Amigos</span>
+          </button>
+        `;
+      } else if (pendingReceived) {
+        friendBtn = `
+          <button onclick="acceptFriendRequest('${safeTargetKey}', '${safeAuthorName}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all cursor-pointer shadow-2xs animate-pulse" title="Clique para aceitar o pedido de amizade">
+            <span>🤝</span>
+            <span>Aceitar Amizade</span>
+          </button>
+        `;
+      } else if (pendingSent) {
+        friendBtn = `
+          <button onclick="cancelFriendRequest('${safeTargetKey}', '${safeAuthorName}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 hover:bg-rose-50 text-amber-700 hover:text-rose-700 border border-amber-300 transition-all cursor-pointer shadow-2xs" title="Solicitação enviada. Clique para cancelar se desejar.">
+            <span>⏳</span>
+            <span>Pedido Enviado</span>
+          </button>
+        `;
+      } else {
+        friendBtn = `
+          <button onclick="sendFriendRequest('${safeTargetKey}', '${safeAuthorName}', '${safeAvatar}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200 hover:border-blue-300 transition-all cursor-pointer shadow-2xs" title="Solicitar amizade">
+            <span>🤝</span>
+            <span>Solicitar Amizade</span>
+          </button>
+        `;
+      }
+
+      return `
+        <div class="inline-flex items-center gap-1.5 my-0.5">
+          ${followBtn}
+          ${friendBtn}
+        </div>
+      `;
+    }
+
+    function toggleFollowUser(targetKey, targetName, targetAvatar) {
+      if (!currentUser || currentUser.username === 'visitante') {
+        alert('Por favor, faça login ou cadastre-se gratuitamente para seguir pacientes e acompanhar seus relatos.');
+        openLoginModal('login');
+        return;
+      }
+
+      const tk = String(targetKey).toLowerCase();
+      const existingIdx = socialConnections.following.findIndex(u => 
+        (u.key && String(u.key).toLowerCase() === tk) || 
+        (u.name && String(u.name).toLowerCase() === tk)
+      );
+
+      if (existingIdx >= 0) {
+        socialConnections.following.splice(existingIdx, 1);
+        saveSocialConnections();
+        renderFeed();
+        if (currentSocialTab === 'following') renderSocialTabContent();
+        showNotificationToast(`Você deixou de seguir ${targetName}.`, 'info');
+      } else {
+        socialConnections.following.unshift({
+          key: targetKey,
+          name: targetName,
+          avatar: targetAvatar || '👤',
+          date: formatPostDateTime(new Date().toISOString())
+        });
+        saveSocialConnections();
+        renderFeed();
+        if (currentSocialTab === 'following') renderSocialTabContent();
+        showNotificationToast(`✓ Você agora está seguindo ${targetName}!`, 'success');
+      }
+    }
+
+    async function sendFriendRequest(targetKey, targetName, targetAvatar) {
+      if (!currentUser || currentUser.username === 'visitante') {
+        alert('Por favor, faça login ou cadastre-se gratuitamente para solicitar amizades na rede Minha Voz.');
+        openLoginModal('login');
+        return;
+      }
+
+      const currentKey = currentUser.id || currentUser.username || currentUser.name;
+      if (String(currentKey).toLowerCase() === String(targetKey).toLowerCase()) {
+        alert('Você não pode solicitar amizade para você mesmo.');
+        return;
+      }
+
+      const tk = String(targetKey).toLowerCase();
+      if (!socialConnections.sentRequests.some(u => (u.key && String(u.key).toLowerCase() === tk) || (u.name && String(u.name).toLowerCase() === tk))) {
+        socialConnections.sentRequests.unshift({
+          key: targetKey,
+          name: targetName,
+          avatar: targetAvatar || '👤',
+          date: formatPostDateTime(new Date().toISOString())
+        });
+        saveSocialConnections();
+        renderFeed();
+        if (currentSocialTab === 'requests') renderSocialTabContent();
+      }
+
+      // Persiste no Supabase para entrega ao destinatário em tempo real
+      if (window.supabaseClient) {
+        try {
+          const payload = {
+            cidade: currentUser.city ? currentUser.city.split(',')[0].trim() : 'São Paulo',
+            estado: currentUser.city && currentUser.city.includes(',') ? currentUser.city.split(',')[1].trim() : 'SP',
+            hospital: 'Rede Minha Voz',
+            categoria: 'friend_request',
+            especialidade: 'Amizade e Conexão',
+            tempo_espera_dias: 0,
+            tempo_espera_horas: 0,
+            tipo_midia: 'texto',
+            anonimo: false,
+            user_id: (currentUser.id && isValidUUID(currentUser.id)) ? currentUser.id : null,
+            relato: formatMetaAndText({
+              isFriendRequest: true,
+              fromKey: currentKey,
+              fromName: currentUser.name,
+              fromAvatar: currentUser.avatar || '👤',
+              toKey: targetKey,
+              toName: targetName,
+              toAvatar: targetAvatar || '👤',
+              status: 'pending'
+            }, `Solicitação de amizade de ${currentUser.name} para ${targetName}`)
+          };
+          if (!payload.user_id) delete payload.user_id;
+          await window.supabaseClient.from('reports').insert([payload]);
+        } catch (e) {
+          console.warn('Erro ao registrar envio de solicitação no Supabase:', e);
+        }
+      }
+
+      showNotificationToast(`✓ Solicitação de amizade enviada para ${targetName}!`, 'success');
+    }
+
+    async function acceptFriendRequest(targetKey, targetName) {
+      if (!currentUser) return;
+      const tk = String(targetKey).toLowerCase();
+      const req = socialConnections.receivedRequests.find(r => 
+        (r.key && String(r.key).toLowerCase() === tk) || 
+        (r.name && String(r.name).toLowerCase() === tk)
+      );
+      const avatar = (req && req.avatar) || '👤';
+
+      socialConnections.receivedRequests = socialConnections.receivedRequests.filter(r => 
+        (r.key && String(r.key).toLowerCase() !== tk) && 
+        (r.name && String(r.name).toLowerCase() !== tk)
+      );
+
+      if (!socialConnections.friends.some(f => (f.key && String(f.key).toLowerCase() === tk) || (f.name && String(f.name).toLowerCase() === tk))) {
+        socialConnections.friends.unshift({
+          key: targetKey,
+          name: targetName,
+          avatar: avatar,
+          date: formatPostDateTime(new Date().toISOString())
+        });
+      }
+
+      saveSocialConnections();
+      renderFeed();
+      renderSocialTabContent();
+
+      // Sincroniza aceite no Supabase
+      if (window.supabaseClient) {
+        try {
+          const currentKey = currentUser.id || currentUser.username || currentUser.name;
+          const payload = {
+            cidade: currentUser.city ? currentUser.city.split(',')[0].trim() : 'São Paulo',
+            estado: currentUser.city && currentUser.city.includes(',') ? currentUser.city.split(',')[1].trim() : 'SP',
+            hospital: 'Rede Minha Voz',
+            categoria: 'friend_request',
+            especialidade: 'Amizade e Conexão',
+            tempo_espera_dias: 0,
+            tempo_espera_horas: 0,
+            tipo_midia: 'texto',
+            anonimo: false,
+            user_id: (currentUser.id && isValidUUID(currentUser.id)) ? currentUser.id : null,
+            relato: formatMetaAndText({
+              isFriendRequest: true,
+              fromKey: currentKey,
+              fromName: currentUser.name,
+              fromAvatar: currentUser.avatar || '👤',
+              toKey: targetKey,
+              toName: targetName,
+              status: 'accepted'
+            }, `Amizade aceita entre ${currentUser.name} e ${targetName}`)
+          };
+          if (!payload.user_id) delete payload.user_id;
+          await window.supabaseClient.from('reports').insert([payload]);
+        } catch (e) {
+          console.warn('Erro ao registrar aceite de amizade no Supabase:', e);
+        }
+      }
+
+      showNotificationToast(`✓ Agora você e ${targetName} são amigos na rede!`, 'success');
+    }
+
+    function rejectFriendRequest(targetKey, targetName) {
+      const tk = String(targetKey).toLowerCase();
+      socialConnections.receivedRequests = socialConnections.receivedRequests.filter(r => 
+        (r.key && String(r.key).toLowerCase() !== tk) && 
+        (r.name && String(r.name).toLowerCase() !== tk)
+      );
+      saveSocialConnections();
+      renderFeed();
+      renderSocialTabContent();
+      showNotificationToast(`Solicitação de ${targetName} recusada.`, 'info');
+    }
+
+    function cancelFriendRequest(targetKey, targetName) {
+      const tk = String(targetKey).toLowerCase();
+      socialConnections.sentRequests = socialConnections.sentRequests.filter(s => 
+        (s.key && String(s.key).toLowerCase() !== tk) && 
+        (s.name && String(s.name).toLowerCase() !== tk)
+      );
+      saveSocialConnections();
+      renderFeed();
+      renderSocialTabContent();
+      showNotificationToast(`Solicitação de amizade cancelada.`, 'info');
+    }
+
+    function removeFriend(targetKey, targetName) {
+      if (!confirm(`Deseja realmente desfazer a amizade com ${targetName}?`)) return;
+      const tk = String(targetKey).toLowerCase();
+      socialConnections.friends = socialConnections.friends.filter(f => 
+        (f.key && String(f.key).toLowerCase() !== tk) && 
+        (f.name && String(f.name).toLowerCase() !== tk)
+      );
+      saveSocialConnections();
+      renderFeed();
+      renderSocialTabContent();
+      showNotificationToast(`Amizade com ${targetName} desfeita.`, 'info');
+    }
+
+    let currentSocialTab = 'friends';
+
+    function openSocialModal(defaultTab = 'friends') {
+      if (!currentUser || currentUser.username === 'visitante') {
+        alert('Por favor, faça login ou cadastre-se para acessar suas amizades e conexões.');
+        openLoginModal('login');
+        return;
+      }
+      const modal = document.getElementById('modal-social-connections');
+      if (modal) modal.classList.remove('hidden');
+      switchSocialTab(defaultTab);
+      updateSocialUI();
+    }
+
+    function switchSocialTab(tab) {
+      currentSocialTab = tab;
+      const btnFriends = document.getElementById('tab-btn-friends');
+      const btnFollowing = document.getElementById('tab-btn-following');
+      const btnRequests = document.getElementById('tab-btn-requests');
+
+      const activeClasses = 'bg-white text-[#103D36] shadow-2xs';
+      const inactiveClasses = 'text-[#66746F] hover:text-[#103D36]';
+
+      if (btnFriends) {
+        btnFriends.className = `flex-1 py-2 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${tab === 'friends' ? activeClasses : inactiveClasses}`;
+      }
+      if (btnFollowing) {
+        btnFollowing.className = `flex-1 py-2 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${tab === 'following' ? activeClasses : inactiveClasses}`;
+      }
+      if (btnRequests) {
+        btnRequests.className = `flex-1 py-2 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${tab === 'requests' ? activeClasses : inactiveClasses}`;
+      }
+
+      renderSocialTabContent();
+    }
+
+    function renderSocialTabContent() {
+      const container = document.getElementById('social-tab-content');
+      if (!container) return;
+
+      if (currentSocialTab === 'friends') {
+        if (!socialConnections.friends || socialConnections.friends.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-8 px-4 text-slate-500 space-y-2">
+              <div class="text-3xl">🤝</div>
+              <p class="font-bold text-xs text-slate-700">Nenhum amigo conectado ainda</p>
+              <p class="text-[11px] text-[#66746F] max-w-xs mx-auto leading-relaxed">
+                Ao navegar pelos relatos no feed, clique no botão <strong>"Solicitar Amizade"</strong> para criar sua rede de apoio mútuo.
+              </p>
+            </div>
+          `;
+          return;
+        }
+        container.innerHTML = socialConnections.friends.map(f => `
+          <div class="flex items-center justify-between gap-3 p-3 bg-[#F6F8F7] hover:bg-[#E9F5F1]/50 rounded-2xl border border-[#DDE6E2] transition-colors">
+            <div class="flex items-center gap-2.5 overflow-hidden">
+              <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs">
+                ${renderAvatarHTML(f.avatar || '👤')}
+              </div>
+              <div class="overflow-hidden">
+                <h4 class="font-bold text-xs text-[#103D36] truncate">${f.name}</h4>
+                <p class="text-[10px] text-[#66746F]">Amigos desde ${f.date || 'hoje'}</p>
+              </div>
+            </div>
+            <button onclick="removeFriend('${f.key}', '${f.name}')" class="px-2.5 py-1 text-[10px] font-bold text-rose-600 hover:text-white hover:bg-rose-600 border border-rose-200 rounded-xl transition-all shrink-0 cursor-pointer">
+              Desfazer
+            </button>
+          </div>
+        `).join('');
+      } else if (currentSocialTab === 'following') {
+        if (!socialConnections.following || socialConnections.following.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-8 px-4 text-slate-500 space-y-2">
+              <div class="text-3xl">✨</div>
+              <p class="font-bold text-xs text-slate-700">Você ainda não está seguindo ninguém</p>
+              <p class="text-[11px] text-[#66746F] max-w-xs mx-auto leading-relaxed">
+                Clique em <strong>"+ Seguir"</strong> nos relatos para acompanhar a evolução e o tempo de espera de outros pacientes.
+              </p>
+            </div>
+          `;
+          return;
+        }
+        container.innerHTML = socialConnections.following.map(u => `
+          <div class="flex items-center justify-between gap-3 p-3 bg-[#F6F8F7] hover:bg-[#E9F5F1]/50 rounded-2xl border border-[#DDE6E2] transition-colors">
+            <div class="flex items-center gap-2.5 overflow-hidden">
+              <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs">
+                ${renderAvatarHTML(u.avatar || '👤')}
+              </div>
+              <div class="overflow-hidden">
+                <h4 class="font-bold text-xs text-[#103D36] truncate">${u.name}</h4>
+                <p class="text-[10px] text-[#66746F]">Seguindo desde ${u.date || 'hoje'}</p>
+              </div>
+            </div>
+            <button onclick="toggleFollowUser('${u.key}', '${u.name}', '${u.avatar || '👤'}')" class="px-2.5 py-1 text-[10px] font-bold text-slate-700 hover:text-rose-600 hover:bg-rose-50 border border-slate-300 rounded-xl transition-all shrink-0 cursor-pointer">
+              Deixar de Seguir
+            </button>
+          </div>
+        `).join('');
+      } else if (currentSocialTab === 'requests') {
+        const received = socialConnections.receivedRequests || [];
+        const sent = socialConnections.sentRequests || [];
+
+        if (received.length === 0 && sent.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-8 px-4 text-slate-500 space-y-2">
+              <div class="text-3xl">📬</div>
+              <p class="font-bold text-xs text-slate-700">Nenhuma solicitação pendente</p>
+              <p class="text-[11px] text-[#66746F] max-w-xs mx-auto leading-relaxed">
+                Aqui aparecerão os pedidos de amizade que você receber de outros pacientes ou que enviar na rede.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        if (received.length > 0) {
+          html += `<div class="text-[11px] font-extrabold text-[#103D36] pb-1 uppercase tracking-wider">Solicitações Recebidas (${received.length})</div>`;
+          html += received.map(r => `
+            <div class="flex items-center justify-between gap-3 p-3 bg-emerald-50/70 rounded-2xl border border-emerald-200 shadow-2xs">
+              <div class="flex items-center gap-2.5 overflow-hidden">
+                <div class="w-9 h-9 rounded-full bg-[#103D36] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">
+                  ${renderAvatarHTML(r.avatar || '👤')}
+                </div>
+                <div class="overflow-hidden">
+                  <h4 class="font-bold text-xs text-[#103D36] truncate">${r.name}</h4>
+                  <p class="text-[10px] text-emerald-800">Deseja ser seu amigo na rede</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="acceptFriendRequest('${r.key}', '${r.name}')" class="px-3 py-1.5 text-[10px] font-bold bg-[#16A085] hover:bg-[#103D36] text-white rounded-xl transition-all shadow-2xs cursor-pointer active-scale">
+                  ✓ Aceitar
+                </button>
+                <button onclick="rejectFriendRequest('${r.key}', '${r.name}')" class="px-2.5 py-1.5 text-[10px] font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl transition-all cursor-pointer">
+                  Recusar
+                </button>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        if (sent.length > 0) {
+          html += `<div class="text-[11px] font-extrabold text-[#66746F] pt-2 pb-1 uppercase tracking-wider">Solicitações Enviadas Pendentes (${sent.length})</div>`;
+          html += sent.map(s => `
+            <div class="flex items-center justify-between gap-3 p-3 bg-[#F6F8F7] rounded-2xl border border-[#DDE6E2]">
+              <div class="flex items-center gap-2.5 overflow-hidden">
+                <div class="w-9 h-9 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">
+                  ${renderAvatarHTML(s.avatar || '👤')}
+                </div>
+                <div class="overflow-hidden">
+                  <h4 class="font-bold text-xs text-[#172B27] truncate">${s.name}</h4>
+                  <p class="text-[10px] text-amber-700 font-semibold">⏳ Aguardando aprovação...</p>
+                </div>
+              </div>
+              <button onclick="cancelFriendRequest('${s.key}', '${s.name}')" class="px-2.5 py-1 text-[10px] font-bold text-amber-800 hover:text-rose-700 hover:bg-rose-50 border border-amber-300 rounded-xl transition-all shrink-0 cursor-pointer">
+                Cancelar
+              </button>
+            </div>
+          `).join('');
+        }
+
+        container.innerHTML = html;
+      }
+    }
+
+    function updateSocialUI() {
+      const friendsCount = socialConnections.friends ? socialConnections.friends.length : 0;
+      const followingCount = socialConnections.following ? socialConnections.following.length : 0;
+      const pendingRequestsCount = socialConnections.receivedRequests ? socialConnections.receivedRequests.length : 0;
+
+      const sideFriends = document.getElementById('sidebar-friends-count');
+      if (sideFriends) sideFriends.innerText = friendsCount;
+      const sideFollowing = document.getElementById('sidebar-following-count');
+      if (sideFollowing) sideFollowing.innerText = followingCount;
+
+      const sideBadge = document.getElementById('sidebar-social-badge');
+      if (sideBadge) {
+        if (pendingRequestsCount > 0) {
+          sideBadge.innerText = pendingRequestsCount;
+          sideBadge.classList.remove('hidden');
+        } else {
+          sideBadge.classList.add('hidden');
+        }
+      }
+
+      const headerBadge = document.getElementById('header-social-badge');
+      if (headerBadge) {
+        if (pendingRequestsCount > 0) {
+          headerBadge.innerText = pendingRequestsCount;
+          headerBadge.classList.remove('hidden');
+        } else {
+          headerBadge.classList.add('hidden');
+        }
+      }
+
+      const mobBadge = document.getElementById('mobile-social-badge');
+      if (mobBadge) {
+        if (pendingRequestsCount > 0) {
+          mobBadge.innerText = pendingRequestsCount;
+          mobBadge.classList.remove('hidden');
+        } else {
+          mobBadge.classList.add('hidden');
+        }
+      }
+
+      const tabFriends = document.getElementById('tab-count-friends');
+      if (tabFriends) tabFriends.innerText = friendsCount;
+      const tabFollowing = document.getElementById('tab-count-following');
+      if (tabFollowing) tabFollowing.innerText = followingCount;
+      const tabRequests = document.getElementById('tab-count-requests');
+      if (tabRequests) tabRequests.innerText = pendingRequestsCount;
+    }
+
+    function showNotificationToast(msg, type = 'success') {
+      let container = document.getElementById('toast-notification-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-notification-container';
+        container.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none flex flex-col items-center gap-2';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      toast.className = 'bg-[#103D36] text-white px-4 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 transform transition-all duration-300 opacity-0 translate-y-3 pointer-events-auto border border-[#16A085]/40';
+      toast.innerHTML = `<span>${type === 'success' ? '✓' : 'ℹ️'}</span><span>${msg}</span>`;
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('opacity-0', 'translate-y-3');
+        toast.classList.add('opacity-100', 'translate-y-0');
+      });
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-3');
+        setTimeout(() => {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 350);
+      }, 3000);
+    }
+
+    function processIncomingFriendRequest(r, meta) {
+      if (!meta || !currentUser) return;
+      const currentKey = String(currentUser.id || currentUser.username || currentUser.name).toLowerCase();
+      const currentName = String(currentUser.name || '').toLowerCase();
+
+      const toKey = String(meta.toKey || meta.toUser || '').toLowerCase();
+      const toName = String(meta.toName || '').toLowerCase();
+      const fromKey = String(meta.fromKey || meta.fromUser || '').toLowerCase();
+      const fromName = String(meta.fromName || '').toLowerCase();
+
+      const isForMe = (toKey && toKey === currentKey) || (toName && toName === currentName);
+      const isFromMe = (fromKey && fromKey === currentKey) || (fromName && fromName === currentName);
+
+      if (meta.status === 'accepted') {
+        if (isForMe) {
+          if (!socialConnections.friends.some(f => String(f.key).toLowerCase() === fromKey || String(f.name).toLowerCase() === fromName)) {
+            socialConnections.friends.unshift({ key: meta.fromKey || fromKey, name: meta.fromName || fromName, avatar: meta.fromAvatar || '👤', date: formatPostDateTime(r.created_at) });
+          }
+          socialConnections.receivedRequests = socialConnections.receivedRequests.filter(x => String(x.key).toLowerCase() !== fromKey && String(x.name).toLowerCase() !== fromName);
+          socialConnections.sentRequests = socialConnections.sentRequests.filter(x => String(x.key).toLowerCase() !== fromKey && String(x.name).toLowerCase() !== fromName);
+        } else if (isFromMe) {
+          if (!socialConnections.friends.some(f => String(f.key).toLowerCase() === toKey || String(f.name).toLowerCase() === toName)) {
+            socialConnections.friends.unshift({ key: meta.toKey || toKey, name: meta.toName || toName, avatar: meta.toAvatar || '👤', date: formatPostDateTime(r.created_at) });
+          }
+          socialConnections.sentRequests = socialConnections.sentRequests.filter(x => String(x.key).toLowerCase() !== toKey && String(x.name).toLowerCase() !== toName);
+        }
+      } else if (meta.status === 'pending') {
+        if (isForMe) {
+          if (!socialConnections.friends.some(f => String(f.key).toLowerCase() === fromKey || String(f.name).toLowerCase() === fromName) &&
+              !socialConnections.receivedRequests.some(x => String(x.key).toLowerCase() === fromKey || String(x.name).toLowerCase() === fromName)) {
+            socialConnections.receivedRequests.unshift({ key: meta.fromKey || fromKey, name: meta.fromName || fromName, avatar: meta.fromAvatar || '👤', date: formatPostDateTime(r.created_at), reqId: r.id });
+          }
+        } else if (isFromMe) {
+          if (!socialConnections.sentRequests.some(x => String(x.key).toLowerCase() === toKey || String(x.name).toLowerCase() === toName) &&
+              !socialConnections.friends.some(f => String(f.key).toLowerCase() === toKey || String(f.name).toLowerCase() === toName)) {
+            socialConnections.sentRequests.unshift({ key: meta.toKey || toKey, name: meta.toName || toName, avatar: meta.toAvatar || '👤', date: formatPostDateTime(r.created_at), reqId: r.id });
+          }
+        }
+      }
+      saveSocialConnections();
     }
 
     // ====================================================================
@@ -5453,6 +6165,12 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               const meta = parsed.meta;
               const cleanText = parsed.text;
 
+              const isFriendReq = r.categoria === 'friend_request' || (meta && meta.isFriendRequest === true);
+              if (isFriendReq) {
+                processIncomingFriendRequest(r, meta);
+                return;
+              }
+
               const isStory = r.categoria === 'story' || (meta && meta.isStory === true);
               if (isStory) {
                 if (!freshStories.some(s => s.id === r.id)) {
@@ -5487,7 +6205,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               const postUsername = (meta && meta.username) || null;
               const videoUrl = r.video_url || null;
               const audioUrl = r.audio_url || null;
-              const postComments = (meta && Array.isArray(meta.comments)) ? meta.comments : [];
+              const postComments = deduplicateComments(meta && meta.comments);
 
               const userIdKey = (currentUser && (currentUser.id || currentUser.username || currentUser.name)) || 'local_user';
               const postLikes = (meta && typeof meta.likes === 'number') ? meta.likes : ((meta && meta.likes) ? parseInt(meta.likes) : 1);
@@ -5510,7 +6228,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                 userId: postUserId,
                 username: postUsername,
                 isPublic: isPublic,
-                comments: postComments,
+                comments: [...postComments],
                 likes: postLikes,
                 hasLiked: postHasLiked,
                 likedBy: postLikedBy,
@@ -5543,7 +6261,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                 hasLiked: postHasLiked,
                 likedBy: postLikedBy,
                 pressures: postPressures,
-                comments: postComments,
+                comments: [...postComments],
                 commentsCount: postComments.length,
                 createdAt: formatPostDateTime(r.created_at),
                 createdAtIso: r.created_at,
@@ -5570,7 +6288,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               const isPublic = meta ? (meta.isPublic !== false) : true;
               const postUserId = (meta && meta.userId) || w.user_id || null;
               const postUsername = (meta && meta.username) || null;
-              const postComments = (meta && Array.isArray(meta.comments)) ? meta.comments : [];
+              const postComments = deduplicateComments(meta && meta.comments);
 
               const userIdKey = (currentUser && (currentUser.id || currentUser.username || currentUser.name)) || 'local_user';
               const postLikes = (meta && typeof meta.likes === 'number') ? meta.likes : ((meta && meta.likes) ? parseInt(meta.likes) : 1);
@@ -5594,7 +6312,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   userId: postUserId,
                   username: postUsername,
                   isPublic: isPublic,
-                  comments: postComments,
+                  comments: [...postComments],
                   likes: postLikes,
                   hasLiked: postHasLiked,
                   likedBy: postLikedBy,
@@ -5628,7 +6346,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   hasLiked: postHasLiked,
                   likedBy: postLikedBy,
                   pressures: postPressures,
-                  comments: postComments,
+                  comments: [...postComments],
                   commentsCount: postComments.length,
                   createdAt: formatPostDateTime(w.created_at),
                   createdAtIso: w.created_at,
@@ -5670,6 +6388,14 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                 const meta = parsed.meta;
                 const cleanText = parsed.text;
 
+                const isFriendReq = r.categoria === 'friend_request' || (meta && meta.isFriendRequest === true);
+                if (isFriendReq) {
+                  processIncomingFriendRequest(r, meta);
+                  renderFeed();
+                  updateSocialUI();
+                  return;
+                }
+
                 const isStory = r.categoria === 'story' || (meta && meta.isStory === true);
                 if (isStory) {
                   if (!communityStories.some(s => s.id === r.id)) {
@@ -5708,7 +6434,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   const isPublic = meta ? (meta.isPublic !== false) : true;
                   const postUserId = (meta && meta.userId) || r.user_id || null;
                   const postUsername = (meta && meta.username) || null;
-                  const postComments = (meta && Array.isArray(meta.comments)) ? meta.comments : [];
+                  const postComments = deduplicateComments(meta && meta.comments);
 
                   const userIdKey = (currentUser && (currentUser.id || currentUser.username || currentUser.name)) || 'local_user';
                   const postLikes = (meta && typeof meta.likes === 'number') ? meta.likes : 1;
@@ -5739,7 +6465,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                     hasLiked: postHasLiked,
                     likedBy: postLikedBy,
                     pressures: postPressures,
-                    comments: postComments,
+                    comments: [...postComments],
                     commentsCount: postComments.length,
                     createdAt: formatPostDateTime(r.created_at || new Date()),
                     createdAtIso: r.created_at || new Date().toISOString(),
@@ -5764,7 +6490,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                     userId: postUserId,
                     username: postUsername,
                     isPublic: isPublic,
-                    comments: postComments,
+                    comments: [...postComments],
                     likes: postLikes,
                     hasLiked: postHasLiked,
                     likedBy: postLikedBy,
@@ -5784,12 +6510,22 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
               })
               .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reports' }, payload => {
                 const r = payload.new;
+                const parsed = extractMetaAndText(r.relato);
+                const meta = parsed.meta;
+
+                const isFriendReq = r.categoria === 'friend_request' || (meta && meta.isFriendRequest === true);
+                if (isFriendReq) {
+                  processIncomingFriendRequest(r, meta);
+                  renderFeed();
+                  updateSocialUI();
+                  return;
+                }
+
                 const post = socialPosts.find(p => p.id === r.id);
                 if (post) {
-                  const parsed = extractMetaAndText(r.relato);
                   if (parsed.meta) {
                     if (Array.isArray(parsed.meta.comments)) {
-                      post.comments = parsed.meta.comments;
+                      post.comments = deduplicateComments(parsed.meta.comments);
                       post.commentsCount = post.comments.length;
                     }
                     if (typeof parsed.meta.isPublic === 'boolean') {
@@ -5807,7 +6543,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   }
                   const rec = realWaitingRecords.find(x => x.id === r.id);
                   if (rec && parsed.meta) {
-                    if (Array.isArray(parsed.meta.comments)) rec.comments = parsed.meta.comments;
+                    if (Array.isArray(parsed.meta.comments)) rec.comments = [...post.comments];
                     if (typeof parsed.meta.isPublic === 'boolean') rec.isPublic = parsed.meta.isPublic;
                     if (typeof parsed.meta.likes === 'number') {
                       rec.likes = parsed.meta.likes;
