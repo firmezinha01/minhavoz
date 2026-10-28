@@ -3214,7 +3214,7 @@
       if (btnRetry) btnRetry.classList.add('hidden');
     }
 
-    function confirmAttachVideo() {
+    async function confirmAttachVideo() {
       if (!recordedVideoBlobUrl && !recordedVideoDataUrl) {
         alert('Nenhum vídeo foi gravado ainda.');
         return;
@@ -3226,7 +3226,22 @@
         const authorAvatar = (currentUser && currentUser.avatar) || '✨';
         const currentUserId = currentUser ? currentUser.id : null;
         const currentUsername = currentUser ? (currentUser.username || currentUser.cpf || currentUser.email) : null;
-        const hospName = detectedHospitalName || 'Hospital / Unidade de Saúde';
+        const hospName = (typeof detectedHospitalName !== 'undefined' ? detectedHospitalName : 'Hospital / Unidade de Saúde');
+
+        let finalMediaUrl = recordedVideoDataUrl;
+        if (!finalMediaUrl && recordedVideoBlobUrl) {
+          try {
+            const blobRes = await fetch(recordedVideoBlobUrl);
+            const blob = await blobRes.blob();
+            finalMediaUrl = await new Promise((resolve) => {
+              const r = new FileReader();
+              r.onloadend = () => resolve(r.result);
+              r.readAsDataURL(blob);
+            });
+          } catch(e) {
+            finalMediaUrl = recordedVideoBlobUrl;
+          }
+        }
 
         const newStory = {
           id: 'story-live-' + Date.now(),
@@ -3237,7 +3252,7 @@
           hospital: hospName,
           time: 'Agora mesmo',
           type: 'video',
-          mediaUrl: recordedVideoDataUrl || recordedVideoBlobUrl,
+          mediaUrl: finalMediaUrl || recordedVideoDataUrl || recordedVideoBlobUrl,
           caption: 'Depoimento em vídeo gravado ao vivo pelo paciente.'
         };
 
@@ -3248,8 +3263,7 @@
         renderStories();
         closeVideoRecordModal();
         openStoryViewer(newStory.id);
-        saveStoryToSupabase(newStory);
-        alert('✓ Story gravado e publicado no seu Status com sucesso!');
+        await saveStoryToSupabase(newStory);
         return;
       }
 
@@ -5008,51 +5022,111 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       if (modal) modal.classList.remove('hidden');
     }
 
+    // Comprime imagens para até 1080p JPEG garantindo uploads ultra-rápidos e persistência confiável
+    function compressImageIfNeeded(file) {
+      return new Promise((resolve) => {
+        if (!file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target.result);
+          reader.readAsDataURL(file);
+          return;
+        }
+        const img = new Image();
+        const reader = new FileReader();
+        reader.onload = e => {
+          img.onload = () => {
+            const maxW = 1080;
+            const maxH = 1920;
+            let w = img.width;
+            let h = img.height;
+            if (w > maxW || h > maxH) {
+              const ratio = Math.min(maxW / w, maxH / h);
+              w = Math.round(w * ratio);
+              h = Math.round(h * ratio);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', 0.82));
+          };
+          img.onerror = () => resolve(e.target.result);
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
     async function saveStoryToSupabase(story) {
       if (!window.supabaseClient) return null;
 
-      const storyMeta = {
-        isStory: true,
-        author: story.author,
-        avatar: story.avatar,
-        userId: story.userId || null,
-        username: story.username || null,
-        hospital: story.hospital,
-        type: story.type,
-        mediaUrl: story.mediaUrl,
-        caption: story.caption,
-        time: story.time
-      };
-
-      const payload = {
-        categoria: 'story',
-        tipo_midia: story.type === 'video' ? 'video' : 'imagem',
-        relato: formatMetaAndText(storyMeta, story.caption || 'Depoimento em story'),
-        video_url: story.type === 'video' ? story.mediaUrl : null,
-        duracao_segundos: 15,
-        anonimo: false,
-        hospital: story.hospital || 'Hospital / Unidade de Saúde',
-        cidade: detectedCity || 'São Paulo',
-        estado: detectedState || 'SP'
-      };
-
-      if (currentUser && currentUser.id && isValidUUID(currentUser.id)) {
-        payload.user_id = currentUser.id;
-      }
-
       try {
+        let mediaDataUrl = story.mediaUrl;
+        if (mediaDataUrl && mediaDataUrl.startsWith('blob:')) {
+          try {
+            const blobRes = await fetch(mediaDataUrl);
+            const blob = await blobRes.blob();
+            mediaDataUrl = await new Promise((resolve) => {
+              const r = new FileReader();
+              r.onloadend = () => resolve(r.result);
+              r.readAsDataURL(blob);
+            });
+            story.mediaUrl = mediaDataUrl;
+          } catch(e) {
+            console.warn('Erro ao converter blob em dataUrl:', e);
+          }
+        }
+
+        const hospName = story.hospital || (typeof detectedHospitalName !== 'undefined' ? detectedHospitalName : 'Hospital / Unidade de Saúde');
+
+        const storyMeta = {
+          isStory: true,
+          author: story.author,
+          avatar: story.avatar,
+          userId: story.userId || null,
+          username: story.username || null,
+          hospital: hospName,
+          type: story.type,
+          mediaUrl: mediaDataUrl,
+          caption: story.caption,
+          time: story.time
+        };
+
+        const payload = {
+          categoria: 'story',
+          tipo_midia: story.type === 'video' ? 'video' : 'imagem',
+          relato: formatMetaAndText(storyMeta, story.caption || 'Depoimento em story'),
+          video_url: mediaDataUrl || null,
+          duracao_segundos: 15,
+          anonimo: false,
+          hospital: hospName,
+          cidade: 'São Paulo',
+          estado: 'SP'
+        };
+
+        if (currentUser && currentUser.id && isValidUUID(currentUser.id)) {
+          payload.user_id = currentUser.id;
+        }
+
         let res = await window.supabaseClient.from('reports').insert([payload]).select();
         if (res.error && payload.user_id) {
           delete payload.user_id;
           res = await window.supabaseClient.from('reports').insert([payload]).select();
         }
         if (res.data && res.data[0]) {
-          console.log('✓ Story salvo no Supabase com ID:', res.data[0].id);
+          console.log('✓ Story persistido no Supabase com ID:', res.data[0].id);
+          const oldId = story.id;
           story.id = res.data[0].id;
+          const found = communityStories.find(s => s.id === oldId);
+          if (found) found.id = res.data[0].id;
           try {
             localStorage.setItem('minhavoz_community_stories', JSON.stringify(communityStories));
           } catch(e) {}
+          renderStories();
           return res.data[0];
+        } else if (res.error) {
+          console.error('Erro retornado do Supabase ao salvar story:', res.error);
         }
       } catch (err) {
         console.warn('Erro ao salvar story no Supabase:', err);
@@ -5060,50 +5134,57 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       return null;
     }
 
-    function handleStoryUpload(event) {
+    async function handleStoryUpload(event) {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
 
-      if (file.size > 30 * 1024 * 1024) {
-        alert('O arquivo selecionado é muito grande. Escolha um vídeo ou imagem com até 30MB.');
+      if (file.size > 25 * 1024 * 1024) {
+        alert('O arquivo selecionado é muito grande. Escolha um vídeo ou imagem com até 25MB.');
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const dataUrl = e.target.result;
-        const isVideo = file.type.startsWith('video');
-        const authorName = (currentUser && currentUser.name) || 'Meu Status';
-        const authorAvatar = (currentUser && currentUser.avatar) || '✨';
-        const currentUserId = currentUser ? currentUser.id : null;
-        const currentUsername = currentUser ? (currentUser.username || currentUser.cpf || currentUser.email) : null;
-        const hospName = detectedHospitalName || 'Hospital / Unidade de Saúde';
+      const isVideo = file.type.startsWith('video');
+      const authorName = (currentUser && currentUser.name) || 'Meu Status';
+      const authorAvatar = (currentUser && currentUser.avatar) || '✨';
+      const currentUserId = currentUser ? currentUser.id : null;
+      const currentUsername = currentUser ? (currentUser.username || currentUser.cpf || currentUser.email) : null;
+      const hospName = (typeof detectedHospitalName !== 'undefined' ? detectedHospitalName : 'Hospital / Unidade de Saúde');
 
-        const newStory = {
-          id: 'story-upload-' + Date.now(),
-          author: authorName,
-          avatar: authorAvatar,
-          userId: currentUserId,
-          username: currentUsername,
-          hospital: hospName,
-          time: 'Agora mesmo',
-          type: isVideo ? 'video' : 'image',
-          mediaUrl: dataUrl,
-          caption: isVideo ? 'Depoimento em vídeo compartilhado pelo paciente.' : 'Foto da unidade de saúde compartilhada no Status.'
-        };
+      let dataUrl = null;
+      try {
+        dataUrl = await compressImageIfNeeded(file);
+      } catch(e) {
+        dataUrl = await new Promise((res) => {
+          const r = new FileReader();
+          r.onload = ev => res(ev.target.result);
+          r.readAsDataURL(file);
+        });
+      }
 
-        communityStories.unshift(newStory);
-        try {
-          localStorage.setItem('minhavoz_community_stories', JSON.stringify(communityStories));
-        } catch(e) {}
-        renderStories();
-        closeModal('modal-create-story');
-        openStoryViewer(newStory.id);
-        saveStoryToSupabase(newStory);
-        alert('✓ Story publicado com sucesso no seu Status e visível para toda a rede!');
+      const newStory = {
+        id: 'story-upload-' + Date.now(),
+        author: authorName,
+        avatar: authorAvatar,
+        userId: currentUserId,
+        username: currentUsername,
+        hospital: hospName,
+        time: 'Agora mesmo',
+        type: isVideo ? 'video' : 'image',
+        mediaUrl: dataUrl,
+        caption: isVideo ? 'Depoimento em vídeo compartilhado pelo paciente.' : 'Foto da unidade de saúde compartilhada no Status.'
       };
-      reader.readAsDataURL(file);
+
+      communityStories.unshift(newStory);
+      try {
+        localStorage.setItem('minhavoz_community_stories', JSON.stringify(communityStories));
+      } catch(e) {}
+      renderStories();
+      closeModal('modal-create-story');
+      openStoryViewer(newStory.id);
       event.target.value = '';
+
+      // Persiste na nuvem do Supabase
+      await saveStoryToSupabase(newStory);
     }
 
     let currentViewingStoryId = null;
