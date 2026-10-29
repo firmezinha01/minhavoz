@@ -201,8 +201,8 @@
       <button onclick="openDefensoriaModal(); closeMobileMenu();" class="w-full text-left py-2 px-3 rounded-xl hover:bg-[#E9F5F1] text-[#172B27] flex items-center gap-2">
         <span>⚖️ Orientação Jurídica & Apoio</span>
       </button>
-      <button onclick="openSocialModal(); closeMobileMenu();" class="w-full text-left py-2 px-3 rounded-xl hover:bg-[#E9F5F1] text-[#172B27] flex items-center justify-between">
-        <span class="flex items-center gap-2"><span>🤝</span><span>Minhas Conexões & Amizades</span></span>
+      <button onclick="openSocialModal('followers'); closeMobileMenu();" class="w-full text-left py-2 px-3 rounded-xl hover:bg-[#E9F5F1] text-[#172B27] flex items-center justify-between">
+        <span class="flex items-center gap-2"><span>👥</span><span>Seguidores, Quem tá Seguindo & Amigos</span></span>
         <span id="mobile-social-badge" class="hidden text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">0</span>
       </button>
       <div class="pt-2 border-t border-[#DDE6E2] flex gap-2">
@@ -270,22 +270,26 @@
             </div>
           </div>
 
-          <!-- Resumo de Conexões Sociais: Amigos & Seguindo -->
-          <div class="grid grid-cols-2 gap-2 my-2.5 py-2.5 border-y border-[#DDE6E2] text-center text-xs">
-            <div onclick="openSocialModal('friends')" class="cursor-pointer hover:bg-slate-50 p-1.5 rounded-xl transition-colors active-scale" title="Ver meus amigos confirmados">
-              <span id="sidebar-friends-count" class="block font-extrabold text-[#103D36] text-sm">0</span>
-              <span class="text-[10px] text-[#66746F]">Amigos</span>
+          <!-- Resumo de Conexões Sociais: Seguidores, Quem tá Seguindo & Amigos -->
+          <div class="grid grid-cols-3 gap-1.5 my-2.5 py-2.5 border-y border-[#DDE6E2] text-center text-xs">
+            <div onclick="openSocialModal('followers')" class="cursor-pointer hover:bg-[#E9F5F1]/70 p-1.5 rounded-xl transition-colors active-scale" title="Pessoas que seguem você">
+              <span id="sidebar-followers-count" class="block font-black text-[#103D36] text-sm">0</span>
+              <span class="text-[10px] text-[#66746F] font-bold">Seguidores</span>
             </div>
-            <div onclick="openSocialModal('following')" class="cursor-pointer hover:bg-slate-50 p-1.5 rounded-xl transition-colors active-scale" title="Ver quem estou seguindo">
-              <span id="sidebar-following-count" class="block font-extrabold text-[#103D36] text-sm">0</span>
-              <span class="text-[10px] text-[#66746F]">Seguindo</span>
+            <div onclick="openSocialModal('following')" class="cursor-pointer hover:bg-[#E9F5F1]/70 p-1.5 rounded-xl transition-colors active-scale" title="Quem você está seguindo">
+              <span id="sidebar-following-count" class="block font-black text-[#103D36] text-sm">0</span>
+              <span class="text-[10px] text-[#66746F] font-bold">Seguindo</span>
+            </div>
+            <div onclick="openSocialModal('friends')" class="cursor-pointer hover:bg-[#E9F5F1]/70 p-1.5 rounded-xl transition-colors active-scale" title="Amizades confirmadas">
+              <span id="sidebar-friends-count" class="block font-black text-[#103D36] text-sm">0</span>
+              <span class="text-[10px] text-[#66746F] font-bold">Amigos</span>
             </div>
           </div>
 
           <div class="pt-1 space-y-2">
-            <button onclick="openSocialModal()" class="w-full py-2 bg-[#E9F5F1] hover:bg-[#d5ece4] text-[#103D36] text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 active-scale border border-[#16A085]/30 shadow-2xs">
-              <span>🤝</span>
-              <span>Minhas Conexões & Amizades</span>
+            <button onclick="openSocialModal('followers')" class="w-full py-2 bg-[#E9F5F1] hover:bg-[#d5ece4] text-[#103D36] text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 active-scale border border-[#16A085]/30 shadow-2xs">
+              <span>👥</span>
+              <span>Seguidores & Conexões</span>
               <span id="sidebar-social-badge" class="hidden text-[10px] bg-emerald-600 text-white px-1.5 py-0.2 rounded-full font-bold">0</span>
             </button>
             <button onclick="openProfileModal()" class="w-full py-2.5 bg-[#16A085] hover:bg-[#103D36] text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 active-scale shadow-xs">
@@ -1070,6 +1074,22 @@
           </div>
         </div>
 
+        <!-- Resumo de Seguidores e Quem tá Seguindo no Perfil -->
+        <div class="grid grid-cols-3 gap-2 p-3 bg-gradient-to-r from-[#E9F5F1] to-[#F6F8F7] border border-[#16A085]/30 rounded-2xl text-center">
+          <div onclick="closeModal('modal-profile'); openSocialModal('followers');" class="cursor-pointer hover:bg-white/80 p-1.5 rounded-xl transition-all active-scale" title="Ver meus seguidores">
+            <span id="profile-followers-count" class="block font-black text-[#103D36] text-base sm:text-lg">0</span>
+            <span class="text-[10px] text-[#66746F] font-bold">Seguidores</span>
+          </div>
+          <div onclick="closeModal('modal-profile'); openSocialModal('following');" class="cursor-pointer hover:bg-white/80 p-1.5 rounded-xl transition-all active-scale" title="Ver quem estou seguindo">
+            <span id="profile-following-count" class="block font-black text-[#103D36] text-base sm:text-lg">0</span>
+            <span class="text-[10px] text-[#66746F] font-bold">Quem tá seguindo</span>
+          </div>
+          <div onclick="closeModal('modal-profile'); openSocialModal('friends');" class="cursor-pointer hover:bg-white/80 p-1.5 rounded-xl transition-all active-scale" title="Ver meus amigos confirmados">
+            <span id="profile-friends-count" class="block font-black text-[#103D36] text-base sm:text-lg">0</span>
+            <span class="text-[10px] text-[#66746F] font-bold">Amigos</span>
+          </div>
+        </div>
+
         <!-- Nome Completo & Login -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
@@ -1794,18 +1814,22 @@
         <button onclick="closeModal('modal-social-connections')" class="text-slate-400 hover:text-slate-700 text-lg p-1.5 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer">✕</button>
       </div>
 
-      <!-- Abas de Navegação: Amigos / Seguindo / Solicitações -->
-      <div class="flex items-center bg-[#F6F8F7] p-1 rounded-2xl border border-[#DDE6E2] text-xs font-bold shrink-0">
-        <button id="tab-btn-friends" onclick="switchSocialTab('friends')" class="flex-1 py-2 px-2 rounded-xl bg-white text-[#103D36] shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-          <span>🤝 Amigos</span>
-          <span id="tab-count-friends" class="text-[10px] bg-[#E9F5F1] text-[#103D36] px-1.5 py-0.2 rounded-full font-extrabold">0</span>
+      <!-- Abas de Navegação: Seguidores / Quem tá Seguindo / Amigos / Solicitações -->
+      <div class="grid grid-cols-4 gap-1 bg-[#F6F8F7] p-1 rounded-2xl border border-[#DDE6E2] text-xs font-bold shrink-0 text-center">
+        <button id="tab-btn-followers" onclick="switchSocialTab('followers')" class="py-2 px-1 rounded-xl bg-white text-[#103D36] shadow-2xs transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer">
+          <span class="text-[11px] truncate">👥 Seguidores</span>
+          <span id="tab-count-followers" class="text-[10px] bg-[#E9F5F1] text-[#103D36] px-1.5 py-0.2 rounded-full font-extrabold">0</span>
         </button>
-        <button id="tab-btn-following" onclick="switchSocialTab('following')" class="flex-1 py-2 px-2 rounded-xl text-[#66746F] hover:text-[#103D36] transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-          <span>✨ Seguindo</span>
+        <button id="tab-btn-following" onclick="switchSocialTab('following')" class="py-2 px-1 rounded-xl text-[#66746F] hover:text-[#103D36] transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer">
+          <span class="text-[11px] truncate">👣 Seguindo</span>
           <span id="tab-count-following" class="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded-full font-extrabold">0</span>
         </button>
-        <button id="tab-btn-requests" onclick="switchSocialTab('requests')" class="flex-1 py-2 px-2 rounded-xl text-[#66746F] hover:text-[#103D36] transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-          <span>📬 Pedidos</span>
+        <button id="tab-btn-friends" onclick="switchSocialTab('friends')" class="py-2 px-1 rounded-xl text-[#66746F] hover:text-[#103D36] transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer">
+          <span class="text-[11px] truncate">🤝 Amigos</span>
+          <span id="tab-count-friends" class="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded-full font-extrabold">0</span>
+        </button>
+        <button id="tab-btn-requests" onclick="switchSocialTab('requests')" class="py-2 px-1 rounded-xl text-[#66746F] hover:text-[#103D36] transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer">
+          <span class="text-[11px] truncate">📬 Pedidos</span>
           <span id="tab-count-requests" class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-full font-extrabold">0</span>
         </button>
       </div>
@@ -2256,6 +2280,7 @@
         }
       }
 
+      updateSocialUI();
       const modal = document.getElementById('modal-profile');
       if (modal) modal.classList.remove('hidden');
     }
@@ -2742,6 +2767,31 @@
       if (modalLogoutBtn) {
         if (isLogged) modalLogoutBtn.classList.remove('hidden');
         else modalLogoutBtn.classList.add('hidden');
+      }
+
+      if (isLogged && typeof allFollowRelations !== 'undefined' && Array.isArray(allFollowRelations) && allFollowRelations.length > 0) {
+        const myKey = currentUser.id || currentUser.username;
+        const myName = currentUser.name;
+        const myFollowers = allFollowRelations
+          .filter(r => r.active !== false && isMatchKeyOrName(r.followingKey, r.followingName, myKey, myName))
+          .map(r => ({
+            key: r.followerKey,
+            name: r.followerName,
+            avatar: r.followerAvatar || '👤',
+            date: formatPostDateTime(r.date)
+          }));
+        const myFollowing = allFollowRelations
+          .filter(r => r.active !== false && isMatchKeyOrName(r.followerKey, r.followerName, myKey, myName))
+          .map(r => ({
+            key: r.followingKey,
+            name: r.followingName,
+            avatar: r.followingAvatar || '👤',
+            date: formatPostDateTime(r.date)
+          }));
+
+        if (myFollowers.length > 0) socialConnections.followers = myFollowers;
+        if (myFollowing.length > 0) socialConnections.following = myFollowing;
+        saveSocialConnections();
       }
 
       updateSocialUI();
@@ -5137,14 +5187,49 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     }
 
     // ====================================================================
-    // SISTEMA DE CONEXÕES SOCIAIS: SEGUIR & SOLICITAR AMIZADE
+    // SISTEMA DE CONEXÕES SOCIAIS: SEGUIDORES, QUEM TÁ SEGUINDO & AMIZADES
     // ====================================================================
     let socialConnections = {
+      followers: [],
       following: [],
       friends: [],
       sentRequests: [],
       receivedRequests: []
     };
+
+    let allFollowRelations = [];
+
+    function isMatchKeyOrName(key1, name1, key2, name2) {
+      const k1 = key1 ? String(key1).toLowerCase().trim() : '';
+      const n1 = name1 ? String(name1).toLowerCase().trim() : '';
+      const k2 = key2 ? String(key2).toLowerCase().trim() : '';
+      const n2 = name2 ? String(name2).toLowerCase().trim() : '';
+      if (k1 && k2 && k1 === k2) return true;
+      if (n1 && n2 && n1 === n2) return true;
+      if (k1 && n2 && k1 === n2) return true;
+      if (n1 && k2 && n1 === k2) return true;
+      return false;
+    }
+
+    function getFollowersCountForUser(targetKey, targetName) {
+      const activeFollowers = allFollowRelations.filter(r => 
+        r.active !== false && isMatchKeyOrName(r.followingKey, r.followingName, targetKey, targetName)
+      );
+      if (currentUser && isMatchKeyOrName(currentUser.id || currentUser.username, currentUser.name, targetKey, targetName)) {
+        return Math.max(activeFollowers.length, (socialConnections.followers || []).length);
+      }
+      return activeFollowers.length;
+    }
+
+    function getFollowingCountForUser(targetKey, targetName) {
+      const activeFollowing = allFollowRelations.filter(r => 
+        r.active !== false && isMatchKeyOrName(r.followerKey, r.followerName, targetKey, targetName)
+      );
+      if (currentUser && isMatchKeyOrName(currentUser.id || currentUser.username, currentUser.name, targetKey, targetName)) {
+        return Math.max(activeFollowing.length, (socialConnections.following || []).length);
+      }
+      return activeFollowing.length;
+    }
 
     function loadSocialConnections() {
       try {
@@ -5155,6 +5240,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         }
       } catch (e) {}
       if (!socialConnections) socialConnections = {};
+      if (!Array.isArray(socialConnections.followers)) socialConnections.followers = [];
       if (!Array.isArray(socialConnections.following)) socialConnections.following = [];
       if (!Array.isArray(socialConnections.friends)) socialConnections.friends = [];
       if (!Array.isArray(socialConnections.sentRequests)) socialConnections.sentRequests = [];
@@ -5205,27 +5291,43 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     }
 
     function renderSocialActionButtons(post, isOwner) {
-      if (!post || isOwner || post.isAnon) return '';
+      if (!post || post.isAnon) return '';
       const authorName = post.author || 'Paciente';
       const targetKey = post.userId || post.username || authorName;
       const targetAvatar = post.avatar || '👤';
+
+      const followersCount = getFollowersCountForUser(targetKey, authorName);
+      const safeTargetKey = String(targetKey).replace(/'/g, "\\'");
+      const safeAuthorName = String(authorName).replace(/'/g, "\\'");
+      const safeAvatar = (typeof targetAvatar === 'string' && targetAvatar.startsWith('data:') ? '👤' : targetAvatar).replace(/'/g, "\\'");
+
+      const followersBadge = `
+        <button type="button" onclick="openUserFollowersList('${safeTargetKey}', '${safeAuthorName}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F6F8F7] hover:bg-[#E9F5F1] text-[#103D36] border border-[#DDE6E2] hover:border-[#16A085]/40 transition-all cursor-pointer shadow-2xs" title="Ver quem está seguindo ${safeAuthorName}">
+          <span>👥</span>
+          <span>${followersCount} ${followersCount === 1 ? 'seguidor' : 'seguidores'}</span>
+        </button>
+      `;
+
+      if (isOwner) {
+        return `
+          <div class="inline-flex items-center gap-1.5 my-0.5 flex-wrap">
+            ${followersBadge}
+          </div>
+        `;
+      }
 
       const following = isUserFollowing(targetKey);
       const friend = isUserFriend(targetKey);
       const pendingSent = isUserPendingSent(targetKey);
       const pendingReceived = isUserPendingReceived(targetKey);
 
-      const safeTargetKey = String(targetKey).replace(/'/g, "\\'");
-      const safeAuthorName = String(authorName).replace(/'/g, "\\'");
-      const safeAvatar = (typeof targetAvatar === 'string' && targetAvatar.startsWith('data:') ? '👤' : targetAvatar).replace(/'/g, "\\'");
-
       const followBtn = following ? `
-        <button onclick="toggleFollowUser('${safeTargetKey}', '${safeAuthorName}', '${safeAvatar}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#103D36] text-white hover:bg-rose-700 transition-all cursor-pointer shadow-2xs" title="Você está seguindo esta pessoa. Clique para deixar de seguir.">
+        <button type="button" onclick="toggleFollowUser('${safeTargetKey}', '${safeAuthorName}', '${safeAvatar}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#103D36] text-white hover:bg-rose-700 transition-all cursor-pointer shadow-2xs" title="Você está seguindo esta pessoa. Clique para deixar de seguir.">
           <span>✓</span>
           <span>Seguindo</span>
         </button>
       ` : `
-        <button onclick="toggleFollowUser('${safeTargetKey}', '${safeAuthorName}', '${safeAvatar}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E9F5F1] hover:bg-[#16A085] text-[#103D36] hover:text-white border border-[#16A085]/30 transition-all cursor-pointer shadow-2xs" title="Seguir relatos desta pessoa">
+        <button type="button" onclick="toggleFollowUser('${safeTargetKey}', '${safeAuthorName}', '${safeAvatar}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E9F5F1] hover:bg-[#16A085] text-[#103D36] hover:text-white border border-[#16A085]/30 transition-all cursor-pointer shadow-2xs" title="Seguir relatos desta pessoa">
           <span>+</span>
           <span>Seguir</span>
         </button>
@@ -5234,28 +5336,28 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       let friendBtn = '';
       if (friend) {
         friendBtn = `
-          <button onclick="openSocialModal('friends')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 transition-all cursor-pointer shadow-2xs" title="Vocês são amigos na rede Minha Voz">
+          <button type="button" onclick="openSocialModal('friends')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 transition-all cursor-pointer shadow-2xs" title="Vocês são amigos na rede Minha Voz">
             <span>🤝</span>
             <span>Amigos</span>
           </button>
         `;
       } else if (pendingReceived) {
         friendBtn = `
-          <button onclick="acceptFriendRequest('${safeTargetKey}', '${safeAuthorName}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all cursor-pointer shadow-2xs animate-pulse" title="Clique para aceitar o pedido de amizade">
+          <button type="button" onclick="acceptFriendRequest('${safeTargetKey}', '${safeAuthorName}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all cursor-pointer shadow-2xs animate-pulse" title="Clique para aceitar o pedido de amizade">
             <span>🤝</span>
             <span>Aceitar Amizade</span>
           </button>
         `;
       } else if (pendingSent) {
         friendBtn = `
-          <button onclick="cancelFriendRequest('${safeTargetKey}', '${safeAuthorName}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 hover:bg-rose-50 text-amber-700 hover:text-rose-700 border border-amber-300 transition-all cursor-pointer shadow-2xs" title="Solicitação enviada. Clique para cancelar se desejar.">
+          <button type="button" onclick="cancelFriendRequest('${safeTargetKey}', '${safeAuthorName}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 hover:bg-rose-50 text-amber-700 hover:text-rose-700 border border-amber-300 transition-all cursor-pointer shadow-2xs" title="Solicitação enviada. Clique para cancelar se desejar.">
             <span>⏳</span>
             <span>Pedido Enviado</span>
           </button>
         `;
       } else {
         friendBtn = `
-          <button onclick="sendFriendRequest('${safeTargetKey}', '${safeAuthorName}', '${safeAvatar}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200 hover:border-blue-300 transition-all cursor-pointer shadow-2xs" title="Solicitar amizade">
+          <button type="button" onclick="sendFriendRequest('${safeTargetKey}', '${safeAuthorName}', '${safeAvatar}')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200 hover:border-blue-300 transition-all cursor-pointer shadow-2xs" title="Solicitar amizade">
             <span>🤝</span>
             <span>Solicitar Amizade</span>
           </button>
@@ -5263,17 +5365,24 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       }
 
       return `
-        <div class="inline-flex items-center gap-1.5 my-0.5">
+        <div class="inline-flex items-center gap-1.5 my-0.5 flex-wrap">
+          ${followersBadge}
           ${followBtn}
           ${friendBtn}
         </div>
       `;
     }
 
-    function toggleFollowUser(targetKey, targetName, targetAvatar) {
+    async function toggleFollowUser(targetKey, targetName, targetAvatar) {
       if (!currentUser || currentUser.username === 'visitante') {
         alert('Por favor, faça login ou cadastre-se gratuitamente para seguir pacientes e acompanhar seus relatos.');
         openLoginModal('login');
+        return;
+      }
+
+      const currentKey = currentUser.id || currentUser.username || currentUser.name;
+      if (isMatchKeyOrName(currentKey, currentUser.name, targetKey, targetName)) {
+        alert('Você não pode seguir o seu próprio perfil.');
         return;
       }
 
@@ -5283,11 +5392,10 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         (u.name && String(u.name).toLowerCase() === tk)
       );
 
+      let isNowFollowing = false;
       if (existingIdx >= 0) {
         socialConnections.following.splice(existingIdx, 1);
-        saveSocialConnections();
-        renderFeed();
-        if (currentSocialTab === 'following') renderSocialTabContent();
+        isNowFollowing = false;
         showNotificationToast(`Você deixou de seguir ${targetName}.`, 'info');
       } else {
         socialConnections.following.unshift({
@@ -5296,10 +5404,67 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
           avatar: targetAvatar || '👤',
           date: formatPostDateTime(new Date().toISOString())
         });
-        saveSocialConnections();
-        renderFeed();
-        if (currentSocialTab === 'following') renderSocialTabContent();
+        isNowFollowing = true;
         showNotificationToast(`✓ Você agora está seguindo ${targetName}!`, 'success');
+      }
+
+      // Atualiza allFollowRelations localmente
+      const relIdx = allFollowRelations.findIndex(x => 
+        isMatchKeyOrName(x.followerKey, x.followerName, currentKey, currentUser.name) &&
+        isMatchKeyOrName(x.followingKey, x.followingName, targetKey, targetName)
+      );
+      if (relIdx !== -1) {
+        allFollowRelations[relIdx].active = isNowFollowing;
+      } else {
+        allFollowRelations.push({
+          followerKey: currentKey,
+          followerName: currentUser.name,
+          followerAvatar: currentUser.avatar || '👤',
+          followingKey: targetKey,
+          followingName: targetName,
+          followingAvatar: targetAvatar || '👤',
+          active: isNowFollowing,
+          date: new Date().toISOString()
+        });
+      }
+
+      saveSocialConnections();
+      renderFeed();
+      if (currentSocialTab === 'following' || currentSocialTab === 'followers') renderSocialTabContent();
+
+      // Persiste no Supabase com categoria 'social_follow'
+      const client = getSupabaseClient();
+      if (client) {
+        try {
+          const payload = {
+            cidade: currentUser.city ? currentUser.city.split(',')[0].trim() : 'São Paulo',
+            estado: currentUser.city && currentUser.city.includes(',') ? currentUser.city.split(',')[1].trim() : 'SP',
+            hospital: 'Rede Minha Voz',
+            categoria: 'social_follow',
+            especialidade: 'Conexão e Seguidores',
+            tempo_espera_dias: 0,
+            tempo_espera_horas: 0,
+            tipo_midia: 'texto',
+            anonimo: false,
+            user_id: (currentUser.id && isValidUUID(currentUser.id)) ? currentUser.id : null,
+            relato: formatMetaAndText({
+              isSocialFollow: true,
+              action: isNowFollowing ? 'follow' : 'unfollow',
+              followerKey: currentKey,
+              followerName: currentUser.name,
+              followerAvatar: currentUser.avatar || '👤',
+              followingKey: targetKey,
+              followingName: targetName,
+              followingAvatar: targetAvatar || '👤',
+              active: isNowFollowing,
+              date: new Date().toISOString()
+            }, `${currentUser.name} ${isNowFollowing ? 'começou a seguir' : 'deixou de seguir'} ${targetName}`)
+          };
+          if (!payload.user_id) delete payload.user_id;
+          await client.from('reports').insert([payload]);
+        } catch (e) {
+          console.warn('Erro ao registrar follow no Supabase:', e);
+        }
       }
     }
 
@@ -5463,9 +5628,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       showNotificationToast(`Amizade com ${targetName} desfeita.`, 'info');
     }
 
-    let currentSocialTab = 'friends';
+    let currentSocialTab = 'followers';
 
-    function openSocialModal(defaultTab = 'friends') {
+    function openSocialModal(defaultTab = 'followers') {
       if (!currentUser || currentUser.username === 'visitante') {
         alert('Por favor, faça login ou cadastre-se para acessar suas amizades e conexões.');
         openLoginModal('login');
@@ -5479,31 +5644,186 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
     function switchSocialTab(tab) {
       currentSocialTab = tab;
-      const btnFriends = document.getElementById('tab-btn-friends');
+      const btnFollowers = document.getElementById('tab-btn-followers');
       const btnFollowing = document.getElementById('tab-btn-following');
+      const btnFriends = document.getElementById('tab-btn-friends');
       const btnRequests = document.getElementById('tab-btn-requests');
 
       const activeClasses = 'bg-white text-[#103D36] shadow-2xs';
       const inactiveClasses = 'text-[#66746F] hover:text-[#103D36]';
 
-      if (btnFriends) {
-        btnFriends.className = `flex-1 py-2 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${tab === 'friends' ? activeClasses : inactiveClasses}`;
+      if (btnFollowers) {
+        btnFollowers.className = `py-2 px-1 rounded-xl transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer ${tab === 'followers' ? activeClasses : inactiveClasses}`;
       }
       if (btnFollowing) {
-        btnFollowing.className = `flex-1 py-2 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${tab === 'following' ? activeClasses : inactiveClasses}`;
+        btnFollowing.className = `py-2 px-1 rounded-xl transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer ${tab === 'following' ? activeClasses : inactiveClasses}`;
+      }
+      if (btnFriends) {
+        btnFriends.className = `py-2 px-1 rounded-xl transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer ${tab === 'friends' ? activeClasses : inactiveClasses}`;
       }
       if (btnRequests) {
-        btnRequests.className = `flex-1 py-2 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${tab === 'requests' ? activeClasses : inactiveClasses}`;
+        btnRequests.className = `py-2 px-1 rounded-xl transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer ${tab === 'requests' ? activeClasses : inactiveClasses}`;
       }
 
       renderSocialTabContent();
+    }
+
+    function openUserFollowersList(targetKey, targetName) {
+      if (currentUser && isMatchKeyOrName(currentUser.id || currentUser.username, currentUser.name, targetKey, targetName)) {
+        openSocialModal('followers');
+        return;
+      }
+
+      openSocialModal('followers');
+      const container = document.getElementById('social-tab-content');
+      if (!container) return;
+
+      const userFollowers = allFollowRelations.filter(r => 
+        r.active !== false && isMatchKeyOrName(r.followingKey, r.followingName, targetKey, targetName)
+      );
+
+      if (userFollowers.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 px-4 text-slate-500 space-y-2">
+            <div class="text-3xl">👥</div>
+            <p class="font-bold text-xs text-slate-700">${targetName} ainda não possui seguidores</p>
+            <p class="text-[11px] text-[#66746F] max-w-xs mx-auto leading-relaxed">
+              Seja o primeiro a acompanhar os relatos de espera e atualizações de ${targetName}.
+            </p>
+            <div class="pt-2">
+              <button onclick="toggleFollowUser('${String(targetKey).replace(/'/g, "\\'")}', '${String(targetName).replace(/'/g, "\\'")}')" class="px-3.5 py-1.5 bg-[#16A085] hover:bg-[#103D36] text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer active-scale">
+                + Seguir ${targetName}
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="text-[11px] font-extrabold text-[#103D36] pb-1 uppercase tracking-wider">
+          Pessoas que seguem ${targetName} (${userFollowers.length})
+        </div>
+        ${userFollowers.map(u => {
+          const isMe = currentUser && isMatchKeyOrName(currentUser.id || currentUser.username, currentUser.name, u.followerKey, u.followerName);
+          const amIFollowing = isUserFollowing(u.followerKey);
+          const safeKey = String(u.followerKey).replace(/'/g, "\\'");
+          const safeName = String(u.followerName).replace(/'/g, "\\'");
+          const safeAvatar = (typeof u.followerAvatar === 'string' && u.followerAvatar.startsWith('data:') ? '👤' : u.followerAvatar || '👤').replace(/'/g, "\\'");
+
+          return `
+            <div class="flex items-center justify-between gap-3 p-3 bg-[#F6F8F7] hover:bg-[#E9F5F1]/50 rounded-2xl border border-[#DDE6E2] transition-colors">
+              <div class="flex items-center gap-2.5 overflow-hidden">
+                <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs">
+                  ${renderAvatarHTML(u.followerAvatar || '👤')}
+                </div>
+                <div class="overflow-hidden">
+                  <h4 class="font-bold text-xs text-[#103D36] truncate">${u.followerName} ${isMe ? '(Você)' : ''}</h4>
+                  <p class="text-[10px] text-[#66746F]">Seguindo desde ${u.date ? formatPostDateTime(u.date) : 'recentemente'}</p>
+                </div>
+              </div>
+              ${!isMe ? `
+                <button onclick="toggleFollowUser('${safeKey}', '${safeName}', '${safeAvatar}')" class="px-2.5 py-1 text-[10px] font-bold ${amIFollowing ? 'bg-[#103D36] text-white' : 'bg-[#16A085] text-white'} rounded-xl transition-all shrink-0 cursor-pointer shadow-2xs">
+                  ${amIFollowing ? '✓ Seguindo' : '+ Seguir'}
+                </button>
+              ` : ''}
+            </div>
+          `;
+        }).join('')}
+      `;
     }
 
     function renderSocialTabContent() {
       const container = document.getElementById('social-tab-content');
       if (!container) return;
 
-      if (currentSocialTab === 'friends') {
+      if (currentSocialTab === 'followers') {
+        const followers = socialConnections.followers || [];
+        if (followers.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-8 px-4 text-slate-500 space-y-2">
+              <div class="text-3xl">👥</div>
+              <p class="font-bold text-xs text-slate-700">Você ainda não possui seguidores</p>
+              <p class="text-[11px] text-[#66746F] max-w-xs mx-auto leading-relaxed">
+                Publique seus relatos de espera na fila e compartilhe stories no status para que outros pacientes acompanhem sua rotina.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="text-[11px] font-extrabold text-[#103D36] pb-1 uppercase tracking-wider">
+            Quem está seguindo você (${followers.length})
+          </div>
+          ${followers.map(u => {
+            const isFollowingBack = isUserFollowing(u.key);
+            const safeKey = String(u.key).replace(/'/g, "\\'");
+            const safeName = String(u.name).replace(/'/g, "\\'");
+            const safeAvatar = (typeof u.avatar === 'string' && u.avatar.startsWith('data:') ? '👤' : u.avatar || '👤').replace(/'/g, "\\'");
+
+            return `
+              <div class="flex items-center justify-between gap-3 p-3 bg-[#F6F8F7] hover:bg-[#E9F5F1]/50 rounded-2xl border border-[#DDE6E2] transition-colors">
+                <div class="flex items-center gap-2.5 overflow-hidden">
+                  <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs">
+                    ${renderAvatarHTML(u.avatar || '👤')}
+                  </div>
+                  <div class="overflow-hidden">
+                    <h4 class="font-bold text-xs text-[#103D36] truncate">${u.name}</h4>
+                    <p class="text-[10px] text-[#66746F]">Segue você desde ${u.date || 'recentemente'}</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button onclick="toggleFollowUser('${safeKey}', '${safeName}', '${safeAvatar}')" class="px-2.5 py-1 text-[10px] font-bold ${isFollowingBack ? 'bg-[#103D36] text-white hover:bg-rose-700' : 'bg-[#16A085] hover:bg-[#103D36] text-white'} rounded-xl transition-all shrink-0 cursor-pointer shadow-2xs">
+                    ${isFollowingBack ? '✓ Seguindo' : '+ Seguir de volta'}
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        `;
+      } else if (currentSocialTab === 'following') {
+        const followingList = socialConnections.following || [];
+        if (followingList.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-8 px-4 text-slate-500 space-y-2">
+              <div class="text-3xl">👣</div>
+              <p class="font-bold text-xs text-slate-700">Você ainda não está seguindo ninguém</p>
+              <p class="text-[11px] text-[#66746F] max-w-xs mx-auto leading-relaxed">
+                Clique em <strong>"+ Seguir"</strong> nos relatos do feed para acompanhar a evolução e o tempo de espera de outros pacientes.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="text-[11px] font-extrabold text-[#103D36] pb-1 uppercase tracking-wider">
+            Pessoas que você está seguindo (${followingList.length})
+          </div>
+          ${followingList.map(u => {
+            const safeKey = String(u.key).replace(/'/g, "\\'");
+            const safeName = String(u.name).replace(/'/g, "\\'");
+            const safeAvatar = (typeof u.avatar === 'string' && u.avatar.startsWith('data:') ? '👤' : u.avatar || '👤').replace(/'/g, "\\'");
+            return `
+              <div class="flex items-center justify-between gap-3 p-3 bg-[#F6F8F7] hover:bg-[#E9F5F1]/50 rounded-2xl border border-[#DDE6E2] transition-colors">
+                <div class="flex items-center gap-2.5 overflow-hidden">
+                  <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs">
+                    ${renderAvatarHTML(u.avatar || '👤')}
+                  </div>
+                  <div class="overflow-hidden">
+                    <h4 class="font-bold text-xs text-[#103D36] truncate">${u.name}</h4>
+                    <p class="text-[10px] text-[#66746F]">Seguindo desde ${u.date || 'recentemente'}</p>
+                  </div>
+                </div>
+                <button onclick="toggleFollowUser('${safeKey}', '${safeName}', '${safeAvatar}')" class="px-2.5 py-1 text-[10px] font-bold text-slate-700 hover:text-rose-600 hover:bg-rose-50 border border-slate-300 rounded-xl transition-all shrink-0 cursor-pointer">
+                  Deixar de Seguir
+                </button>
+              </div>
+            `;
+          }).join('')}
+        `;
+      } else if (currentSocialTab === 'friends') {
         if (!socialConnections.friends || socialConnections.friends.length === 0) {
           container.innerHTML = `
             <div class="text-center py-8 px-4 text-slate-500 space-y-2">
@@ -5529,35 +5849,6 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
             </div>
             <button onclick="removeFriend('${f.key}', '${f.name}')" class="px-2.5 py-1 text-[10px] font-bold text-rose-600 hover:text-white hover:bg-rose-600 border border-rose-200 rounded-xl transition-all shrink-0 cursor-pointer">
               Desfazer
-            </button>
-          </div>
-        `).join('');
-      } else if (currentSocialTab === 'following') {
-        if (!socialConnections.following || socialConnections.following.length === 0) {
-          container.innerHTML = `
-            <div class="text-center py-8 px-4 text-slate-500 space-y-2">
-              <div class="text-3xl">✨</div>
-              <p class="font-bold text-xs text-slate-700">Você ainda não está seguindo ninguém</p>
-              <p class="text-[11px] text-[#66746F] max-w-xs mx-auto leading-relaxed">
-                Clique em <strong>"+ Seguir"</strong> nos relatos para acompanhar a evolução e o tempo de espera de outros pacientes.
-              </p>
-            </div>
-          `;
-          return;
-        }
-        container.innerHTML = socialConnections.following.map(u => `
-          <div class="flex items-center justify-between gap-3 p-3 bg-[#F6F8F7] hover:bg-[#E9F5F1]/50 rounded-2xl border border-[#DDE6E2] transition-colors">
-            <div class="flex items-center gap-2.5 overflow-hidden">
-              <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs">
-                ${renderAvatarHTML(u.avatar || '👤')}
-              </div>
-              <div class="overflow-hidden">
-                <h4 class="font-bold text-xs text-[#103D36] truncate">${u.name}</h4>
-                <p class="text-[10px] text-[#66746F]">Seguindo desde ${u.date || 'hoje'}</p>
-              </div>
-            </div>
-            <button onclick="toggleFollowUser('${u.key}', '${u.name}', '${u.avatar || '👤'}')" class="px-2.5 py-1 text-[10px] font-bold text-slate-700 hover:text-rose-600 hover:bg-rose-50 border border-slate-300 rounded-xl transition-all shrink-0 cursor-pointer">
-              Deixar de Seguir
             </button>
           </div>
         `).join('');
@@ -5629,14 +5920,24 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     }
 
     function updateSocialUI() {
-      const friendsCount = socialConnections.friends ? socialConnections.friends.length : 0;
+      const followersCount = socialConnections.followers ? socialConnections.followers.length : 0;
       const followingCount = socialConnections.following ? socialConnections.following.length : 0;
+      const friendsCount = socialConnections.friends ? socialConnections.friends.length : 0;
       const pendingRequestsCount = socialConnections.receivedRequests ? socialConnections.receivedRequests.length : 0;
 
-      const sideFriends = document.getElementById('sidebar-friends-count');
-      if (sideFriends) sideFriends.innerText = friendsCount;
+      const sideFollowers = document.getElementById('sidebar-followers-count');
+      if (sideFollowers) sideFollowers.innerText = followersCount;
       const sideFollowing = document.getElementById('sidebar-following-count');
       if (sideFollowing) sideFollowing.innerText = followingCount;
+      const sideFriends = document.getElementById('sidebar-friends-count');
+      if (sideFriends) sideFriends.innerText = friendsCount;
+
+      const profFollowers = document.getElementById('profile-followers-count');
+      if (profFollowers) profFollowers.innerText = followersCount;
+      const profFollowing = document.getElementById('profile-following-count');
+      if (profFollowing) profFollowing.innerText = followingCount;
+      const profFriends = document.getElementById('profile-friends-count');
+      if (profFriends) profFriends.innerText = friendsCount;
 
       const sideBadge = document.getElementById('sidebar-social-badge');
       if (sideBadge) {
@@ -5668,10 +5969,12 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         }
       }
 
-      const tabFriends = document.getElementById('tab-count-friends');
-      if (tabFriends) tabFriends.innerText = friendsCount;
+      const tabFollowers = document.getElementById('tab-count-followers');
+      if (tabFollowers) tabFollowers.innerText = followersCount;
       const tabFollowing = document.getElementById('tab-count-following');
       if (tabFollowing) tabFollowing.innerText = followingCount;
+      const tabFriends = document.getElementById('tab-count-friends');
+      if (tabFriends) tabFriends.innerText = friendsCount;
       const tabRequests = document.getElementById('tab-count-requests');
       if (tabRequests) tabRequests.innerText = pendingRequestsCount;
     }
@@ -5741,6 +6044,67 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         }
       }
       saveSocialConnections();
+    }
+
+    function processIncomingSocialFollow(r, meta) {
+      if (!meta || !currentUser) return;
+      const currentKey = String(currentUser.id || currentUser.username || currentUser.name).toLowerCase();
+      const currentName = String(currentUser.name || '').toLowerCase();
+
+      const followingKey = String(meta.followingKey || '').toLowerCase();
+      const followingName = String(meta.followingName || '').toLowerCase();
+      const followerKey = String(meta.followerKey || '').toLowerCase();
+      const followerName = String(meta.followerName || '').toLowerCase();
+
+      const isTargetingMe = (followingKey && followingKey === currentKey) || (followingName && followingName === currentName);
+      const isFromMe = (followerKey && followerKey === currentKey) || (followerName && followerName === currentName);
+
+      if (!Array.isArray(socialConnections.followers)) socialConnections.followers = [];
+      if (!Array.isArray(socialConnections.following)) socialConnections.following = [];
+
+      if (isTargetingMe) {
+        const existingIdx = socialConnections.followers.findIndex(u => 
+          String(u.key).toLowerCase() === followerKey || String(u.name).toLowerCase() === followerName
+        );
+        if (meta.action === 'unfollow' || meta.active === false) {
+          if (existingIdx !== -1) {
+            socialConnections.followers.splice(existingIdx, 1);
+            saveSocialConnections();
+          }
+        } else {
+          if (existingIdx === -1) {
+            socialConnections.followers.unshift({
+              key: meta.followerKey || followerKey,
+              name: meta.followerName || followerName,
+              avatar: meta.followerAvatar || '👤',
+              date: formatPostDateTime(r.created_at || meta.date)
+            });
+            saveSocialConnections();
+          }
+        }
+      }
+
+      if (isFromMe) {
+        const existingIdx = socialConnections.following.findIndex(u => 
+          String(u.key).toLowerCase() === followingKey || String(u.name).toLowerCase() === followingName
+        );
+        if (meta.action === 'unfollow' || meta.active === false) {
+          if (existingIdx !== -1) {
+            socialConnections.following.splice(existingIdx, 1);
+            saveSocialConnections();
+          }
+        } else {
+          if (existingIdx === -1) {
+            socialConnections.following.unshift({
+              key: meta.followingKey || followingKey,
+              name: meta.followingName || followingName,
+              avatar: meta.followingAvatar || '👤',
+              date: formatPostDateTime(r.created_at || meta.date)
+            });
+            saveSocialConnections();
+          }
+        }
+      }
     }
 
     // ====================================================================
@@ -6234,6 +6598,34 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                 return;
               }
 
+              const isSocialFollow = r.categoria === 'social_follow' || (meta && meta.isSocialFollow === true);
+              if (isSocialFollow) {
+                if (meta) {
+                  const rel = {
+                    id: r.id,
+                    followerKey: meta.followerKey,
+                    followerName: meta.followerName,
+                    followerAvatar: meta.followerAvatar || '👤',
+                    followingKey: meta.followingKey,
+                    followingName: meta.followingName,
+                    followingAvatar: meta.followingAvatar || '👤',
+                    active: meta.action !== 'unfollow' && meta.active !== false,
+                    date: r.created_at || meta.date
+                  };
+                  const exIdx = allFollowRelations.findIndex(x => 
+                    isMatchKeyOrName(x.followerKey, x.followerName, rel.followerKey, rel.followerName) &&
+                    isMatchKeyOrName(x.followingKey, x.followingName, rel.followingKey, rel.followingName)
+                  );
+                  if (exIdx !== -1) {
+                    allFollowRelations[exIdx] = rel;
+                  } else {
+                    allFollowRelations.push(rel);
+                  }
+                }
+                processIncomingSocialFollow(r, meta);
+                return;
+              }
+
               const isStory = r.categoria === 'story' || (meta && meta.isStory === true);
               if (isStory) {
                 if (!freshStories.some(s => s.id === r.id)) {
@@ -6448,6 +6840,32 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
             updateMapStatistics();
           }
 
+          if (currentUser) {
+            const myKey = currentUser.id || currentUser.username;
+            const myName = currentUser.name;
+            const myFollowers = allFollowRelations
+              .filter(r => r.active !== false && isMatchKeyOrName(r.followingKey, r.followingName, myKey, myName))
+              .map(r => ({
+                key: r.followerKey,
+                name: r.followerName,
+                avatar: r.followerAvatar || '👤',
+                date: formatPostDateTime(r.date)
+              }));
+            const myFollowing = allFollowRelations
+              .filter(r => r.active !== false && isMatchKeyOrName(r.followerKey, r.followerName, myKey, myName))
+              .map(r => ({
+                key: r.followingKey,
+                name: r.followingName,
+                avatar: r.followingAvatar || '👤',
+                date: formatPostDateTime(r.date)
+              }));
+
+            if (myFollowers.length > 0) socialConnections.followers = myFollowers;
+            if (myFollowing.length > 0) socialConnections.following = myFollowing;
+            saveSocialConnections();
+            updateSocialUI();
+          }
+
           // 3. Subscriptions em Tempo Real (INSERT, UPDATE e DELETE)
           try {
             window.supabaseClient
@@ -6463,6 +6881,50 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                   processIncomingFriendRequest(r, meta);
                   renderFeed();
                   updateSocialUI();
+                  return;
+                }
+
+                const isSocialFollow = r.categoria === 'social_follow' || (meta && meta.isSocialFollow === true);
+                if (isSocialFollow) {
+                  if (meta) {
+                    const rel = {
+                      id: r.id,
+                      followerKey: meta.followerKey,
+                      followerName: meta.followerName,
+                      followerAvatar: meta.followerAvatar || '👤',
+                      followingKey: meta.followingKey,
+                      followingName: meta.followingName,
+                      followingAvatar: meta.followingAvatar || '👤',
+                      active: meta.action !== 'unfollow' && meta.active !== false,
+                      date: r.created_at || meta.date
+                    };
+                    const exIdx = allFollowRelations.findIndex(x => 
+                      isMatchKeyOrName(x.followerKey, x.followerName, rel.followerKey, rel.followerName) &&
+                      isMatchKeyOrName(x.followingKey, x.followingName, rel.followingKey, rel.followingName)
+                    );
+                    if (exIdx !== -1) {
+                      allFollowRelations[exIdx] = rel;
+                    } else {
+                      allFollowRelations.push(rel);
+                    }
+                  }
+                  processIncomingSocialFollow(r, meta);
+                  updateSocialUI();
+                  renderFeed();
+                  if (currentSocialTab === 'followers' || currentSocialTab === 'following') {
+                    renderSocialTabContent();
+                  }
+                  if (meta && currentUser) {
+                    const myKey = String(currentUser.id || currentUser.username || currentUser.name).toLowerCase();
+                    const myName = String(currentUser.name || '').toLowerCase();
+                    const fKey = String(meta.followingKey || '').toLowerCase();
+                    const fName = String(meta.followingName || '').toLowerCase();
+                    if ((fKey && fKey === myKey) || (fName && fName === myName)) {
+                      if (meta.action !== 'unfollow' && meta.active !== false) {
+                        showNotificationToast(`👥 ${meta.followerName || 'Um paciente'} começou a seguir você!`, 'info');
+                      }
+                    }
+                  }
                   return;
                 }
 
