@@ -189,6 +189,27 @@
 
     <!-- Gaveta Menu Mobile (Drawer) -->
     <div id="mobile-nav-drawer" class="lg:hidden hidden border-t border-[#DDE6E2] bg-white px-4 py-3 space-y-2 text-sm font-semibold">
+      <!-- Bloco de Usuário Logado no Menu Mobile (visível apenas quando logado) -->
+      <div id="mobile-user-card-drawer" class="p-3 bg-[#E9F5F1] rounded-2xl mb-2 flex items-center justify-between border border-[#16A085]/30 hidden">
+        <div class="flex items-center gap-2.5 overflow-hidden cursor-pointer" onclick="openProfileModal(); closeMobileMenu();" title="Acessar Meus Dados e Foto">
+          <div id="mobile-drawer-avatar" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center font-bold text-base shadow-xs overflow-hidden shrink-0">
+            👤
+          </div>
+          <div class="overflow-hidden text-left">
+            <h4 id="mobile-drawer-name" class="font-bold text-xs text-[#103D36] truncate">Paciente</h4>
+            <span id="mobile-drawer-role" class="text-[10px] text-[#16A085] font-extrabold">Perfil Ativo</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <button onclick="openProfileModal(); closeMobileMenu();" class="p-2 text-[#103D36] hover:bg-[#d5ece4] rounded-xl text-xs font-bold" title="Meus Dados">
+            👤
+          </button>
+          <button onclick="logoutUser(); closeMobileMenu();" class="p-2 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-bold" title="Sair da Conta">
+            🚪
+          </button>
+        </div>
+      </div>
+
       <button onclick="window.scrollTo({top:0, behavior:'smooth'}); setFeedFilter('todos'); closeMobileMenu();" class="w-full text-left py-2 px-3 rounded-xl hover:bg-[#E9F5F1] text-[#103D36] font-bold flex items-center gap-2">
         <span>🏠 Início</span>
       </button>
@@ -201,16 +222,28 @@
       <button onclick="openDefensoriaModal(); closeMobileMenu();" class="w-full text-left py-2 px-3 rounded-xl hover:bg-[#E9F5F1] text-[#172B27] flex items-center gap-2">
         <span>⚖️ Orientação Jurídica & Apoio</span>
       </button>
-      <button onclick="openSocialModal('followers'); closeMobileMenu();" class="w-full text-left py-2 px-3 rounded-xl hover:bg-[#E9F5F1] text-[#172B27] flex items-center justify-between">
-        <span class="flex items-center gap-2"><span>👥</span><span>Seguidores, Quem tá Seguindo & Amigos</span></span>
+      <button id="mobile-drawer-social-btn" onclick="openSocialModal('followers'); closeMobileMenu();" class="w-full text-left py-2 px-3 rounded-xl hover:bg-[#E9F5F1] text-[#172B27] flex items-center justify-between hidden">
+        <span class="flex items-center gap-2"><span>👥</span><span>Seguidores & Conexões</span></span>
         <span id="mobile-social-badge" class="hidden text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">0</span>
       </button>
-      <div class="pt-2 border-t border-[#DDE6E2] flex gap-2">
+
+      <!-- Botões de Login e Cadastro (visível apenas quando deslogado) -->
+      <div id="mobile-drawer-auth-buttons" class="pt-2 border-t border-[#DDE6E2] flex gap-2">
         <button onclick="openLoginModal('login'); closeMobileMenu();" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#172B27] font-bold text-xs rounded-xl text-center">
           🔑 Entrar
         </button>
         <button onclick="openLoginModal('register'); closeMobileMenu();" class="flex-1 py-2.5 bg-[#16A085] hover:bg-[#103D36] text-white font-bold text-xs rounded-xl text-center">
           📝 Cadastrar
+        </button>
+      </div>
+
+      <!-- Ações de Conta Logada no Rodapé do Drawer -->
+      <div id="mobile-drawer-logged-actions" class="pt-2 border-t border-[#DDE6E2] flex gap-2 hidden">
+        <button onclick="openLoginModal('login'); closeMobileMenu();" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-[#172B27] text-xs font-bold rounded-xl text-center">
+          🔑 Trocar Conta
+        </button>
+        <button onclick="logoutUser(); closeMobileMenu();" class="py-2 px-3 bg-rose-50 hover:bg-rose-100 text-[#C93C45] text-xs font-bold rounded-xl flex items-center justify-center gap-1">
+          <span>Sair</span>
         </button>
       </div>
     </div>
@@ -1852,40 +1885,40 @@
 
   <!-- MODAL: VISUALIZADOR DE STORY / STATUS -->
   <div id="modal-story-viewer" onclick="if(event.target === this) closeStoryViewer()" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-50 hidden">
-    <div class="relative w-full max-w-sm bg-slate-950 text-white rounded-3xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col max-h-[90vh]">
+    <div class="relative w-[60%] max-w-[240px] sm:w-full sm:max-w-sm bg-slate-950 text-white rounded-3xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col max-h-[88vh]">
       <!-- Barra de Progresso no topo -->
-      <div class="p-3 pb-1 flex items-center gap-2">
+      <div class="p-2 sm:p-3 pb-1 flex items-center gap-1.5 sm:gap-2">
         <div class="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
           <div id="story-progress-bar" class="h-full bg-emerald-400 transition-all duration-300 w-0"></div>
         </div>
-        <button onclick="closeStoryViewer()" class="text-white hover:text-rose-400 p-1 text-base ml-1 cursor-pointer">✕</button>
+        <button onclick="closeStoryViewer()" class="text-white hover:text-rose-400 p-1 text-sm sm:text-base ml-1 cursor-pointer">✕</button>
       </div>
 
       <!-- Cabeçalho do Story com dados do Paciente -->
-      <div class="px-4 py-2 flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div id="story-viewer-avatar" class="w-9 h-9 rounded-full bg-[#16A085] border border-white flex items-center justify-center text-sm font-bold overflow-hidden">
+      <div class="px-2.5 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between">
+        <div class="flex items-center gap-2 sm:gap-2.5 overflow-hidden">
+          <div id="story-viewer-avatar" class="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#16A085] border border-white flex items-center justify-center text-xs sm:text-sm font-bold overflow-hidden shrink-0">
             👤
           </div>
-          <div>
-            <div id="story-viewer-author" class="text-xs font-bold text-white leading-tight">Paciente</div>
-            <div id="story-viewer-hospital" class="text-[10px] text-emerald-300">Hospital</div>
+          <div class="overflow-hidden">
+            <div id="story-viewer-author" class="text-[11px] sm:text-xs font-bold text-white leading-tight truncate max-w-[85px] sm:max-w-none">Paciente</div>
+            <div id="story-viewer-hospital" class="text-[9px] sm:text-[10px] text-emerald-300 truncate max-w-[85px] sm:max-w-none">Hospital</div>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <span id="story-viewer-time" class="text-[10px] text-slate-300 bg-white/10 px-2 py-0.5 rounded-full">Hoje</span>
-          <button id="story-viewer-delete-btn" onclick="deleteStory(currentViewingStoryId)" class="hidden text-rose-400 hover:text-rose-300 text-xs font-bold px-2 py-0.5 rounded bg-rose-950/60 hover:bg-rose-900 border border-rose-800 transition-colors cursor-pointer" title="Excluir este story">🗑️</button>
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <span id="story-viewer-time" class="text-[8px] sm:text-[10px] text-slate-300 bg-white/10 px-1.5 sm:px-2 py-0.5 rounded-full">Hoje</span>
+          <button id="story-viewer-delete-btn" onclick="deleteStory(currentViewingStoryId)" class="hidden text-rose-400 hover:text-rose-300 text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded bg-rose-950/60 hover:bg-rose-900 border border-rose-800 transition-colors cursor-pointer" title="Excluir este story">🗑️</button>
         </div>
       </div>
 
       <!-- Conteúdo do Story (Vídeo, Imagem ou Áudio) -->
-      <div id="story-viewer-media-container" class="flex-1 min-h-[300px] bg-black flex items-center justify-center p-2 relative overflow-hidden">
+      <div id="story-viewer-media-container" class="flex-1 min-h-[190px] sm:min-h-[300px] bg-black flex items-center justify-center p-1 sm:p-2 relative overflow-hidden">
         <!-- Injetado dinamicamente -->
       </div>
 
       <!-- Legenda / Texto do Story -->
-      <div class="p-4 bg-gradient-to-t from-black via-black/80 to-transparent">
-        <p id="story-viewer-caption" class="text-xs text-slate-200 leading-relaxed">
+      <div class="p-2.5 sm:p-4 bg-gradient-to-t from-black via-black/80 to-transparent">
+        <p id="story-viewer-caption" class="text-[10px] sm:text-xs text-slate-200 leading-relaxed">
           Relato de atendimento na fila.
         </p>
       </div>
@@ -2710,15 +2743,15 @@
       const hAvatar = document.getElementById('header-user-avatar');
       const hName = document.getElementById('header-user-name');
       const hBadge = document.getElementById('header-user-badge');
+      const headerSection = document.getElementById('header-user-section');
 
       if (isLogged) {
         if (headerLoggedIn) {
           headerLoggedIn.classList.remove('hidden');
-          headerLoggedIn.classList.add('lg:hidden'); // Não aparece no modo desktop quando logado
+          headerLoggedIn.classList.add('lg:hidden'); // No desktop fica no card da barra lateral
         }
         if (headerLoggedOut) headerLoggedOut.classList.add('hidden');
-        const headerSection = document.getElementById('header-user-section');
-        if (headerSection) headerSection.classList.add('lg:hidden'); // Esconde no desktop
+        if (headerSection) headerSection.classList.add('lg:hidden');
         if (hAvatar) hAvatar.innerHTML = renderAvatarHTML(currentUser.avatar);
         if (hName) hName.innerText = currentUser.name || currentUser.username;
         if (hBadge) {
@@ -2729,13 +2762,14 @@
       } else {
         if (headerLoggedIn) headerLoggedIn.classList.add('hidden');
         if (headerLoggedOut) headerLoggedOut.classList.remove('hidden');
-        const headerSection = document.getElementById('header-user-section');
         if (headerSection) headerSection.classList.remove('lg:hidden');
+        if (hAvatar) hAvatar.innerHTML = '👤';
+        if (hName) hName.innerText = '';
+        if (hBadge) hBadge.innerHTML = '';
       }
 
       // Sidebar
       const sCard = document.getElementById('sidebar-user-card');
-      // sLoggedOut removido
       const sAvatar = document.getElementById('sidebar-user-avatar');
       const sName = document.getElementById('sidebar-user-name');
       const sInfo = document.getElementById('sidebar-user-info');
@@ -2743,7 +2777,6 @@
 
       if (isLogged) {
         if (sCard) sCard.classList.remove('hidden');
-        
         if (sAvatar) sAvatar.innerHTML = renderAvatarHTML(currentUser.avatar);
         if (sName) sName.innerText = currentUser.name || currentUser.username;
         if (sInfo) sInfo.innerHTML = `Login: <strong>${currentUser.username}</strong> • ${currentUser.city || 'São Paulo, SP'}`;
@@ -2755,7 +2788,36 @@
         }
       } else {
         if (sCard) sCard.classList.add('hidden');
-        
+        if (sAvatar) sAvatar.innerHTML = '👤';
+        if (sName) sName.innerText = 'Paciente';
+        if (sInfo) sInfo.innerHTML = 'Login: <strong>--</strong>';
+        if (sRole) sRole.innerText = 'Perfil Desconectado';
+      }
+
+      // Mobile Drawer (Menu do Celular)
+      const mobCard = document.getElementById('mobile-user-card-drawer');
+      const mobAvatar = document.getElementById('mobile-drawer-avatar');
+      const mobName = document.getElementById('mobile-drawer-name');
+      const mobRole = document.getElementById('mobile-drawer-role');
+      const mobSocialBtn = document.getElementById('mobile-drawer-social-btn');
+      const mobAuthBtns = document.getElementById('mobile-drawer-auth-buttons');
+      const mobLoggedActions = document.getElementById('mobile-drawer-logged-actions');
+
+      if (isLogged) {
+        if (mobCard) mobCard.classList.remove('hidden');
+        if (mobAvatar) mobAvatar.innerHTML = renderAvatarHTML(currentUser.avatar);
+        if (mobName) mobName.innerText = currentUser.name || currentUser.username;
+        if (mobRole) mobRole.innerText = currentUser.isAdmin ? '👑 Administrador' : 'Perfil Ativo';
+        if (mobSocialBtn) mobSocialBtn.classList.remove('hidden');
+        if (mobAuthBtns) mobAuthBtns.classList.add('hidden');
+        if (mobLoggedActions) mobLoggedActions.classList.remove('hidden');
+      } else {
+        if (mobCard) mobCard.classList.add('hidden');
+        if (mobAvatar) mobAvatar.innerHTML = '👤';
+        if (mobName) mobName.innerText = 'Paciente';
+        if (mobSocialBtn) mobSocialBtn.classList.add('hidden');
+        if (mobAuthBtns) mobAuthBtns.classList.remove('hidden');
+        if (mobLoggedActions) mobLoggedActions.classList.add('hidden');
       }
 
       // Composer
@@ -2769,7 +2831,8 @@
         else modalLogoutBtn.classList.add('hidden');
       }
 
-      if (isLogged && typeof allFollowRelations !== 'undefined' && Array.isArray(allFollowRelations) && allFollowRelations.length > 0) {
+      // Sincronização de Seguidores / Seguindo exclusiva do usuário atual
+      if (isLogged && typeof allFollowRelations !== 'undefined' && Array.isArray(allFollowRelations)) {
         const myKey = currentUser.id || currentUser.username;
         const myName = currentUser.name;
         const myFollowers = allFollowRelations
@@ -2789,9 +2852,13 @@
             date: formatPostDateTime(r.date)
           }));
 
-        if (myFollowers.length > 0) socialConnections.followers = myFollowers;
-        if (myFollowing.length > 0) socialConnections.following = myFollowing;
+        // Atribui diretamente para este usuário logado (se for 0, fica 0; nunca herda dados de outro perfil)
+        socialConnections.followers = myFollowers;
+        socialConnections.following = myFollowing;
         saveSocialConnections();
+      } else if (!isLogged) {
+        // Zera completamente quando deslogado
+        socialConnections = { followers: [], following: [], friends: [], sentRequests: [], receivedRequests: [] };
       }
 
       updateSocialUI();
@@ -2842,8 +2909,11 @@
 
             localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
             saveRegisteredUser(currentUser);
+            loadSocialConnections();
             updateUserUI();
+            updateSocialUI();
             renderFeed();
+            renderStories();
             closeModal('modal-login');
             document.getElementById('login-username').value = '';
             document.getElementById('login-password').value = '';
@@ -2860,8 +2930,11 @@
         if (passVal === '123456') {
           currentUser = { ...KNOWN_ACCOUNTS[userVal] };
           localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+          loadSocialConnections();
           updateUserUI();
+          updateSocialUI();
           renderFeed();
+          renderStories();
           closeModal('modal-login');
           document.getElementById('login-username').value = '';
           document.getElementById('login-password').value = '';
@@ -2879,8 +2952,11 @@
         if (registered[userVal].password === passVal) {
           currentUser = registered[userVal];
           localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+          loadSocialConnections();
           updateUserUI();
+          updateSocialUI();
           renderFeed();
+          renderStories();
           closeModal('modal-login');
           document.getElementById('login-username').value = '';
           document.getElementById('login-password').value = '';
@@ -2980,8 +3056,12 @@
       saveRegisteredUser(newUser);
       currentUser = newUser;
       localStorage.setItem('minhavoz_user', JSON.stringify(currentUser));
+      socialConnections = { followers: [], following: [], friends: [], sentRequests: [], receivedRequests: [] };
+      saveSocialConnections();
       updateUserUI();
+      updateSocialUI();
       renderFeed();
+      renderStories();
       closeModal('modal-login');
       document.getElementById('register-fullname').value = '';
       document.getElementById('register-username').value = '';
@@ -2993,8 +3073,13 @@
     function logoutUser() {
       currentUser = null;
       localStorage.removeItem('minhavoz_user');
+      socialConnections = { followers: [], following: [], friends: [], sentRequests: [], receivedRequests: [] };
       updateUserUI();
+      updateSocialUI();
       renderFeed();
+      renderStories();
+      closeModal('modal-profile');
+      closeModal('modal-social-connections');
       alert('✓ Você saiu da sua conta com sucesso.');
     }
 
@@ -5197,7 +5282,30 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       receivedRequests: []
     };
 
-    let allFollowRelations = [];
+    let allFollowRelations = [
+      {
+        id: 'rel_init_1',
+        followerKey: 'jose',
+        followerName: 'José Silva',
+        followerAvatar: '👤',
+        followingKey: 'maria',
+        followingName: 'Maria Silva',
+        followingAvatar: '👤',
+        active: true,
+        date: new Date(Date.now() - 3600000 * 24).toISOString()
+      },
+      {
+        id: 'rel_init_2',
+        followerKey: 'maria',
+        followerName: 'Maria Silva',
+        followerAvatar: '👤',
+        followingKey: 'jose',
+        followingName: 'José Silva',
+        followingAvatar: '👤',
+        active: true,
+        date: new Date(Date.now() - 3600000 * 12).toISOString()
+      }
+    ];
 
     function isMatchKeyOrName(key1, name1, key2, name2) {
       const k1 = key1 ? String(key1).toLowerCase().trim() : '';
@@ -5231,14 +5339,28 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       return activeFollowing.length;
     }
 
+    function getSocialStorageKey() {
+      if (!currentUser || !currentUser.username || currentUser.username === 'visitante') return null;
+      return 'minhavoz_social_connections_' + encodeURIComponent(currentUser.username.toLowerCase());
+    }
+
     function loadSocialConnections() {
+      const key = getSocialStorageKey();
+      if (!key) {
+        socialConnections = { followers: [], following: [], friends: [], sentRequests: [], receivedRequests: [] };
+        return;
+      }
       try {
-        const raw = localStorage.getItem('minhavoz_social_connections');
+        const raw = localStorage.getItem(key);
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && typeof parsed === 'object') socialConnections = parsed;
+        } else {
+          socialConnections = { followers: [], following: [], friends: [], sentRequests: [], receivedRequests: [] };
         }
-      } catch (e) {}
+      } catch (e) {
+        socialConnections = { followers: [], following: [], friends: [], sentRequests: [], receivedRequests: [] };
+      }
       if (!socialConnections) socialConnections = {};
       if (!Array.isArray(socialConnections.followers)) socialConnections.followers = [];
       if (!Array.isArray(socialConnections.following)) socialConnections.following = [];
@@ -5248,9 +5370,12 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     }
 
     function saveSocialConnections() {
-      try {
-        localStorage.setItem('minhavoz_social_connections', JSON.stringify(socialConnections));
-      } catch (e) {}
+      const key = getSocialStorageKey();
+      if (key) {
+        try {
+          localStorage.setItem(key, JSON.stringify(socialConnections));
+        } catch (e) {}
+      }
       updateSocialUI();
     }
 
@@ -5674,7 +5799,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         return;
       }
 
-      openSocialModal('followers');
+      const modal = document.getElementById('modal-social-connections');
+      if (modal) modal.classList.remove('hidden');
+
       const container = document.getElementById('social-tab-content');
       if (!container) return;
 
@@ -5684,14 +5811,14 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
       if (userFollowers.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-8 px-4 text-slate-500 space-y-2">
+          <div class="text-center py-8 px-4 text-slate-500 space-y-2 bg-white rounded-2xl border border-[#DDE6E2]">
             <div class="text-3xl">👥</div>
             <p class="font-bold text-xs text-slate-700">${targetName} ainda não possui seguidores</p>
             <p class="text-[11px] text-[#66746F] max-w-xs mx-auto leading-relaxed">
               Seja o primeiro a acompanhar os relatos de espera e atualizações de ${targetName}.
             </p>
             <div class="pt-2">
-              <button onclick="toggleFollowUser('${String(targetKey).replace(/'/g, "\\'")}', '${String(targetName).replace(/'/g, "\\'")}')" class="px-3.5 py-1.5 bg-[#16A085] hover:bg-[#103D36] text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer active-scale">
+              <button onclick="toggleFollowUser('${String(targetKey).replace(/'/g, "\\'")}', '${String(targetName).replace(/'/g, "\\'")}', '👤')" class="px-3.5 py-1.5 bg-[#16A085] hover:bg-[#103D36] text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer active-scale">
                 + Seguir ${targetName}
               </button>
             </div>
@@ -5702,7 +5829,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
       container.innerHTML = `
         <div class="text-[11px] font-extrabold text-[#103D36] pb-1 uppercase tracking-wider">
-          Pessoas que seguem ${targetName} (${userFollowers.length})
+          Pessoas que estão seguindo ${targetName} (${userFollowers.length})
         </div>
         ${userFollowers.map(u => {
           const isMe = currentUser && isMatchKeyOrName(currentUser.id || currentUser.username, currentUser.name, u.followerKey, u.followerName);
@@ -5712,9 +5839,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
           const safeAvatar = (typeof u.followerAvatar === 'string' && u.followerAvatar.startsWith('data:') ? '👤' : u.followerAvatar || '👤').replace(/'/g, "\\'");
 
           return `
-            <div class="flex items-center justify-between gap-3 p-3 bg-[#F6F8F7] hover:bg-[#E9F5F1]/50 rounded-2xl border border-[#DDE6E2] transition-colors">
+            <div class="flex items-center justify-between gap-3 p-3 bg-white hover:bg-[#E9F5F1]/50 rounded-2xl border border-[#DDE6E2] shadow-2xs transition-colors">
               <div class="flex items-center gap-2.5 overflow-hidden">
-                <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs">
                   ${renderAvatarHTML(u.followerAvatar || '👤')}
                 </div>
                 <div class="overflow-hidden">
@@ -5738,49 +5865,164 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       if (!container) return;
 
       if (currentSocialTab === 'followers') {
-        const followers = socialConnections.followers || [];
-        if (followers.length === 0) {
+        if (!currentUser || currentUser.username === 'visitante') {
           container.innerHTML = `
-            <div class="text-center py-8 px-4 text-slate-500 space-y-2">
+            <div class="text-center py-6 px-4 bg-white rounded-2xl border border-[#DDE6E2] space-y-3">
               <div class="text-3xl">👥</div>
-              <p class="font-bold text-xs text-slate-700">Você ainda não possui seguidores</p>
+              <h4 class="font-bold text-xs text-[#103D36]">Acesso à Rede de Seguidores</h4>
               <p class="text-[11px] text-[#66746F] max-w-xs mx-auto leading-relaxed">
-                Publique seus relatos de espera na fila e compartilhe stories no status para que outros pacientes acompanhem sua rotina.
+                Você está navegando como visitante. Faça login ou crie sua conta gratuitamente para acompanhar seguidores e conectar-se a outros pacientes.
               </p>
+              <div class="pt-1 flex gap-2 justify-center">
+                <button onclick="closeModal('modal-social-connections'); openLoginModal('login');" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#172B27] text-xs font-bold rounded-xl active-scale">
+                  🔑 Entrar
+                </button>
+                <button onclick="closeModal('modal-social-connections'); openLoginModal('register');" class="px-4 py-2 bg-[#16A085] hover:bg-[#103D36] text-white text-xs font-bold rounded-xl active-scale">
+                  📝 Cadastrar
+                </button>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        let followers = [];
+        if (currentUser) {
+          const myKey = currentUser.id || currentUser.username;
+          const myName = currentUser.name;
+          const directRelations = allFollowRelations
+            .filter(r => r.active !== false && isMatchKeyOrName(r.followingKey, r.followingName, myKey, myName))
+            .map(r => ({
+              key: r.followerKey,
+              name: r.followerName,
+              avatar: r.followerAvatar || '👤',
+              date: r.date ? formatPostDateTime(r.date) : 'recentemente'
+            }));
+          
+          const map = new Map();
+          directRelations.forEach(f => {
+            const k = (f.key || f.name || '').toLowerCase();
+            if (k) map.set(k, f);
+          });
+          (socialConnections.followers || []).forEach(f => {
+            const k = (f.key || f.name || '').toLowerCase();
+            if (k && !map.has(k)) map.set(k, f);
+          });
+          followers = Array.from(map.values());
+        }
+
+        if (followers.length === 0) {
+          const suggestedMap = new Map();
+          socialPosts.forEach(p => {
+            if (!p.isAnon && p.author && (!currentUser || !isMatchKeyOrName(p.userId || p.username, p.author, currentUser.id || currentUser.username, currentUser.name))) {
+              const k = String(p.userId || p.username || p.author).toLowerCase();
+              if (!suggestedMap.has(k)) {
+                suggestedMap.set(k, {
+                  key: p.userId || p.username || p.author,
+                  name: p.author,
+                  avatar: p.avatar || '👤',
+                  location: p.location || 'Hospital'
+                });
+              }
+            }
+          });
+          Object.values(KNOWN_ACCOUNTS).forEach(acc => {
+            if (!currentUser || !isMatchKeyOrName(acc.id || acc.username, acc.name, currentUser.id || currentUser.username, currentUser.name)) {
+              const k = acc.username.toLowerCase();
+              if (!suggestedMap.has(k)) {
+                suggestedMap.set(k, {
+                  key: acc.username,
+                  name: acc.name,
+                  avatar: acc.avatar || '👤',
+                  location: acc.city || 'São Paulo, SP'
+                });
+              }
+            }
+          });
+          const suggestions = Array.from(suggestedMap.values()).slice(0, 5);
+
+          container.innerHTML = `
+            <div class="space-y-4">
+              <div class="text-center py-6 px-4 bg-white rounded-2xl border border-[#DDE6E2] space-y-2 shadow-2xs">
+                <div class="text-3xl">👥</div>
+                <h4 class="font-bold text-xs text-[#103D36]">Você ainda não possui seguidores</h4>
+                <p class="text-[11px] text-[#66746F] max-w-sm mx-auto leading-relaxed">
+                  Publique seus relatos de espera e compartilhe stories no status para que outros pacientes acompanhem sua rotina. Ao seguir outros pacientes abaixo, eles serão notificados para seguir você de volta!
+                </p>
+              </div>
+
+              ${suggestions.length > 0 ? `
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between pb-1 border-b border-[#DDE6E2]">
+                    <span class="text-[11px] font-extrabold text-[#103D36] uppercase tracking-wider">
+                      👥 Pacientes Ativos na Comunidade
+                    </span>
+                    <span class="text-[10px] text-[#66746F]">Sugestões para seguir</span>
+                  </div>
+                  ${suggestions.map(s => {
+                    const amIFollowing = isUserFollowing(s.key);
+                    const safeKey = String(s.key).replace(/'/g, "\\'");
+                    const safeName = String(s.name).replace(/'/g, "\\'");
+                    const safeAvatar = (typeof s.avatar === 'string' && s.avatar.startsWith('data:') ? '👤' : s.avatar || '👤').replace(/'/g, "\\'");
+                    return `
+                      <div class="flex items-center justify-between gap-3 p-3 bg-white hover:bg-[#E9F5F1]/50 rounded-2xl border border-[#DDE6E2] shadow-2xs transition-colors">
+                        <div class="flex items-center gap-2.5 overflow-hidden">
+                          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs">
+                            ${renderAvatarHTML(s.avatar || '👤')}
+                          </div>
+                          <div class="overflow-hidden">
+                            <h4 class="font-bold text-xs text-[#103D36] truncate">${s.name}</h4>
+                            <p class="text-[10px] text-[#66746F] truncate">${s.location}</p>
+                          </div>
+                        </div>
+                        <button onclick="toggleFollowUser('${safeKey}', '${safeName}', '${safeAvatar}')" class="px-2.5 py-1 text-[10px] font-bold ${amIFollowing ? 'bg-[#103D36] text-white' : 'bg-[#16A085] text-white'} rounded-xl transition-all shrink-0 cursor-pointer shadow-2xs">
+                          ${amIFollowing ? '✓ Seguindo' : '+ Seguir'}
+                        </button>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              ` : ''}
             </div>
           `;
           return;
         }
 
         container.innerHTML = `
-          <div class="text-[11px] font-extrabold text-[#103D36] pb-1 uppercase tracking-wider">
-            Quem está seguindo você (${followers.length})
-          </div>
-          ${followers.map(u => {
-            const isFollowingBack = isUserFollowing(u.key);
-            const safeKey = String(u.key).replace(/'/g, "\\'");
-            const safeName = String(u.name).replace(/'/g, "\\'");
-            const safeAvatar = (typeof u.avatar === 'string' && u.avatar.startsWith('data:') ? '👤' : u.avatar || '👤').replace(/'/g, "\\'");
+          <div class="space-y-2">
+            <div class="flex items-center justify-between pb-1 border-b border-[#DDE6E2]">
+              <span class="text-[11px] font-extrabold text-[#103D36] uppercase tracking-wider">
+                Quem está seguindo você (${followers.length})
+              </span>
+              <span class="text-[10px] text-[#16A085] font-bold">Conexões ativas</span>
+            </div>
+            ${followers.map(u => {
+              const isFollowingBack = isUserFollowing(u.key);
+              const safeKey = String(u.key).replace(/'/g, "\\'");
+              const safeName = String(u.name).replace(/'/g, "\\'");
+              const safeAvatar = (typeof u.avatar === 'string' && u.avatar.startsWith('data:') ? '👤' : u.avatar || '👤').replace(/'/g, "\\'");
 
-            return `
-              <div class="flex items-center justify-between gap-3 p-3 bg-[#F6F8F7] hover:bg-[#E9F5F1]/50 rounded-2xl border border-[#DDE6E2] transition-colors">
-                <div class="flex items-center gap-2.5 overflow-hidden">
-                  <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs">
-                    ${renderAvatarHTML(u.avatar || '👤')}
+              return `
+                <div class="flex items-center justify-between gap-3 p-3 bg-white hover:bg-[#E9F5F1]/50 rounded-2xl border border-[#DDE6E2] shadow-2xs transition-colors">
+                  <div class="flex items-center gap-2.5 overflow-hidden">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-2xs ring-2 ring-[#16A085]/20">
+                      ${renderAvatarHTML(u.avatar || '👤')}
+                    </div>
+                    <div class="overflow-hidden">
+                      <h4 class="font-bold text-xs text-[#103D36] truncate">${u.name}</h4>
+                      <p class="text-[10px] text-[#16A085] font-semibold mt-0.5">✓ Segue seus relatos</p>
+                      <p class="text-[9px] text-[#66746F]">Desde ${u.date || 'recentemente'}</p>
+                    </div>
                   </div>
-                  <div class="overflow-hidden">
-                    <h4 class="font-bold text-xs text-[#103D36] truncate">${u.name}</h4>
-                    <p class="text-[10px] text-[#66746F]">Segue você desde ${u.date || 'recentemente'}</p>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <button onclick="toggleFollowUser('${safeKey}', '${safeName}', '${safeAvatar}')" class="px-2.5 py-1.5 text-[10px] font-bold ${isFollowingBack ? 'bg-[#103D36] text-white hover:bg-rose-700' : 'bg-[#16A085] hover:bg-[#103D36] text-white'} rounded-xl transition-all shrink-0 cursor-pointer shadow-2xs">
+                      ${isFollowingBack ? '✓ Seguindo' : '+ Seguir de volta'}
+                    </button>
                   </div>
                 </div>
-                <div class="flex items-center gap-1.5 shrink-0">
-                  <button onclick="toggleFollowUser('${safeKey}', '${safeName}', '${safeAvatar}')" class="px-2.5 py-1 text-[10px] font-bold ${isFollowingBack ? 'bg-[#103D36] text-white hover:bg-rose-700' : 'bg-[#16A085] hover:bg-[#103D36] text-white'} rounded-xl transition-all shrink-0 cursor-pointer shadow-2xs">
-                    ${isFollowingBack ? '✓ Seguindo' : '+ Seguir de volta'}
-                  </button>
-                </div>
-              </div>
-            `;
-          }).join('')}
+              `;
+            }).join('')}
+          </div>
         `;
       } else if (currentSocialTab === 'following') {
         const followingList = socialConnections.following || [];
@@ -5920,10 +6162,11 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     }
 
     function updateSocialUI() {
-      const followersCount = socialConnections.followers ? socialConnections.followers.length : 0;
-      const followingCount = socialConnections.following ? socialConnections.following.length : 0;
-      const friendsCount = socialConnections.friends ? socialConnections.friends.length : 0;
-      const pendingRequestsCount = socialConnections.receivedRequests ? socialConnections.receivedRequests.length : 0;
+      const isLogged = (currentUser !== null && currentUser.username !== 'visitante');
+      const followersCount = isLogged && socialConnections.followers ? socialConnections.followers.length : 0;
+      const followingCount = isLogged && socialConnections.following ? socialConnections.following.length : 0;
+      const friendsCount = isLogged && socialConnections.friends ? socialConnections.friends.length : 0;
+      const pendingRequestsCount = isLogged && socialConnections.receivedRequests ? socialConnections.receivedRequests.length : 0;
 
       const sideFollowers = document.getElementById('sidebar-followers-count');
       if (sideFollowers) sideFollowers.innerText = followersCount;
@@ -5941,7 +6184,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
       const sideBadge = document.getElementById('sidebar-social-badge');
       if (sideBadge) {
-        if (pendingRequestsCount > 0) {
+        if (isLogged && pendingRequestsCount > 0) {
           sideBadge.innerText = pendingRequestsCount;
           sideBadge.classList.remove('hidden');
         } else {
@@ -5951,7 +6194,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
       const headerBadge = document.getElementById('header-social-badge');
       if (headerBadge) {
-        if (pendingRequestsCount > 0) {
+        if (isLogged && pendingRequestsCount > 0) {
           headerBadge.innerText = pendingRequestsCount;
           headerBadge.classList.remove('hidden');
         } else {
@@ -5961,7 +6204,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
       const mobBadge = document.getElementById('mobile-social-badge');
       if (mobBadge) {
-        if (pendingRequestsCount > 0) {
+        if (isLogged && pendingRequestsCount > 0) {
           mobBadge.innerText = pendingRequestsCount;
           mobBadge.classList.remove('hidden');
         } else {
@@ -6356,22 +6599,22 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
       if (mediaContainer) {
         if (story.type === 'video' && story.mediaUrl) {
-          mediaContainer.innerHTML = `<video src="${story.mediaUrl}" autoplay controls playsinline class="max-h-[55vh] max-w-full rounded-2xl bg-black"></video>`;
+          mediaContainer.innerHTML = `<video src="${story.mediaUrl}" autoplay controls playsinline class="max-h-[42vh] sm:max-h-[55vh] max-w-full rounded-xl sm:rounded-2xl bg-black"></video>`;
         } else if (story.type === 'image' && story.mediaUrl) {
-          mediaContainer.innerHTML = `<img src="${story.mediaUrl}" alt="Story" class="max-h-[55vh] max-w-full rounded-2xl object-contain bg-black">`;
+          mediaContainer.innerHTML = `<img src="${story.mediaUrl}" alt="Story" class="max-h-[42vh] sm:max-h-[55vh] max-w-full rounded-xl sm:rounded-2xl object-contain bg-black">`;
         } else if (story.type === 'audio' && story.mediaUrl) {
           mediaContainer.innerHTML = `
-            <div class="p-6 text-center space-y-3 bg-slate-900 rounded-2xl border border-slate-800 w-full max-w-xs">
-              <div class="text-4xl animate-bounce">🎙️</div>
-              <div class="text-xs font-bold text-emerald-400">Depoimento em Áudio</div>
+            <div class="p-3 sm:p-6 text-center space-y-2 sm:space-y-3 bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-800 w-full max-w-xs">
+              <div class="text-3xl sm:text-4xl animate-bounce">🎙️</div>
+              <div class="text-[10px] sm:text-xs font-bold text-emerald-400">Depoimento em Áudio</div>
               <audio src="${story.mediaUrl}" autoplay controls class="w-full"></audio>
             </div>
           `;
         } else {
           mediaContainer.innerHTML = `
-            <div class="p-6 text-center space-y-3 bg-gradient-to-br ${story.bgGradient || 'from-teal-800 to-slate-900'} rounded-2xl w-full max-w-xs flex flex-col items-center justify-center min-h-[220px]">
-              <div class="text-3xl">🏥</div>
-              <p class="text-sm font-semibold text-white leading-relaxed">${story.caption}</p>
+            <div class="p-3 sm:p-6 text-center space-y-2 sm:space-y-3 bg-gradient-to-br ${story.bgGradient || 'from-teal-800 to-slate-900'} rounded-xl sm:rounded-2xl w-full max-w-xs flex flex-col items-center justify-center min-h-[170px] sm:min-h-[220px]">
+              <div class="text-2xl sm:text-3xl">🏥</div>
+              <p class="text-xs sm:text-sm font-semibold text-white leading-relaxed">${story.caption}</p>
             </div>
           `;
         }
@@ -6860,8 +7103,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
                 date: formatPostDateTime(r.date)
               }));
 
-            if (myFollowers.length > 0) socialConnections.followers = myFollowers;
-            if (myFollowing.length > 0) socialConnections.following = myFollowing;
+            socialConnections.followers = myFollowers;
+            socialConnections.following = myFollowing;
             saveSocialConnections();
             updateSocialUI();
           }
