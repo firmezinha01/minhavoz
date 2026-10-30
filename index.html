@@ -291,7 +291,7 @@
         <!-- Card do Usuário Logado -->
         <div id="sidebar-user-card" class="bg-white rounded-3xl p-5 border border-[#DDE6E2] shadow-xs text-left hidden">
           <div class="flex items-center space-x-3 mb-3.5 cursor-pointer" onclick="openProfileModal()" title="Clique para acessar e editar seus dados e foto">
-            <div id="sidebar-user-avatar" class="w-13 h-13 rounded-2xl bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white font-bold flex items-center justify-center text-xl shadow-md overflow-hidden">
+            <div id="sidebar-user-avatar" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#103D36] to-[#16A085] text-white font-bold flex items-center justify-center text-xl shadow-md overflow-hidden">
               👤
             </div>
             <div class="overflow-hidden">
@@ -1006,7 +1006,7 @@
             <span class="text-[10px] text-[#66746F] font-normal">Opcional</span>
           </label>
           <div class="flex items-center gap-3 p-3 bg-[#F6F8F7] border border-[#DDE6E2] rounded-2xl">
-            <div id="register-photo-preview" class="w-13 h-13 rounded-full bg-[#E9F5F1] border-2 border-dashed border-[#16A085] flex items-center justify-center text-2xl overflow-hidden shrink-0 text-[#66746F] shadow-2xs">
+            <div id="register-photo-preview" class="w-14 h-14 rounded-full bg-[#E9F5F1] border-2 border-dashed border-[#16A085] flex items-center justify-center text-2xl overflow-hidden shrink-0 text-[#66746F] shadow-2xs">
               👤
             </div>
             <div class="flex-1 space-y-1">
@@ -2009,7 +2009,7 @@
 
   <!-- MODAL: VISUALIZADOR DE STORY / STATUS -->
   <div id="modal-story-viewer" onclick="if(event.target === this) closeStoryViewer()" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-50 hidden select-none">
-    <div class="relative w-[230px] sm:w-[240px] max-w-[90vw] bg-slate-950 text-white rounded-3xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col max-h-[85vh]">
+    <div class="relative w-[240px] max-w-[88vw] bg-slate-950 text-white rounded-3xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col max-h-[82vh]">
       <!-- Barra de Progresso Segmentada no topo -->
       <div class="p-2 sm:p-2.5 pb-1 flex items-center gap-1.5">
         <div id="story-progress-bar-container" class="flex-1 flex items-center gap-1 h-1">
@@ -2039,7 +2039,7 @@
       </div>
 
       <!-- Conteúdo do Story (Vídeo, Imagem ou Áudio) com Botões de Navegação -->
-      <div id="story-viewer-media-container" onclick="handleStoryMediaClick(event)" class="flex-1 min-h-[220px] sm:min-h-[260px] max-h-[50vh] bg-black flex items-center justify-center p-1 relative overflow-hidden cursor-pointer">
+      <div id="story-viewer-media-container" onclick="handleStoryMediaClick(event)" class="flex-1 min-h-[190px] sm:min-h-[230px] max-h-[46vh] sm:max-h-[50vh] bg-black flex items-center justify-center p-1 relative overflow-hidden cursor-pointer">
         <!-- Injetado dinamicamente -->
       </div>
 
@@ -6780,9 +6780,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
       if (mediaContainer) {
         if (story.type === 'video' && story.mediaUrl) {
-          mediaContainer.innerHTML = `<video src="${story.mediaUrl}" autoplay controls playsinline class="max-h-[42vh] sm:max-h-[50vh] max-w-full rounded-xl sm:rounded-2xl bg-black object-contain"></video>`;
+          mediaContainer.innerHTML = `<video src="${story.mediaUrl}" autoplay controls playsinline class="max-h-[45vh] sm:max-h-[48vh] max-w-full rounded-xl sm:rounded-2xl bg-black object-contain"></video>`;
         } else if (story.type === 'image' && story.mediaUrl) {
-          mediaContainer.innerHTML = `<img src="${story.mediaUrl}" alt="Story" class="max-h-[42vh] sm:max-h-[50vh] max-w-full rounded-xl sm:rounded-2xl object-contain bg-black">`;
+          mediaContainer.innerHTML = `<img src="${story.mediaUrl}" alt="Story" class="max-h-[45vh] sm:max-h-[48vh] max-w-full rounded-xl sm:rounded-2xl object-contain bg-black">`;
         } else if (story.type === 'audio' && story.mediaUrl) {
           mediaContainer.innerHTML = `
             <div class="p-3 text-center space-y-2 bg-slate-900 rounded-xl border border-slate-800 w-full max-w-[200px]">
@@ -7217,19 +7217,19 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       list.innerHTML = allDisplayStories.map(s => {
         const isImgStory = (s.type === 'image' && s.mediaUrl);
         const innerCircle = isImgStory
-          ? `<div class="w-full h-full rounded-full border-2 border-white overflow-hidden relative bg-slate-900 shadow-2xs">
+          ? `<div class="w-full h-full rounded-full border-2 border-white overflow-hidden relative bg-slate-900 shadow-2xs" style="width: 100%; height: 100%;">
                <img src="${s.mediaUrl}" alt="Story" class="w-full h-full object-cover">
                <div class="absolute bottom-0 right-0 w-4 h-4 rounded-full border border-white overflow-hidden bg-[#16A085] flex items-center justify-center text-[8px] text-white font-bold shadow-2xs">
                  ${renderAvatarHTML(s.avatar)}
                </div>
              </div>`
-          : `<div class="w-full h-full rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-white text-sm font-bold overflow-hidden shadow-2xs">
+          : `<div class="w-full h-full rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-white text-sm font-bold overflow-hidden shadow-2xs" style="width: 100%; height: 100%;">
                ${renderAvatarHTML(s.avatar)}
              </div>`;
 
         return `
           <div onclick="openStoryViewer('${s.id}')" class="flex flex-col items-center shrink-0 cursor-pointer group">
-            <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full p-0.5 story-ring group-hover:scale-105 transition-transform">
+            <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-[#16A085] via-teal-400 to-[#103D36] group-hover:scale-105 transition-transform shrink-0" style="width: 56px; height: 56px; min-width: 56px; min-height: 56px;">
               ${innerCircle}
             </div>
             <span class="text-[10px] font-semibold text-slate-700 mt-1 max-w-[65px] truncate text-center">${s.author}</span>
