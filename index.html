@@ -1830,6 +1830,130 @@
     </div>
   </div>
 
+  <!-- MODAL: EDITAR STORY (STATUS) -->
+  <div id="modal-edit-story" onclick="if(event.target === this) closeModal('modal-edit-story')" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 hidden">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-2xl border border-[#DDE6E2] space-y-4 max-h-[90vh] flex flex-col overflow-y-auto custom-scrollbar">
+      <div class="flex items-center justify-between pb-2 border-b border-[#DDE6E2]">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-2xl bg-[#E9F5F1] text-[#16A085] flex items-center justify-center text-lg font-bold">
+            ✏️
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-[#103D36]">Editar Story</h3>
+            <p class="text-[11px] text-[#66746F]">Atualize foto, legenda ou dados do seu status</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-edit-story')" class="text-slate-400 hover:text-slate-700 text-lg p-1 cursor-pointer">✕</button>
+      </div>
+
+      <form id="form-edit-story" onsubmit="handleEditStorySubmit(event)" class="space-y-3.5 text-xs">
+        <input type="hidden" id="edit-story-id" value="">
+
+        <!-- Prévia e Troca da Mídia do Story -->
+        <div class="bg-[#F6F8F7] p-3 rounded-2xl border border-[#DDE6E2] space-y-2 text-center">
+          <label class="block font-bold text-[#103D36] text-left">Foto / Mídia do Story:</label>
+          <div id="edit-story-media-preview" class="w-full h-40 bg-black rounded-xl overflow-hidden flex items-center justify-center border border-slate-300 relative">
+            <!-- Imagem ou vídeo atual exibido aqui -->
+          </div>
+          <div>
+            <input type="file" id="edit-story-file-input" accept="video/*,image/*" onchange="handleEditStoryFileChange(event)" class="hidden">
+            <button type="button" onclick="document.getElementById('edit-story-file-input').click()" class="px-3 py-1.5 bg-[#E9F5F1] hover:bg-[#d5ece4] text-[#103D36] border border-[#16A085]/30 rounded-xl font-bold text-[11px] transition-colors active-scale cursor-pointer flex items-center gap-1.5 mx-auto">
+              <span>📷</span> <span>Trocar Foto / Vídeo</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#103D36] mb-1">Legenda / Depoimento:</label>
+          <textarea id="edit-story-caption" rows="2" class="w-full p-2.5 bg-[#F6F8F7] border border-[#DDE6E2] rounded-xl text-xs text-[#172B27] focus:bg-white focus:ring-2 focus:ring-[#16A085] outline-hidden" placeholder="Conte algo sobre seu atendimento..."></textarea>
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#103D36] mb-1">Hospital / Unidade de Saúde:</label>
+          <input type="text" id="edit-story-hospital" class="w-full p-2.5 bg-[#F6F8F7] border border-[#DDE6E2] rounded-xl text-xs text-[#172B27] focus:bg-white focus:ring-2 focus:ring-[#16A085] outline-hidden">
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="button" onclick="closeModal('modal-edit-story')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#172B27] font-bold rounded-xl active-scale cursor-pointer">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 py-2.5 bg-[#16A085] hover:bg-[#103D36] text-white font-bold rounded-xl shadow-xs active-scale transition-all cursor-pointer">
+            Salvar Story
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITAR RELATO (REGISTRAR MINHA ESPERA) -->
+  <div id="modal-edit-post" onclick="if(event.target === this) closeModal('modal-edit-post')" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DDE6E2] space-y-4 max-h-[90vh] flex flex-col overflow-y-auto custom-scrollbar">
+      <div class="flex items-center justify-between pb-2 border-b border-[#DDE6E2]">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-2xl bg-[#E9F5F1] text-[#16A085] flex items-center justify-center text-lg font-bold">
+            ✏️
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-[#103D36]">Editar Meu Relato</h3>
+            <p class="text-[11px] text-[#66746F]">Atualize as informações do seu atendimento</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-edit-post')" class="text-slate-400 hover:text-slate-700 text-lg p-1 cursor-pointer">✕</button>
+      </div>
+
+      <form id="form-edit-post" onsubmit="handleEditPostSubmit(event)" class="space-y-3.5 text-xs">
+        <input type="hidden" id="edit-post-id" value="">
+
+        <div>
+          <label class="block font-bold text-[#103D36] mb-1">Hospital / Unidade de Saúde:</label>
+          <input type="text" id="edit-post-hospital" required class="w-full p-2.5 bg-[#F6F8F7] border border-[#DDE6E2] rounded-xl text-xs text-[#172B27] focus:bg-white focus:ring-2 focus:ring-[#16A085] outline-hidden">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block font-bold text-[#103D36] mb-1">Setor / Especialidade:</label>
+            <input type="text" id="edit-post-specialty" required class="w-full p-2.5 bg-[#F6F8F7] border border-[#DDE6E2] rounded-xl text-xs text-[#172B27] focus:bg-white focus:ring-2 focus:ring-[#16A085] outline-hidden">
+          </div>
+          <div>
+            <label class="block font-bold text-[#103D36] mb-1">Tempo de Espera:</label>
+            <div class="flex gap-1.5">
+              <input type="number" id="edit-post-wait-val" min="1" max="999" required class="w-16 p-2.5 bg-[#F6F8F7] border border-[#DDE6E2] rounded-xl text-xs text-center font-bold text-[#103D36] focus:bg-white focus:ring-2 focus:ring-[#16A085] outline-hidden">
+              <select id="edit-post-wait-unit" class="flex-1 p-2 bg-[#F6F8F7] border border-[#DDE6E2] rounded-xl text-xs text-[#172B27] font-semibold">
+                <option value="horas">Horas</option>
+                <option value="dias">Dias</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#103D36] mb-1">Relato / Experiência no Atendimento:</label>
+          <textarea id="edit-post-text" rows="3" required class="w-full p-2.5 bg-[#F6F8F7] border border-[#DDE6E2] rounded-xl text-xs text-[#172B27] focus:bg-white focus:ring-2 focus:ring-[#16A085] outline-hidden"></textarea>
+        </div>
+
+        <div class="p-3 bg-[#F6F8F7] rounded-xl border border-[#DDE6E2] flex items-center justify-between">
+          <div>
+            <div class="font-bold text-[#103D36]">Visibilidade do Relato</div>
+            <div class="text-[10px] text-[#66746F]">Público para toda a comunidade ou privado só para você</div>
+          </div>
+          <select id="edit-post-visibility" class="p-1.5 bg-white border border-[#DDE6E2] rounded-lg text-xs font-bold text-[#103D36]">
+            <option value="public">🌐 Público</option>
+            <option value="private">🔒 Privado</option>
+          </select>
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="button" onclick="closeModal('modal-edit-post')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#172B27] font-bold rounded-xl active-scale cursor-pointer">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 py-2.5 bg-[#16A085] hover:bg-[#103D36] text-white font-bold rounded-xl shadow-xs active-scale transition-all cursor-pointer">
+            Salvar Alterações
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL: MINHA REDE DE AMIZADES & CONEXÕES -->
   <div id="modal-social-connections" onclick="if(event.target === this) closeModal('modal-social-connections')" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 hidden">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DDE6E2] space-y-4 max-h-[90vh] flex flex-col">
@@ -1884,41 +2008,48 @@
   <div id="toast-notification-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none flex flex-col items-center gap-2"></div>
 
   <!-- MODAL: VISUALIZADOR DE STORY / STATUS -->
-  <div id="modal-story-viewer" onclick="if(event.target === this) closeStoryViewer()" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-50 hidden">
-    <div class="relative w-[60%] max-w-[240px] sm:w-full sm:max-w-sm bg-slate-950 text-white rounded-3xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col max-h-[88vh]">
-      <!-- Barra de Progresso no topo -->
-      <div class="p-2 sm:p-3 pb-1 flex items-center gap-1.5 sm:gap-2">
-        <div class="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
-          <div id="story-progress-bar" class="h-full bg-emerald-400 transition-all duration-300 w-0"></div>
+  <div id="modal-story-viewer" onclick="if(event.target === this) closeStoryViewer()" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-50 hidden select-none">
+    <div class="relative w-[230px] sm:w-[240px] max-w-[90vw] bg-slate-950 text-white rounded-3xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col max-h-[85vh]">
+      <!-- Barra de Progresso Segmentada no topo -->
+      <div class="p-2 sm:p-2.5 pb-1 flex items-center gap-1.5">
+        <div id="story-progress-bar-container" class="flex-1 flex items-center gap-1 h-1">
+          <div class="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
+            <div id="story-progress-bar" class="h-full bg-emerald-400 transition-all duration-300 w-0"></div>
+          </div>
         </div>
-        <button onclick="closeStoryViewer()" class="text-white hover:text-rose-400 p-1 text-sm sm:text-base ml-1 cursor-pointer">✕</button>
+        <button onclick="closeStoryViewer()" class="text-white hover:text-rose-400 p-1 text-sm ml-0.5 cursor-pointer" title="Fechar visualizador">✕</button>
       </div>
 
       <!-- Cabeçalho do Story com dados do Paciente -->
-      <div class="px-2.5 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between">
-        <div class="flex items-center gap-2 sm:gap-2.5 overflow-hidden">
-          <div id="story-viewer-avatar" class="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#16A085] border border-white flex items-center justify-center text-xs sm:text-sm font-bold overflow-hidden shrink-0">
+      <div class="px-2.5 py-1.5 flex items-center justify-between border-b border-white/5">
+        <div class="flex items-center gap-2 overflow-hidden">
+          <div id="story-viewer-avatar" class="w-7 h-7 rounded-full bg-[#16A085] border border-white flex items-center justify-center text-xs font-bold overflow-hidden shrink-0 shadow-2xs">
             👤
           </div>
           <div class="overflow-hidden">
-            <div id="story-viewer-author" class="text-[11px] sm:text-xs font-bold text-white leading-tight truncate max-w-[85px] sm:max-w-none">Paciente</div>
-            <div id="story-viewer-hospital" class="text-[9px] sm:text-[10px] text-emerald-300 truncate max-w-[85px] sm:max-w-none">Hospital</div>
+            <div id="story-viewer-author" class="text-[11px] font-bold text-white leading-tight truncate max-w-[80px]">Paciente</div>
+            <div id="story-viewer-hospital" class="text-[9px] text-emerald-300 truncate max-w-[80px]">Hospital</div>
           </div>
         </div>
-        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          <span id="story-viewer-time" class="text-[8px] sm:text-[10px] text-slate-300 bg-white/10 px-1.5 sm:px-2 py-0.5 rounded-full">Hoje</span>
-          <button id="story-viewer-delete-btn" onclick="deleteStory(currentViewingStoryId)" class="hidden text-rose-400 hover:text-rose-300 text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded bg-rose-950/60 hover:bg-rose-900 border border-rose-800 transition-colors cursor-pointer" title="Excluir este story">🗑️</button>
+        <div class="flex items-center gap-1 shrink-0">
+          <span id="story-viewer-time" class="text-[8px] text-slate-300 bg-white/10 px-1.5 py-0.5 rounded-full">Hoje</span>
+          <button id="story-viewer-edit-btn" onclick="openEditStoryModal(currentViewingStoryId)" class="hidden text-amber-400 hover:text-amber-300 text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-950/60 hover:bg-amber-900 border border-amber-800 transition-colors cursor-pointer" title="Editar este story">✏️</button>
+          <button id="story-viewer-delete-btn" onclick="deleteStory(currentViewingStoryId)" class="hidden text-rose-400 hover:text-rose-300 text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-950/60 hover:bg-rose-900 border border-rose-800 transition-colors cursor-pointer" title="Excluir este story">🗑️</button>
         </div>
       </div>
 
-      <!-- Conteúdo do Story (Vídeo, Imagem ou Áudio) -->
-      <div id="story-viewer-media-container" class="flex-1 min-h-[190px] sm:min-h-[300px] bg-black flex items-center justify-center p-1 sm:p-2 relative overflow-hidden">
+      <!-- Conteúdo do Story (Vídeo, Imagem ou Áudio) com Botões de Navegação -->
+      <div id="story-viewer-media-container" onclick="handleStoryMediaClick(event)" class="flex-1 min-h-[220px] sm:min-h-[260px] max-h-[50vh] bg-black flex items-center justify-center p-1 relative overflow-hidden cursor-pointer">
         <!-- Injetado dinamicamente -->
       </div>
 
+      <!-- Botões de Navegação Anterior / Próximo -->
+      <button type="button" onclick="event.stopPropagation(); prevStory();" class="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center text-[10px] z-30 transition-all cursor-pointer shadow-md" title="Story anterior">◀</button>
+      <button type="button" onclick="event.stopPropagation(); nextStory();" class="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center text-[10px] z-30 transition-all cursor-pointer shadow-md" title="Próximo story">▶</button>
+
       <!-- Legenda / Texto do Story -->
-      <div class="p-2.5 sm:p-4 bg-gradient-to-t from-black via-black/80 to-transparent">
-        <p id="story-viewer-caption" class="text-[10px] sm:text-xs text-slate-200 leading-relaxed">
+      <div class="p-2.5 bg-gradient-to-t from-black via-black/85 to-transparent shrink-0">
+        <p id="story-viewer-caption" class="text-[10px] text-slate-200 leading-relaxed max-h-16 overflow-y-auto custom-scrollbar">
           Relato de atendimento na fila.
         </p>
       </div>
@@ -4973,6 +5104,13 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         `;
       }
 
+      const editPostBtn = isOwner ? `
+        <button onclick="openEditPostModal('${post.id}')" class="text-[#103D36] hover:text-[#16A085] font-bold text-[11px] flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#E9F5F1] hover:bg-[#d5ece4] transition-colors active-scale cursor-pointer" title="Editar este relato">
+          <span>✏️</span>
+          <span>Editar</span>
+        </button>
+      ` : '';
+
       const deletePostBtn = isOwner ? `
         <button onclick="deleteMyPost('${post.id}')" class="text-rose-600 hover:text-rose-800 font-bold text-[11px] flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-50 hover:bg-rose-100 transition-colors active-scale cursor-pointer" title="Excluir este relato">
           <span>🗑️</span>
@@ -5061,6 +5199,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
             <div class="flex items-center gap-2">
               ${visibilityActionBtn}
+              ${editPostBtn}
               ${deletePostBtn}
             </div>
           </div>
@@ -6367,11 +6506,13 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     let currentStoryTimer = null;
 
     function openCreateStoryModal() {
+      const input = document.getElementById('story-file-upload-input');
+      if (input) input.value = '';
       const modal = document.getElementById('modal-create-story');
       if (modal) modal.classList.remove('hidden');
     }
 
-    // Comprime imagens para até 1080p JPEG garantindo uploads ultra-rápidos e persistência confiável
+    // Comprime imagens para até 720p JPEG garantindo uploads ultra-rápidos, sem estouro de cota e fotos nítidas
     function compressImageIfNeeded(file) {
       return new Promise((resolve) => {
         if (!file.type.startsWith('image/')) {
@@ -6384,8 +6525,8 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         const reader = new FileReader();
         reader.onload = e => {
           img.onload = () => {
-            const maxW = 1080;
-            const maxH = 1920;
+            const maxW = 720;
+            const maxH = 1280;
             let w = img.width;
             let h = img.height;
             if (w > maxW || h > maxH) {
@@ -6398,13 +6539,50 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
             canvas.height = h;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL('image/jpeg', 0.82));
+            resolve(canvas.toDataURL('image/jpeg', 0.80));
           };
           img.onerror = () => resolve(e.target.result);
           img.src = e.target.result;
         };
         reader.readAsDataURL(file);
       });
+    }
+
+    function isStoryOwner(story) {
+      if (!story || !currentUser) return false;
+      if (currentUser.isAdmin) return true;
+      const currentId = currentUser.id ? String(currentUser.id).toLowerCase() : '';
+      const currentUsername = currentUser.username ? String(currentUser.username).toLowerCase() : '';
+      const currentName = currentUser.name ? String(currentUser.name).toLowerCase() : '';
+
+      const sUserId = story.userId ? String(story.userId).toLowerCase() : '';
+      const sUsername = story.username ? String(story.username).toLowerCase() : '';
+      const sAuthor = story.author ? String(story.author).toLowerCase() : '';
+
+      if (currentId && sUserId && currentId === sUserId) return true;
+      if (currentUsername && sUsername && currentUsername === sUsername) return true;
+      if (currentName && sAuthor && currentName === sAuthor) return true;
+      if (story.author === 'Meu Status') return true;
+
+      return false;
+    }
+
+    function isPostOwner(post) {
+      if (!post || !currentUser) return false;
+      if (currentUser.isAdmin) return true;
+      const currentId = currentUser.id ? String(currentUser.id).toLowerCase() : '';
+      const currentUsername = currentUser.username ? String(currentUser.username).toLowerCase() : '';
+      const currentName = currentUser.name ? String(currentUser.name).toLowerCase() : '';
+
+      const pUserId = post.userId ? String(post.userId).toLowerCase() : '';
+      const pUsername = post.username ? String(post.username).toLowerCase() : '';
+      const pAuthor = post.author ? String(post.author).toLowerCase() : '';
+
+      if (currentId && pUserId && currentId === pUserId) return true;
+      if (currentUsername && pUsername && currentUsername === pUsername) return true;
+      if (currentName && pAuthor && currentName === pAuthor) return true;
+
+      return false;
     }
 
     async function saveStoryToSupabase(story) {
@@ -6440,8 +6618,6 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
         const hospName = story.hospital || (typeof detectedHospitalName !== 'undefined' ? detectedHospitalName : 'Hospital / Unidade de Saúde');
 
-        // IMPORTANTE: NÃO duplicamos mediaDataUrl dentro de storyMeta (relato) para não dobrar o tamanho do payload HTTP!
-        // O vídeo ou imagem vai exclusivamente na coluna video_url do Supabase.
         const storyMeta = {
           isStory: true,
           author: story.author,
@@ -6510,6 +6686,9 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       const file = event.target.files && event.target.files[0];
       if (!file) return;
 
+      // Reseta imediatamente o input para aceitar novos uploads subsequentes sem reutilizar o arquivo
+      event.target.value = '';
+
       if (file.size > 12 * 1024 * 1024) {
         alert('O arquivo selecionado é muito grande. Para envio rápido de stories, escolha um arquivo de vídeo ou imagem com até 12MB.');
         return;
@@ -6541,6 +6720,7 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         username: currentUsername,
         hospital: hospName,
         time: 'Agora mesmo',
+        createdAtIso: new Date().toISOString(),
         type: isVideo ? 'video' : 'image',
         mediaUrl: dataUrl,
         caption: isVideo ? 'Depoimento em vídeo compartilhado pelo paciente.' : 'Foto da unidade de saúde compartilhada no Status.'
@@ -6553,7 +6733,6 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       renderStories();
       closeModal('modal-create-story');
       openStoryViewer(newStory.id);
-      event.target.value = '';
 
       // Persiste na nuvem do Supabase
       await saveStoryToSupabase(newStory);
@@ -6562,24 +6741,26 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
     let currentViewingStoryId = null;
 
     function openStoryViewer(storyId) {
+      if (!communityStories || communityStories.length === 0) return;
+      if (!storyId) storyId = communityStories[0].id;
       currentViewingStoryId = storyId;
-      let story = communityStories.find(s => s.id === storyId);
-      if (!story) return;
+
+      const storyIdx = communityStories.findIndex(s => s.id === storyId);
+      if (storyIdx === -1) return;
+      const story = communityStories[storyIdx];
+
+      const isOwner = isStoryOwner(story);
+
+      const editBtn = document.getElementById('story-viewer-edit-btn');
+      if (editBtn) {
+        if (isOwner) editBtn.classList.remove('hidden');
+        else editBtn.classList.add('hidden');
+      }
 
       const deleteBtn = document.getElementById('story-viewer-delete-btn');
       if (deleteBtn) {
-        const isOwner = currentUser && (
-          currentUser.isAdmin ||
-          (story.userId && currentUser.id && story.userId === currentUser.id) ||
-          (story.username && currentUser.username && story.username.toLowerCase() === currentUser.username.toLowerCase()) ||
-          (story.author && currentUser.name && story.author.toLowerCase() === currentUser.name.toLowerCase()) ||
-          story.author === 'Meu Status'
-        );
-        if (isOwner) {
-          deleteBtn.classList.remove('hidden');
-        } else {
-          deleteBtn.classList.add('hidden');
-        }
+        if (isOwner) deleteBtn.classList.remove('hidden');
+        else deleteBtn.classList.add('hidden');
       }
 
       const modal = document.getElementById('modal-story-viewer');
@@ -6589,32 +6770,32 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       const timeEl = document.getElementById('story-viewer-time');
       const captionEl = document.getElementById('story-viewer-caption');
       const mediaContainer = document.getElementById('story-viewer-media-container');
-      const progressBar = document.getElementById('story-progress-bar');
+      const progressContainer = document.getElementById('story-progress-bar-container');
 
       if (authorEl) authorEl.innerText = story.author;
       if (avatarEl) avatarEl.innerHTML = renderAvatarHTML(story.avatar);
-      if (hospitalEl) hospitalEl.innerText = story.hospital;
-      if (timeEl) timeEl.innerText = story.time;
+      if (hospitalEl) hospitalEl.innerText = story.hospital || 'Hospital';
+      if (timeEl) timeEl.innerText = story.time || 'Hoje';
       if (captionEl) captionEl.innerText = story.caption || 'Relato de espera no atendimento.';
 
       if (mediaContainer) {
         if (story.type === 'video' && story.mediaUrl) {
-          mediaContainer.innerHTML = `<video src="${story.mediaUrl}" autoplay controls playsinline class="max-h-[42vh] sm:max-h-[55vh] max-w-full rounded-xl sm:rounded-2xl bg-black"></video>`;
+          mediaContainer.innerHTML = `<video src="${story.mediaUrl}" autoplay controls playsinline class="max-h-[42vh] sm:max-h-[50vh] max-w-full rounded-xl sm:rounded-2xl bg-black object-contain"></video>`;
         } else if (story.type === 'image' && story.mediaUrl) {
-          mediaContainer.innerHTML = `<img src="${story.mediaUrl}" alt="Story" class="max-h-[42vh] sm:max-h-[55vh] max-w-full rounded-xl sm:rounded-2xl object-contain bg-black">`;
+          mediaContainer.innerHTML = `<img src="${story.mediaUrl}" alt="Story" class="max-h-[42vh] sm:max-h-[50vh] max-w-full rounded-xl sm:rounded-2xl object-contain bg-black">`;
         } else if (story.type === 'audio' && story.mediaUrl) {
           mediaContainer.innerHTML = `
-            <div class="p-3 sm:p-6 text-center space-y-2 sm:space-y-3 bg-slate-900 rounded-xl sm:rounded-2xl border border-slate-800 w-full max-w-xs">
-              <div class="text-3xl sm:text-4xl animate-bounce">🎙️</div>
-              <div class="text-[10px] sm:text-xs font-bold text-emerald-400">Depoimento em Áudio</div>
+            <div class="p-3 text-center space-y-2 bg-slate-900 rounded-xl border border-slate-800 w-full max-w-[200px]">
+              <div class="text-2xl animate-bounce">🎙️</div>
+              <div class="text-[10px] font-bold text-emerald-400">Depoimento em Áudio</div>
               <audio src="${story.mediaUrl}" autoplay controls class="w-full"></audio>
             </div>
           `;
         } else {
           mediaContainer.innerHTML = `
-            <div class="p-3 sm:p-6 text-center space-y-2 sm:space-y-3 bg-gradient-to-br ${story.bgGradient || 'from-teal-800 to-slate-900'} rounded-xl sm:rounded-2xl w-full max-w-xs flex flex-col items-center justify-center min-h-[170px] sm:min-h-[220px]">
-              <div class="text-2xl sm:text-3xl">🏥</div>
-              <p class="text-xs sm:text-sm font-semibold text-white leading-relaxed">${story.caption}</p>
+            <div class="p-3 text-center space-y-2 bg-gradient-to-br ${story.bgGradient || 'from-teal-800 to-slate-900'} rounded-xl w-full max-w-[200px] flex flex-col items-center justify-center min-h-[160px]">
+              <div class="text-2xl">🏥</div>
+              <p class="text-[11px] font-semibold text-white leading-relaxed">${story.caption}</p>
             </div>
           `;
         }
@@ -6622,9 +6803,23 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
 
       if (modal) modal.classList.remove('hidden');
 
-      // Animação da barra de progresso
+      // Segmentos da barra de progresso no topo
+      if (progressContainer) {
+        progressContainer.innerHTML = communityStories.map((s, idx) => {
+          if (idx < storyIdx) {
+            return `<div class="flex-1 h-1 bg-emerald-400 rounded-full"></div>`;
+          } else if (idx === storyIdx) {
+            return `<div class="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
+                      <div id="story-progress-bar" class="h-full bg-emerald-400 transition-all duration-150 w-0"></div>
+                    </div>`;
+          } else {
+            return `<div class="flex-1 h-1 bg-white/20 rounded-full"></div>`;
+          }
+        }).join('');
+      }
+
+      const progressBar = document.getElementById('story-progress-bar');
       if (progressBar) {
-        progressBar.style.width = '0%';
         if (currentStoryTimer) clearInterval(currentStoryTimer);
         let progress = 0;
         currentStoryTimer = setInterval(() => {
@@ -6632,8 +6827,43 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
           progressBar.style.width = progress + '%';
           if (progress >= 100) {
             clearInterval(currentStoryTimer);
+            nextStory();
           }
-        }, 150);
+        }, 120);
+      }
+    }
+
+    function nextStory() {
+      if (!communityStories || communityStories.length === 0) return;
+      const currentIdx = communityStories.findIndex(s => s.id === currentViewingStoryId);
+      if (currentIdx !== -1 && currentIdx < communityStories.length - 1) {
+        openStoryViewer(communityStories[currentIdx + 1].id);
+      } else {
+        closeStoryViewer();
+      }
+    }
+
+    function prevStory() {
+      if (!communityStories || communityStories.length === 0) return;
+      const currentIdx = communityStories.findIndex(s => s.id === currentViewingStoryId);
+      if (currentIdx > 0) {
+        openStoryViewer(communityStories[currentIdx - 1].id);
+      } else {
+        openStoryViewer(communityStories[0].id);
+      }
+    }
+
+    function handleStoryMediaClick(event) {
+      if (event.target.tagName === 'VIDEO' || event.target.tagName === 'AUDIO') {
+        return;
+      }
+      const rect = event.currentTarget.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const width = rect.width;
+      if (clickX < width * 0.35) {
+        prevStory();
+      } else {
+        nextStory();
       }
     }
 
@@ -6680,6 +6910,298 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
       }
     }
 
+    let editingStoryTempMediaUrl = null;
+    let editingStoryTempType = null;
+
+    function openEditStoryModal(storyId) {
+      if (!currentUser) {
+        alert('Faça login para editar seu story.');
+        return;
+      }
+      if (!storyId) storyId = currentViewingStoryId;
+      const story = communityStories.find(s => s.id === storyId);
+      if (!story) return;
+
+      if (!isStoryOwner(story)) {
+        alert('Você só pode editar stories criados pela sua conta.');
+        return;
+      }
+
+      if (currentStoryTimer) clearInterval(currentStoryTimer);
+      closeStoryViewer();
+
+      const modal = document.getElementById('modal-edit-story');
+      const idInput = document.getElementById('edit-story-id');
+      const captionInput = document.getElementById('edit-story-caption');
+      const hospInput = document.getElementById('edit-story-hospital');
+      const previewEl = document.getElementById('edit-story-media-preview');
+
+      if (idInput) idInput.value = story.id;
+      if (captionInput) captionInput.value = story.caption || '';
+      if (hospInput) hospInput.value = story.hospital || '';
+
+      editingStoryTempMediaUrl = story.mediaUrl;
+      editingStoryTempType = story.type;
+
+      if (previewEl) {
+        if (story.type === 'video' && story.mediaUrl) {
+          previewEl.innerHTML = `<video src="${story.mediaUrl}" controls playsinline class="w-full h-full object-cover"></video>`;
+        } else if (story.type === 'image' && story.mediaUrl) {
+          previewEl.innerHTML = `<img src="${story.mediaUrl}" alt="Story" class="w-full h-full object-cover">`;
+        } else {
+          previewEl.innerHTML = `<div class="text-white text-xs p-2 text-center">Mídia do story</div>`;
+        }
+      }
+
+      const fileInput = document.getElementById('edit-story-file-input');
+      if (fileInput) fileInput.value = '';
+
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    async function handleEditStoryFileChange(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      if (file.size > 12 * 1024 * 1024) {
+        alert('O arquivo selecionado é muito grande. Escolha uma foto ou vídeo com até 12MB.');
+        return;
+      }
+
+      const isVideo = file.type.startsWith('video');
+      let dataUrl = null;
+      try {
+        dataUrl = await compressImageIfNeeded(file);
+      } catch(e) {
+        dataUrl = await new Promise((res) => {
+          const r = new FileReader();
+          r.onload = ev => res(ev.target.result);
+          r.readAsDataURL(file);
+        });
+      }
+
+      editingStoryTempMediaUrl = dataUrl;
+      editingStoryTempType = isVideo ? 'video' : 'image';
+
+      const previewEl = document.getElementById('edit-story-media-preview');
+      if (previewEl) {
+        if (isVideo) {
+          previewEl.innerHTML = `<video src="${dataUrl}" controls playsinline class="w-full h-full object-cover"></video>`;
+        } else {
+          previewEl.innerHTML = `<img src="${dataUrl}" alt="Story Preview" class="w-full h-full object-cover">`;
+        }
+      }
+      showNotificationToast('✓ Nova mídia selecionada para o story', 'info');
+    }
+
+    async function handleEditStorySubmit(event) {
+      if (event) event.preventDefault();
+      const storyId = document.getElementById('edit-story-id') ? document.getElementById('edit-story-id').value : null;
+      if (!storyId) return;
+
+      const story = communityStories.find(s => s.id === storyId);
+      if (!story) {
+        alert('Story não encontrado.');
+        closeModal('modal-edit-story');
+        return;
+      }
+
+      const newCaption = (document.getElementById('edit-story-caption') && document.getElementById('edit-story-caption').value.trim()) || '';
+      const newHospital = (document.getElementById('edit-story-hospital') && document.getElementById('edit-story-hospital').value.trim()) || story.hospital || 'Hospital';
+
+      story.caption = newCaption;
+      story.hospital = newHospital;
+      if (editingStoryTempMediaUrl) {
+        story.mediaUrl = editingStoryTempMediaUrl;
+        story.type = editingStoryTempType || story.type;
+      }
+
+      try {
+        localStorage.setItem('minhavoz_community_stories', JSON.stringify(communityStories));
+      } catch(e){}
+
+      renderStories();
+      closeModal('modal-edit-story');
+      showNotificationToast('✓ Story atualizado com sucesso!', 'success');
+      openStoryViewer(story.id);
+
+      // Atualiza no Supabase
+      const client = getSupabaseClient();
+      if (client && isValidUUID(story.id)) {
+        try {
+          const storyMeta = {
+            isStory: true,
+            author: story.author,
+            avatar: story.avatar,
+            userId: story.userId || null,
+            username: story.username || null,
+            hospital: story.hospital,
+            type: story.type,
+            caption: story.caption,
+            time: story.time
+          };
+          const updatePayload = {
+            relato: formatMetaAndText(storyMeta, story.caption || 'Depoimento em story'),
+            hospital: story.hospital,
+            tipo_midia: story.type === 'video' ? 'video' : 'imagem'
+          };
+          if (editingStoryTempMediaUrl) {
+            updatePayload.video_url = editingStoryTempMediaUrl;
+          }
+          const { error } = await client.from('reports').update(updatePayload).eq('id', story.id);
+          if (error) {
+            console.warn('Erro ao atualizar story no Supabase:', error);
+          } else {
+            console.log('✓ Story atualizado no Supabase com sucesso:', story.id);
+          }
+        } catch(err) {
+          console.warn('Erro na atualização de story no Supabase:', err);
+        }
+      }
+    }
+
+    function openEditPostModal(postId) {
+      if (!currentUser) {
+        alert('Faça login para editar sua publicação.');
+        return;
+      }
+      const post = socialPosts.find(p => p.id === postId);
+      if (!post) return;
+
+      if (!isPostOwner(post)) {
+        alert('Você só pode editar publicações criadas pela sua conta.');
+        return;
+      }
+
+      const modal = document.getElementById('modal-edit-post');
+      const idInput = document.getElementById('edit-post-id');
+      const hospInput = document.getElementById('edit-post-hospital');
+      const specInput = document.getElementById('edit-post-specialty');
+      const waitValInput = document.getElementById('edit-post-wait-val');
+      const waitUnitInput = document.getElementById('edit-post-wait-unit');
+      const textInput = document.getElementById('edit-post-text');
+      const visInput = document.getElementById('edit-post-visibility');
+
+      if (idInput) idInput.value = post.id;
+      if (hospInput) hospInput.value = post.hospital || '';
+      if (specInput) specInput.value = post.specialty || '';
+      if (waitValInput) waitValInput.value = post.waitValue || post.waitHours || post.waitDays || 2;
+      if (waitUnitInput) waitUnitInput.value = post.waitUnit || 'horas';
+      if (textInput) textInput.value = post.text || '';
+      if (visInput) visInput.value = (post.isPublic !== false) ? 'public' : 'private';
+
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    async function handleEditPostSubmit(event) {
+      if (event) event.preventDefault();
+      const postId = document.getElementById('edit-post-id') ? document.getElementById('edit-post-id').value : null;
+      if (!postId) return;
+
+      const post = socialPosts.find(p => p.id === postId);
+      if (!post) {
+        alert('Relato não encontrado.');
+        closeModal('modal-edit-post');
+        return;
+      }
+
+      const hosp = (document.getElementById('edit-post-hospital') && document.getElementById('edit-post-hospital').value.trim()) || post.hospital;
+      const spec = (document.getElementById('edit-post-specialty') && document.getElementById('edit-post-specialty').value.trim()) || post.specialty;
+      const val = parseFloat((document.getElementById('edit-post-wait-val') && document.getElementById('edit-post-wait-val').value) || post.waitValue || 2);
+      const unit = (document.getElementById('edit-post-wait-unit') && document.getElementById('edit-post-wait-unit').value) || post.waitUnit || 'horas';
+      const text = (document.getElementById('edit-post-text') && document.getElementById('edit-post-text').value.trim()) || post.text;
+      const vis = (document.getElementById('edit-post-visibility') && document.getElementById('edit-post-visibility').value) || 'public';
+      const isPublic = (vis === 'public');
+
+      // Atualiza post em memória
+      post.hospital = hosp;
+      post.specialty = spec;
+      post.waitValue = val;
+      post.waitUnit = unit;
+      post.waitHours = (unit === 'horas') ? val : (val * 24);
+      post.waitDays = (unit === 'dias') ? val : Math.round(val / 24);
+      post.text = text;
+      post.isPublic = isPublic;
+
+      // Atualiza realWaitingRecords correspondente
+      const rawId = postId.startsWith('wait-') ? postId.replace('wait-', '') : postId;
+      const waitRec = realWaitingRecords.find(r => r.id === postId || r.id === rawId || ('wait-' + r.id) === postId);
+      if (waitRec) {
+        waitRec.hospital = hosp;
+        waitRec.hospitalShort = hosp.length > 25 ? hosp.slice(0, 22) + '...' : hosp;
+        waitRec.specialty = spec;
+        waitRec.waitValue = val;
+        waitRec.waitUnit = unit;
+        waitRec.text = text;
+        waitRec.isPublic = isPublic;
+      }
+
+      saveWaitRecords();
+      renderFeed();
+      updateMapStatistics();
+      closeModal('modal-edit-post');
+      showNotificationToast('✓ Relato de espera atualizado com sucesso!', 'success');
+
+      // Atualiza no Supabase
+      const client = getSupabaseClient();
+      if (client && isValidUUID(rawId)) {
+        try {
+          if (postId.startsWith('wait-')) {
+            const meta = {
+              hospital: hosp,
+              specialty: spec,
+              category: post.category || 'Emergência',
+              hours: unit === 'horas' ? val : (val * 24),
+              waitVal: val,
+              waitUnit: unit,
+              author: post.author,
+              avatar: post.avatar,
+              userId: post.userId,
+              username: post.username,
+              isPublic: isPublic,
+              comments: post.comments || [],
+              likes: post.likes || 1,
+              likedBy: post.likedBy || [],
+              pressures: post.pressures || 1
+            };
+            await client.from('waiting_times').update({
+              hospital: hosp,
+              setor: spec,
+              tempo_horas: unit === 'horas' ? val : (val * 24),
+              comentario: formatMetaAndText(meta, text)
+            }).eq('id', rawId);
+          } else {
+            const meta = {
+              hospital: hosp,
+              specialty: spec,
+              category: post.category || 'Emergência',
+              waitVal: val,
+              waitUnit: unit,
+              author: post.author,
+              avatar: post.avatar,
+              userId: post.userId,
+              username: post.username,
+              isPublic: isPublic,
+              comments: post.comments || [],
+              likes: post.likes || 1,
+              likedBy: post.likedBy || [],
+              pressures: post.pressures || 1
+            };
+            await client.from('reports').update({
+              hospital: hosp,
+              especialidade: spec,
+              tempo_espera_horas: unit === 'horas' ? val : (val * 24),
+              tempo_espera_dias: unit === 'dias' ? val : Math.round(val / 24),
+              relato: formatMetaAndText(meta, text)
+            }).eq('id', rawId);
+          }
+          console.log('✓ Relato atualizado no Supabase:', rawId);
+        } catch(err) {
+          console.warn('Erro ao atualizar relato no Supabase:', err);
+        }
+      }
+    }
+
     function renderStories() {
       const list = document.getElementById('stories-list');
       if (!list) return;
@@ -6692,16 +7214,28 @@ ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome;`;
         return;
       }
 
-      list.innerHTML = allDisplayStories.map(s => `
-        <div onclick="openStoryViewer('${s.id}')" class="flex flex-col items-center shrink-0 cursor-pointer group">
-          <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full p-0.5 story-ring group-hover:scale-105 transition-transform">
-            <div class="w-full h-full rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-white text-sm font-bold overflow-hidden">
-              ${renderAvatarHTML(s.avatar)}
+      list.innerHTML = allDisplayStories.map(s => {
+        const isImgStory = (s.type === 'image' && s.mediaUrl);
+        const innerCircle = isImgStory
+          ? `<div class="w-full h-full rounded-full border-2 border-white overflow-hidden relative bg-slate-900 shadow-2xs">
+               <img src="${s.mediaUrl}" alt="Story" class="w-full h-full object-cover">
+               <div class="absolute bottom-0 right-0 w-4 h-4 rounded-full border border-white overflow-hidden bg-[#16A085] flex items-center justify-center text-[8px] text-white font-bold shadow-2xs">
+                 ${renderAvatarHTML(s.avatar)}
+               </div>
+             </div>`
+          : `<div class="w-full h-full rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-white text-sm font-bold overflow-hidden shadow-2xs">
+               ${renderAvatarHTML(s.avatar)}
+             </div>`;
+
+        return `
+          <div onclick="openStoryViewer('${s.id}')" class="flex flex-col items-center shrink-0 cursor-pointer group">
+            <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-full p-0.5 story-ring group-hover:scale-105 transition-transform">
+              ${innerCircle}
             </div>
+            <span class="text-[10px] font-semibold text-slate-700 mt-1 max-w-[65px] truncate text-center">${s.author}</span>
           </div>
-          <span class="text-[10px] font-semibold text-slate-700 mt-1 max-w-[65px] truncate text-center">${s.author}</span>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     async function deleteMyPost(id) {
